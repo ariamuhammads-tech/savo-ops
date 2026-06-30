@@ -1,0 +1,24 @@
+name: Keep Supabase Awake
+
+# Supabase free projects pause after 7 days of inactivity.
+# This pings the app's health endpoint (which touches the DB) every 3 days.
+
+on:
+  schedule:
+    - cron: "0 3 */3 * *" # every 3 days at 03:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping health endpoint
+        env:
+          HEALTHCHECK_URL: ${{ vars.HEALTHCHECK_URL }}
+        run: |
+          if [ -z "$HEALTHCHECK_URL" ]; then
+            echo "HEALTHCHECK_URL repo variable is not set; skipping."
+            exit 0
+          fi
+          echo "Pinging $HEALTHCHECK_URL"
+          curl -fsS --max-time 30 "$HEALTHCHECK_URL" && echo "\nOK"

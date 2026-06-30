@@ -1,0 +1,52 @@
+name: Weekly DB Backup
+
+# Supabase free tier has no automatic backups.
+# This dumps the database weekly and commits a gzipped dump to /backups.
+# Requires repo secret SUPABASE_DB_URL (the Postgres connection string URI).
+
+on:
+  schedule:
+    - cron: "0 18 * * 0" # Sundays 18:00 UTC (Mon 01:00 WIB)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client (v16)
+        run: |
+          sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+          curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/pgdg.gpg
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-16
+
+      - name: Dump database
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo "SUPABASE_DB_URL secret not set; skipping."
+            exit 0
+          fi
+          mkdir -p backups
+          STAMP=$(date -u +%Y%m%d)
+          pg_dump "$SUPABASE_DB_URL" --no-owner --no-privileges | gzip > "backups/savo-${STAMP}.sql.gz"
+          # keep only the latest 8 weekly dumps
+          ls -1t backups/savo-*.sql.gz | tail -n +9 | xargs -r rm -f
+
+      - name: Commit backup
+        run: |
+          if [ -z "$(git status --porcelain backups)" ]; then
+            echo "No backup changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add backups
+          git commit -m "chore(backup): weekly DB dump $(date -u +%Y-%m-%d)"
+          git push
