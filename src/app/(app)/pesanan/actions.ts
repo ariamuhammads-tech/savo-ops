@@ -38,7 +38,7 @@ export async function createOrder(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const customerId = String(formData.get("customer_id") ?? "") || null;
+  let customerId = String(formData.get("customer_id") ?? "") || null;
   const channel = String(formData.get("channel") ?? "wa");
   const orderDate = String(formData.get("order_date") ?? "");
   const notes = String(formData.get("notes") ?? "").trim();
@@ -63,6 +63,49 @@ export async function createOrder(
   const total = round2(subtotal - discount + shipping + tax);
 
   const supabase = await createClient();
+
+  // If no saved customer was picked but a contact was typed, auto-link or
+  // create a customer so the person also appears in Pelanggan.
+  if (!customerId && (contactName || contactPhone)) {
+    const digits = contactPhone.replace(/\D/g, "");
+    let found: { id: string } | null = null;
+
+    if (digits) {
+      const { data } = await supabase
+        .from("customers")
+        .select("id")
+        .eq("phone_wa", contactPhone)
+        .limit(1)
+        .maybeSingle();
+      found = data;
+    }
+    if (!found && contactName) {
+      const { data } = await supabase
+        .from("customers")
+        .select("id")
+        .ilike("name", contactName)
+        .limit(1)
+        .maybeSingle();
+      found = data;
+    }
+
+    if (found) {
+      customerId = found.id;
+    } else {
+      const { data: created } = await supabase
+        .from("customers")
+        .insert({
+          name: contactName || "Pelanggan",
+          type: "b2c",
+          price_tier: "b2c",
+          phone_wa: contactPhone || null,
+          notes: "Otomatis dari pesanan",
+        })
+        .select("id")
+        .single();
+      customerId = created?.id ?? null;
+    }
+  }
 
   const year = new Date().toLocaleString("en-US", {
     timeZone: "Asia/Jakarta",
@@ -107,6 +150,7 @@ export async function createOrder(
   if (itemsErr) return { error: "Gagal menyimpan item: " + itemsErr.message };
 
   revalidatePath("/pesanan");
+  revalidatePath("/pelanggan");
   redirect(`/pesanan/${order.id}?msg=` + encodeURIComponent(`Pesanan ${orderNo} dibuat.`));
 }
 
