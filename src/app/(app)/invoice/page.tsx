@@ -31,14 +31,17 @@ type Row = {
   issue_date: string;
   total: number;
   status: string;
-  customer: { name: string } | null;
+  customer: { name: string; phone_wa: string | null } | null;
+  order: { contact_name: string | null; contact_phone: string | null } | null;
 };
 
 export default async function InvoicePage() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("invoices")
-    .select("id, invoice_no, issue_date, total, status, customer:customers(name)")
+    .select(
+      "id, invoice_no, issue_date, total, status, customer:customers(name, phone_wa), order:orders(contact_name, contact_phone)",
+    )
     .order("created_at", { ascending: false });
 
   const invoices = (data ?? []) as unknown as Row[];
@@ -78,8 +81,19 @@ export default async function InvoicePage() {
                       {INV_STATUS_LABEL[inv.status] ?? inv.status}
                     </Badge>
                   </div>
-                  <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                    {inv.customer?.name ?? "Umum"} · {formatDate(inv.issue_date)} ·{" "}
+                  <p className="mt-0.5 truncate text-sm">
+                    <span className="font-medium text-foreground">
+                      {inv.customer?.name ?? inv.order?.contact_name ?? "Umum"}
+                    </span>
+                    {(inv.customer?.phone_wa ?? inv.order?.contact_phone) && (
+                      <span className="text-muted-foreground">
+                        {" · "}
+                        {inv.customer?.phone_wa ?? inv.order?.contact_phone}
+                      </span>
+                    )}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">
+                    {formatDate(inv.issue_date)} ·{" "}
                     <span className="font-medium text-foreground">
                       {formatIDR(Number(inv.total))}
                     </span>
