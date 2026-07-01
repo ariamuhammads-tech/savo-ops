@@ -11,21 +11,24 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const supabase = createAdminClient();
-    const { error } = await supabase
-      .from("business_settings")
-      .select("id")
-      .limit(1);
+    const tableNames = [
+      "business_settings",
+      "products",
+      "ingredients",
+      "stock_movements",
+    ] as const;
 
-    if (error) {
-      return NextResponse.json(
-        { status: "degraded", db: "error", at: new Date().toISOString() },
-        { status: 200 },
-      );
+    const tables: Record<string, string> = {};
+    for (const t of tableNames) {
+      const { error } = await supabase.from(t).select("id").limit(1);
+      tables[t] = error ? `error:${error.code ?? error.message}` : "ok";
     }
 
+    const dbOk = tables.business_settings === "ok";
     return NextResponse.json({
-      status: "ok",
-      db: "ok",
+      status: dbOk ? "ok" : "degraded",
+      db: dbOk ? "ok" : "error",
+      tables,
       at: new Date().toISOString(),
     });
   } catch {
