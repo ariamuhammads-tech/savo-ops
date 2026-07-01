@@ -1,9 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Minus, Plus, Coins } from "lucide-react";
+import { Minus, Plus, Coins, Factory } from "lucide-react";
 
 import { formatIDR, formatNumber } from "@/lib/format";
+import { recordProduction } from "./actions";
+import { ConfirmSubmitButton } from "@/components/form-buttons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +26,7 @@ export function CookCalculator({ recipes }: { recipes: CookRecipe[] }) {
   const [recipeId, setRecipeId] = useState(recipes[0]?.id ?? "");
   const [batches, setBatches] = useState(1);
   const [target, setTarget] = useState("");
+  const [produced, setProduced] = useState("");
 
   const recipe = useMemo(
     () => recipes.find((r) => r.id === recipeId) ?? recipes[0],
@@ -51,6 +54,7 @@ export function CookCalculator({ recipes }: { recipes: CookRecipe[] }) {
   const totalCost = materialCost + overheadTotal;
   const totalYield = (recipe?.yieldQty ?? 0) * batches;
   const anyShort = rows.some((r) => !r.enough);
+  const producedValue = produced === "" ? totalYield : Number(produced) || 0;
 
   return (
     <div className="space-y-4">
@@ -213,6 +217,54 @@ export function CookCalculator({ recipes }: { recipes: CookRecipe[] }) {
               ≈ {formatIDR(totalCost / totalYield)} per {recipe?.yieldUnit}
             </p>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Record production */}
+      <Card>
+        <CardContent className="space-y-3 pt-6">
+          <div className="flex items-center gap-2 font-medium">
+            <Factory className="size-4 text-primary" />
+            Catat Produksi
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Menyimpan produksi akan <span className="font-medium">mengurangi stok bahan</span> dan{" "}
+            <span className="font-medium">menambah stok produk jadi</span> sesuai hasil.
+          </p>
+          <form action={recordProduction} className="space-y-3">
+            <input type="hidden" name="recipe_id" value={recipeId} />
+            <input type="hidden" name="batch_count" value={batches} />
+            <input type="hidden" name="produced_qty" value={producedValue} />
+            <div className="space-y-1">
+              <Label htmlFor="produced" className="text-xs">
+                Hasil jadi ({recipe?.yieldUnit})
+              </Label>
+              <Input
+                id="produced"
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="any"
+                value={produced}
+                onChange={(e) => setProduced(e.target.value)}
+                placeholder={String(totalYield)}
+              />
+              <p className="text-xs text-muted-foreground">
+                Kosongkan untuk pakai perkiraan {formatNumber(totalYield)} {recipe?.yieldUnit}.
+              </p>
+            </div>
+            <ConfirmSubmitButton
+              className="w-full"
+              confirmText={
+                anyShort
+                  ? "Stok bahan tidak cukup — lanjutkan catat produksi? Stok bahan bisa jadi minus."
+                  : "Catat produksi ini? Stok bahan berkurang & stok produk bertambah."
+              }
+            >
+              <Factory />
+              Catat Produksi
+            </ConfirmSubmitButton>
+          </form>
         </CardContent>
       </Card>
     </div>

@@ -380,6 +380,88 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["invoices"]["Insert"]>;
         Relationships: [];
       };
+      purchases: {
+        Row: {
+          id: string;
+          purchase_no: string | null;
+          supplier_name: string | null;
+          purchase_date: string;
+          total: number;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          purchase_no?: string | null;
+          supplier_name?: string | null;
+          purchase_date?: string;
+          total?: number;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["purchases"]["Insert"]>;
+        Relationships: [];
+      };
+      purchase_items: {
+        Row: {
+          id: string;
+          purchase_id: string;
+          ingredient_id: string | null;
+          name: string | null;
+          qty: number;
+          unit_cost: number;
+          subtotal: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          purchase_id: string;
+          ingredient_id?: string | null;
+          name?: string | null;
+          qty?: number;
+          unit_cost?: number;
+          subtotal?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["purchase_items"]["Insert"]>;
+        Relationships: [];
+      };
+      production_batches: {
+        Row: {
+          id: string;
+          batch_no: string | null;
+          product_id: string | null;
+          recipe_id: string | null;
+          batch_count: number;
+          produced_qty: number;
+          hpp_total: number;
+          hpp_per_unit: number;
+          produced_at: string;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          batch_no?: string | null;
+          product_id?: string | null;
+          recipe_id?: string | null;
+          batch_count?: number;
+          produced_qty?: number;
+          hpp_total?: number;
+          hpp_per_unit?: number;
+          produced_at?: string;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["production_batches"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
