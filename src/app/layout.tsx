@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Playfair_Display } from "next/font/google";
+import { Hanken_Grotesk, Source_Serif_4 } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const sans = Plus_Jakarta_Sans({
+const sans = Hanken_Grotesk({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-const serif = Playfair_Display({
+const serif = Source_Serif_4({
   variable: "--font-serif",
   subsets: ["latin"],
   display: "swap",

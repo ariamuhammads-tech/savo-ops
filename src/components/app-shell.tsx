@@ -79,7 +79,7 @@ export function AppShell({
   return (
     <div className="min-h-dvh bg-background">
       {/* ===== Desktop sidebar ===== */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-card md:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r border-border bg-white/60 backdrop-blur-md md:flex">
         <div className="flex items-center gap-2 px-5 py-4">
           <SavoLogo className="h-7 w-auto" />
           <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
@@ -191,7 +191,7 @@ export function AppShell({
       )}
 
       {/* ===== Main content ===== */}
-      <div className="md:pl-64">
+      <div className="md:pl-72">
         <main className="mx-auto max-w-5xl px-4 py-5 pb-24 md:py-8 md:pb-8">
           <div key={pathname} className="savo-in">
             {children}

@@ -41,27 +41,12 @@ export async function GET() {
     );
     const tables: Record<string, string> = Object.fromEntries(results);
 
-    // Raw diagnostic probe (bypasses supabase-js) to see the real HTTP status.
-    let probe = "n/a";
-    try {
-      const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-      const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
-      const pr = await fetch(`${url}/rest/v1/business_settings?select=id&limit=1`, {
-        headers: { apikey: key, Authorization: `Bearer ${key}` },
-      });
-      const body = (await pr.text()).slice(0, 120);
-      probe = `HTTP ${pr.status} keylen=${key.length} urlset=${!!url} body=${body}`;
-    } catch (e) {
-      probe = "fetch-threw:" + (e as Error).message;
-    }
-
     const dbOk = tables.business_settings === "ok";
     return NextResponse.json({
       status: dbOk ? "ok" : "degraded",
       db: dbOk ? "ok" : "error",
       commit: process.env.COMMIT_REF?.slice(0, 7) ?? null,
       sheet_sync: sheetConfigured() ? "configured" : "off",
-      probe,
       tables,
       at: new Date().toISOString(),
     });

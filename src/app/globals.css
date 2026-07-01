@@ -8,46 +8,46 @@
    Used as shadcn/ui design tokens (Tailwind v4 CSS vars).
    ========================================================= */
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
-  --background: #fbf7f0;          /* warm cream */
-  --foreground: #1f1a17;          /* dark ink */
+  --background: #fbf9f7;          /* warm bone */
+  --foreground: #1b1c1b;          /* on-surface ink */
 
   --card: #ffffff;
-  --card-foreground: #1f1a17;
+  --card-foreground: #1b1c1b;
 
   --popover: #ffffff;
-  --popover-foreground: #1f1a17;
+  --popover-foreground: #1b1c1b;
 
-  --primary: #c0492b;            /* terracotta accent */
-  --primary-foreground: #fbf7f0;
+  --primary: #c0492b;            /* SAVO terracotta (logo — unchanged) */
+  --primary-foreground: #ffffff;
 
-  --secondary: #f1e9dc;          /* soft warm surface */
-  --secondary-foreground: #1f1a17;
+  --secondary: #f4f1ee;          /* surface-container-low (warm) */
+  --secondary-foreground: #1b1c1b;
 
-  --muted: #f1e9dc;
-  --muted-foreground: #6b6258;
+  --muted: #f1ede9;
+  --muted-foreground: #6f5b57;   /* warm secondary text */
 
-  --accent: #f1e9dc;
-  --accent-foreground: #1f1a17;
+  --accent: #f7ece8;             /* warm active tint */
+  --accent-foreground: #7a2c19;
 
-  --destructive: #b3261e;
-  --destructive-foreground: #fbf7f0;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
 
-  --success: #2f7d5b;
+  --success: #1f7a3d;            /* grounded green */
   --warning: #c9892f;
 
-  --border: #e7ddcc;
-  --input: #e7ddcc;
+  --border: #e8ded8;             /* warm hairline */
+  --input: #e8ded8;
   --ring: #c0492b;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #1f1a17;
+  --sidebar-foreground: #1b1c1b;
   --sidebar-primary: #c0492b;
-  --sidebar-primary-foreground: #fbf7f0;
-  --sidebar-accent: #f1e9dc;
-  --sidebar-accent-foreground: #1f1a17;
-  --sidebar-border: #e7ddcc;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f7ece8;
+  --sidebar-accent-foreground: #7a2c19;
+  --sidebar-border: #e8ded8;
   --sidebar-ring: #c0492b;
 }
 
