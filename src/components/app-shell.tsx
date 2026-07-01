@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { SavoLogo } from "@/components/savo-logo";
 
 type NavItem = { href: string; label: string; icon: LucideIcon };
 
@@ -80,7 +81,7 @@ export function AppShell({
       {/* ===== Desktop sidebar ===== */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-card md:flex">
         <div className="flex items-center gap-2 px-5 py-4">
-          <span className="font-serif text-2xl font-bold text-primary">SAVO</span>
+          <SavoLogo />
           <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
             Ops
           </span>
@@ -119,7 +120,7 @@ export function AppShell({
       {/* ===== Mobile top header ===== */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card/90 px-4 py-3 backdrop-blur md:hidden">
         <div className="flex items-center gap-2">
-          <span className="font-serif text-xl font-bold text-primary">SAVO</span>
+          <SavoLogo markClassName="size-6" wordClassName="text-xl" />
           <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
             Ops
           </span>
@@ -192,7 +193,9 @@ export function AppShell({
       {/* ===== Main content ===== */}
       <div className="md:pl-64">
         <main className="mx-auto max-w-5xl px-4 py-5 pb-24 md:py-8 md:pb-8">
-          {children}
+          <div key={pathname} className="savo-in">
+            {children}
+          </div>
         </main>
       </div>
 

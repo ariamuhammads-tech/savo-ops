@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SetPasswordForm } from "./set-password-form";
+import { SavoLogo } from "@/components/savo-logo";
 import {
   Card,
   CardContent,
@@ -15,11 +16,9 @@ export const metadata: Metadata = {
 export default function SetPasswordPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background p-4">
-      <div className="w-full max-w-sm space-y-6">
-        <div className="text-center">
-          <h1 className="font-serif text-4xl font-bold tracking-tight text-primary">
-            SAVO
-          </h1>
+      <div className="w-full max-w-sm space-y-6 savo-in">
+        <div className="flex justify-center">
+          <SavoLogo markClassName="size-11" wordClassName="text-4xl" />
         </div>
 
         <Card>

@@ -4,6 +4,8 @@ import {
   Text,
   View,
   StyleSheet,
+  Svg,
+  Path,
 } from "@react-pdf/renderer";
 import { formatIDR, formatDate } from "@/lib/format";
 
@@ -50,7 +52,8 @@ const BORDER = "#E7DDCC";
 const s = StyleSheet.create({
   page: { padding: 36, fontSize: 10, color: INK, fontFamily: "Helvetica" },
   headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  brand: { fontSize: 24, fontFamily: "Helvetica-Bold", color: ACCENT },
+  brandRow: { flexDirection: "row", alignItems: "center" },
+  brand: { fontSize: 24, fontFamily: "Helvetica-Bold", color: ACCENT, marginLeft: 6 },
   biz: { fontSize: 9, color: MUTED, marginTop: 2, maxWidth: 240 },
   invTitle: { fontSize: 18, fontFamily: "Helvetica-Bold", textAlign: "right" },
   invMeta: { fontSize: 9, color: MUTED, textAlign: "right", marginTop: 2 },
@@ -99,7 +102,20 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
       <Page size="A4" style={s.page}>
         <View style={s.headerRow}>
           <View>
-            <Text style={s.brand}>{business.business_name || "SAVO"}</Text>
+            <View style={s.brandRow}>
+              <Svg viewBox="0 0 120 120" width={26} height={26}>
+                <Path
+                  d="M86 38 C86 25 68 20 53 26 C34 33 37 51 58 58 C79 65 89 71 84 85 C79 99 58 101 43 92"
+                  stroke={ACCENT}
+                  strokeWidth={15}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <Path d="M25 31 L47 21" stroke={ACCENT} strokeWidth={11} strokeLinecap="round" />
+                <Path d="M31 99 L53 89" stroke={ACCENT} strokeWidth={11} strokeLinecap="round" />
+              </Svg>
+              <Text style={s.brand}>{business.business_name || "SAVO"}</Text>
+            </View>
             <Text style={s.biz}>
               {[business.address, business.phone_wa, business.instagram, business.email]
                 .filter(Boolean)

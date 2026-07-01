@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LoginForm } from "./login-form";
+import { SavoLogo } from "@/components/savo-logo";
 import {
   Card,
   CardContent,
@@ -15,14 +16,10 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-background p-4">
-      <div className="w-full max-w-sm space-y-6">
-        <div className="text-center">
-          <h1 className="font-serif text-4xl font-bold tracking-tight text-primary">
-            SAVO
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Dasbor Operasional
-          </p>
+      <div className="w-full max-w-sm space-y-6 savo-in">
+        <div className="flex flex-col items-center text-center">
+          <SavoLogo markClassName="size-11" wordClassName="text-4xl" />
+          <p className="mt-2 text-sm text-muted-foreground">Dasbor Operasional</p>
         </div>
 
         <Card>
