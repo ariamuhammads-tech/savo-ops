@@ -42,6 +42,8 @@ export async function createOrder(
   const channel = String(formData.get("channel") ?? "wa");
   const orderDate = String(formData.get("order_date") ?? "");
   const notes = String(formData.get("notes") ?? "").trim();
+  const contactName = String(formData.get("contact_name") ?? "").trim();
+  const contactPhone = String(formData.get("contact_phone") ?? "").trim();
   const discount = Number(formData.get("discount") ?? 0) || 0;
   const shipping = Number(formData.get("shipping") ?? 0) || 0;
   const tax = Number(formData.get("tax") ?? 0) || 0;
@@ -84,6 +86,8 @@ export async function createOrder(
       shipping,
       tax,
       total,
+      contact_name: contactName || null,
+      contact_phone: contactPhone || null,
       notes: notes || null,
     })
     .select("id")

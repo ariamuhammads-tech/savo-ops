@@ -45,6 +45,8 @@ type Detail = {
   total: number;
   payment_status: string;
   notes: string | null;
+  contact_name: string | null;
+  contact_phone: string | null;
   customer: { name: string; phone_wa: string | null } | null;
   order_items: { id: string; name: string | null; qty: number; unit_price: number; subtotal: number }[];
   payments: {
@@ -66,7 +68,7 @@ export default async function PesananDetailPage({
   const { data } = await supabase
     .from("orders")
     .select(
-      "id, order_no, order_date, status, channel, subtotal, discount, shipping, tax, total, payment_status, notes, customer:customers(name, phone_wa), order_items(id, name, qty, unit_price, subtotal), payments(id, amount, method, paid_at, reference)",
+      "id, order_no, order_date, status, channel, subtotal, discount, shipping, tax, total, payment_status, notes, contact_name, contact_phone, customer:customers(name, phone_wa), order_items(id, name, qty, unit_price, subtotal), payments(id, amount, method, paid_at, reference)",
     )
     .eq("id", id)
     .single();
@@ -85,9 +87,11 @@ export default async function PesananDetailPage({
   const remaining = Number(order.total) - paid;
   const today = formatDate(new Date(), "yyyy-MM-dd");
 
-  const waDigits = (order.customer?.phone_wa ?? "").replace(/\D/g, "");
+  const contactName = order.customer?.name ?? order.contact_name ?? null;
+  const contactPhone = order.customer?.phone_wa ?? order.contact_phone ?? "";
+  const waDigits = contactPhone.replace(/\D/g, "");
   const waMsg = encodeURIComponent(
-    `Halo${order.customer?.name ? " " + order.customer.name : ""}, ` +
+    `Halo${contactName ? " " + contactName : ""}, ` +
       `pesanan ${order.order_no} SAVO:\nTotal ${formatIDR(Number(order.total))}\n` +
       `Status bayar: ${PAYMENT_STATUS_LABEL[order.payment_status]}. Terima kasih!`,
   );
@@ -118,7 +122,8 @@ export default async function PesananDetailPage({
         </Badge>
       </div>
       <p className="-mt-2 text-sm text-muted-foreground">
-        {order.customer?.name ?? "Umum"} · {formatDate(order.order_date)}
+        {contactName ?? "Umum"}
+        {contactPhone ? ` · ${contactPhone}` : ""} · {formatDate(order.order_date)}
       </p>
 
       {/* Items + totals */}

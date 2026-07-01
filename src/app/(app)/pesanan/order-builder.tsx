@@ -45,6 +45,8 @@ export function OrderBuilder({
   const [shipping, setShipping] = useState("0");
   const [tax, setTax] = useState("0");
   const [notes, setNotes] = useState("");
+  const [contactName, setContactName] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
   const [lines, setLines] = useState<Line[]>([]);
 
   const tier: "b2c" | "b2b" =
@@ -114,6 +116,8 @@ export function OrderBuilder({
       <input type="hidden" name="shipping" value={shipping || "0"} />
       <input type="hidden" name="tax" value={tax || "0"} />
       <input type="hidden" name="notes" value={notes} />
+      <input type="hidden" name="contact_name" value={contactName} />
+      <input type="hidden" name="contact_phone" value={contactPhone} />
 
       <Card>
         <CardContent className="space-y-3 pt-6">
@@ -136,6 +140,34 @@ export function OrderBuilder({
               <span className="font-medium">{tier.toUpperCase()}</span>.
             </p>
           </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="contact_name">Nama pemesan</Label>
+              <Input
+                id="contact_name"
+                value={contactName}
+                onChange={(e) => setContactName(e.target.value)}
+                placeholder="mis. Budi"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="contact_phone">No. WhatsApp</Label>
+              <Input
+                id="contact_phone"
+                type="tel"
+                inputMode="tel"
+                value={contactPhone}
+                onChange={(e) => setContactPhone(e.target.value)}
+                placeholder="mis. 62812xxxx"
+              />
+            </div>
+          </div>
+          <p className="-mt-1 text-xs text-muted-foreground">
+            Untuk pesanan tanpa pelanggan tersimpan — nama & nomor ini akan
+            tampil di invoice. (Jika memilih pelanggan, data pelanggan yang
+            dipakai.)
+          </p>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">

@@ -36,7 +36,12 @@ type Detail = {
   due_date: string | null;
   status: string;
   total: number;
-  order: { id: string; order_no: string | null } | null;
+  order: {
+    id: string;
+    order_no: string | null;
+    contact_name: string | null;
+    contact_phone: string | null;
+  } | null;
   customer: { name: string; phone_wa: string | null } | null;
 };
 
@@ -49,16 +54,18 @@ export default async function InvoiceDetailPage({
   const supabase = await createClient();
   const { data } = await supabase
     .from("invoices")
-    .select("id, invoice_no, issue_date, due_date, status, total, order:orders(id, order_no), customer:customers(name, phone_wa)")
+    .select("id, invoice_no, issue_date, due_date, status, total, order:orders(id, order_no, contact_name, contact_phone), customer:customers(name, phone_wa)")
     .eq("id", id)
     .single();
 
   if (!data) notFound();
   const inv = data as unknown as Detail;
 
-  const waDigits = (inv.customer?.phone_wa ?? "").replace(/\D/g, "");
+  const custName = inv.customer?.name ?? inv.order?.contact_name ?? null;
+  const custPhone = inv.customer?.phone_wa ?? inv.order?.contact_phone ?? "";
+  const waDigits = custPhone.replace(/\D/g, "");
   const waMsg = encodeURIComponent(
-    `Halo${inv.customer?.name ? " " + inv.customer.name : ""}, berikut invoice ${inv.invoice_no} SAVO ` +
+    `Halo${custName ? " " + custName : ""}, berikut invoice ${inv.invoice_no} SAVO ` +
       `sebesar ${formatIDR(Number(inv.total))}` +
       (inv.due_date ? `, jatuh tempo ${formatDate(inv.due_date)}` : "") +
       `. File PDF menyusul ya. Terima kasih!`,
@@ -95,7 +102,8 @@ export default async function InvoiceDetailPage({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
-          <Row label="Pelanggan" value={inv.customer?.name ?? "Umum"} />
+          <Row label="Pelanggan" value={custName ?? "Umum"} />
+          {custPhone && <Row label="No. WhatsApp" value={custPhone} />}
           <Row label="Tanggal terbit" value={formatDate(inv.issue_date)} />
           {inv.due_date && <Row label="Jatuh tempo" value={formatDate(inv.due_date)} />}
           {inv.order?.order_no && (

@@ -125,7 +125,7 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
             <Text style={s.strong}>{customer?.name ?? "Pelanggan Umum"}</Text>
             {customer?.business_name ? <Text>{customer.business_name}</Text> : null}
             {customer?.address ? <Text style={{ color: MUTED }}>{customer.address}</Text> : null}
-            {customer?.phone_wa ? <Text style={{ color: MUTED }}>{customer.phone_wa}</Text> : null}
+            {customer?.phone_wa ? <Text style={{ color: MUTED }}>WA: {customer.phone_wa}</Text> : null}
           </View>
           {order.order_no ? (
             <View>

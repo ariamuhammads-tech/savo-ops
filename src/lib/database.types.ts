@@ -261,6 +261,8 @@ export interface Database {
           total: number;
           payment_status: "unpaid" | "partial" | "paid";
           stock_applied: boolean;
+          contact_name: string | null;
+          contact_phone: string | null;
           notes: string | null;
           created_at: string;
           updated_at: string;
@@ -279,6 +281,8 @@ export interface Database {
           total?: number;
           payment_status?: "unpaid" | "partial" | "paid";
           stock_applied?: boolean;
+          contact_name?: string | null;
+          contact_phone?: string | null;
           notes?: string | null;
           created_at?: string;
           updated_at?: string;

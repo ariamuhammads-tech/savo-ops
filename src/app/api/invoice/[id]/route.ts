@@ -19,7 +19,7 @@ export async function GET(
   const { data: inv } = await supabase
     .from("invoices")
     .select(
-      "invoice_no, issue_date, due_date, order:orders(order_no, subtotal, discount, shipping, tax, total, payment_status, order_items(name, qty, unit_price, subtotal)), customer:customers(name, business_name, address, phone_wa)",
+      "invoice_no, issue_date, due_date, order:orders(order_no, subtotal, discount, shipping, tax, total, payment_status, contact_name, contact_phone, order_items(name, qty, unit_price, subtotal)), customer:customers(name, business_name, address, phone_wa)",
     )
     .eq("id", id)
     .single();
@@ -39,7 +39,17 @@ export async function GET(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const order = (inv as any).order ?? {};
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const customer = (inv as any).customer ?? null;
+  let customer = (inv as any).customer ?? null;
+
+  // Fallback to the order's typed contact (walk-in) when no saved customer.
+  if (!customer && (order.contact_name || order.contact_phone)) {
+    customer = {
+      name: order.contact_name || "Pelanggan Umum",
+      business_name: null,
+      address: null,
+      phone_wa: order.contact_phone || null,
+    };
+  }
 
   const data: InvoicePdfData = {
     business: {
