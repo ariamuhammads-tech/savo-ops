@@ -207,6 +207,38 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["stock_movements"]["Insert"]>;
         Relationships: [];
       };
+      customers: {
+        Row: {
+          id: string;
+          name: string;
+          type: "b2c" | "b2b";
+          business_name: string | null;
+          phone_wa: string | null;
+          email: string | null;
+          address: string | null;
+          price_tier: "b2c" | "b2b";
+          payment_terms_days: number;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          type?: "b2c" | "b2b";
+          business_name?: string | null;
+          phone_wa?: string | null;
+          email?: string | null;
+          address?: string | null;
+          price_tier?: "b2c" | "b2b";
+          payment_terms_days?: number;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["customers"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;
@@ -224,3 +256,4 @@ export type Product = Tables["products"]["Row"];
 export type StockMovement = Tables["stock_movements"]["Row"];
 export type Recipe = Tables["recipes"]["Row"];
 export type RecipeItem = Tables["recipe_items"]["Row"];
+export type Customer = Tables["customers"]["Row"];
