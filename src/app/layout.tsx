@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Hanken_Grotesk, Source_Serif_4 } from "next/font/google";
 import { Toaster } from "sonner";
+import { ParallaxBg } from "@/components/parallax-bg";
 import "./globals.css";
 
 const sans = Hanken_Grotesk({
@@ -28,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={`${sans.variable} ${serif.variable} antialiased`}>
+        <ParallaxBg />
         {children}
         <Toaster position="top-center" richColors />
       </body>

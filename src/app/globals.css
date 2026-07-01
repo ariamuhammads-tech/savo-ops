@@ -99,18 +99,6 @@
   }
   body {
     background-color: var(--background);
-    background-image:
-      radial-gradient(
-        1100px 520px at 100% -8%,
-        color-mix(in srgb, var(--primary) 7%, transparent),
-        transparent 60%
-      ),
-      radial-gradient(
-        900px 480px at -10% 108%,
-        color-mix(in srgb, var(--warning) 6%, transparent),
-        transparent 60%
-      );
-    background-attachment: fixed;
     color: var(--foreground);
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;

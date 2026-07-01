@@ -77,7 +77,7 @@ export function AppShell({
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-dvh bg-background">
+    <div className="min-h-dvh">
       {/* ===== Desktop sidebar ===== */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r border-border bg-white/60 backdrop-blur-md md:flex">
         <div className="flex items-center gap-2 px-5 py-4">
