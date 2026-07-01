@@ -121,6 +121,56 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["products"]["Insert"]>;
         Relationships: [];
       };
+      recipes: {
+        Row: {
+          id: string;
+          product_id: string;
+          name: string;
+          yield_qty: number;
+          yield_unit: string | null;
+          overhead_cost: number;
+          is_active: boolean;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          product_id: string;
+          name?: string;
+          yield_qty?: number;
+          yield_unit?: string | null;
+          overhead_cost?: number;
+          is_active?: boolean;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["recipes"]["Insert"]>;
+        Relationships: [];
+      };
+      recipe_items: {
+        Row: {
+          id: string;
+          recipe_id: string;
+          ingredient_id: string;
+          quantity: number;
+          unit: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          recipe_id: string;
+          ingredient_id: string;
+          quantity?: number;
+          unit?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["recipe_items"]["Insert"]>;
+        Relationships: [];
+      };
       stock_movements: {
         Row: {
           id: string;
@@ -172,3 +222,5 @@ export type BusinessSettings = Tables["business_settings"]["Row"];
 export type Ingredient = Tables["ingredients"]["Row"];
 export type Product = Tables["products"]["Row"];
 export type StockMovement = Tables["stock_movements"]["Row"];
+export type Recipe = Tables["recipes"]["Row"];
+export type RecipeItem = Tables["recipe_items"]["Row"];

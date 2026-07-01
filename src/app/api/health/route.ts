@@ -16,6 +16,8 @@ export async function GET() {
       "products",
       "ingredients",
       "stock_movements",
+      "recipes",
+      "recipe_items",
     ] as const;
 
     const tables: Record<string, string> = {};
