@@ -81,7 +81,7 @@ export function AppShell({
       {/* ===== Desktop sidebar ===== */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-border bg-card md:flex">
         <div className="flex items-center gap-2 px-5 py-4">
-          <SavoLogo />
+          <SavoLogo className="h-7 w-auto" />
           <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
             Ops
           </span>
@@ -120,7 +120,7 @@ export function AppShell({
       {/* ===== Mobile top header ===== */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card/90 px-4 py-3 backdrop-blur md:hidden">
         <div className="flex items-center gap-2">
-          <SavoLogo markClassName="size-6" wordClassName="text-xl" />
+          <SavoLogo className="h-6 w-auto" />
           <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
             Ops
           </span>

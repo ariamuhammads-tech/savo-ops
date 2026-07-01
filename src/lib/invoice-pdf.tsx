@@ -103,16 +103,19 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
         <View style={s.headerRow}>
           <View>
             <View style={s.brandRow}>
-              <Svg viewBox="0 0 120 120" width={26} height={26}>
+              <Svg viewBox="0 0 224 206.2" width={26} height={24}>
                 <Path
-                  d="M86 38 C86 25 68 20 53 26 C34 33 37 51 58 58 C79 65 89 71 84 85 C79 99 58 101 43 92"
-                  stroke={ACCENT}
-                  strokeWidth={15}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+                  d="M29.93 180.44l-29.93 25.76 150.1 0c13.34,0 36.8,-3.12 36.99,-25.09l-157.17 -0.67z"
+                  fill={ACCENT}
                 />
-                <Path d="M25 31 L47 21" stroke={ACCENT} strokeWidth={11} strokeLinecap="round" />
-                <Path d="M31 99 L53 89" stroke={ACCENT} strokeWidth={11} strokeLinecap="round" />
+                <Path
+                  d="M65.54 129.86c81.55,-24.22 143.09,-40.82 154.84,0.2 3.65,12.74 -5.09,30.08 -33.29,51.06 88.31,-10.67 106.34,-170.79 7.81,-133.89 -68.58,23.9 -138.3,39.56 -139.75,7.04 -0.58,-12.99 5.33,-20.37 20.2,-29.17 -88.31,10.67 -103.96,129.99 -9.82,104.77z"
+                  fill={ACCENT}
+                />
+                <Path
+                  d="M191.28 25.76l28.38 -24.43 -107.32 -1.33c-16.44,0 -36.8,3.12 -36.99,25.09l115.93 0.67z"
+                  fill={ACCENT}
+                />
               </Svg>
               <Text style={s.brand}>{business.business_name || "SAVO"}</Text>
             </View>

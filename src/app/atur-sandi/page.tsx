@@ -18,7 +18,7 @@ export default function SetPasswordPage() {
     <main className="flex min-h-dvh items-center justify-center bg-background p-4">
       <div className="w-full max-w-sm space-y-6 savo-in">
         <div className="flex justify-center">
-          <SavoLogo markClassName="size-11" wordClassName="text-4xl" />
+          <SavoLogo className="h-10 w-auto" />
         </div>
 
         <Card>

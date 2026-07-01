@@ -1,66 +1,50 @@
 import { cn } from "@/lib/utils";
 
-/**
- * SAVO "S" monogram — stylized ribbon S with motion accents.
- * Recreated as SVG so it scales crisply and inherits `currentColor`
- * (terracotta via text-primary). Swap for the exact brand file later if needed.
- */
+// Official SAVO logo paths (from the brand SVG). Recolored to terracotta via
+// `currentColor` (text-primary). Mark = S monogram; word = "SAVO".
+const MARK_PATHS = [
+  "M29.93 180.44l-29.93 25.76 150.1 0c13.34,0 36.8,-3.12 36.99,-25.09l-157.17 -0.67z",
+  "M65.54 129.86c81.55,-24.22 143.09,-40.82 154.84,0.2 3.65,12.74 -5.09,30.08 -33.29,51.06 88.31,-10.67 106.34,-170.79 7.81,-133.89 -68.58,23.9 -138.3,39.56 -139.75,7.04 -0.58,-12.99 5.33,-20.37 20.2,-29.17 -88.31,10.67 -103.96,129.99 -9.82,104.77z",
+  "M191.28 25.76l28.38 -24.43 -107.32 -1.33c-16.44,0 -36.8,3.12 -36.99,25.09l115.93 0.67z",
+];
+const WORD_PATHS = [
+  "M412.32 139.02c0,16.85 -16.85,27.47 -35.78,27.47 -45.24,0 -52.16,-21.24 -57.47,-21.24l-17.25 17.25c27.58,35.3 145.82,53.07 145.82,-23.49 0,-72.71 -104.56,-34.85 -104.56,-66.74 0,-17.97 22.62,-22.58 36.93,-22.58 20.77,0 44.55,11.54 44.55,11.54l11.16 -19.33 2.33 -4.04c-21.05,-9.97 -33.5,-14.72 -58.04,-14.72 -30.93,0 -71.32,18.23 -72.25,49.16 -2.31,75.94 104.56,24.89 104.56,66.7z",
+  "M513.63 129.53c3.46,-9.69 7.85,-8.77 14.08,-8.77l36.75 0 7.69 0 24.63 0c6.23,0 10.62,-0.92 14.08,8.77l6.9 20.06c4.54,13.19 9.53,26.61 13.71,39.88l24.44 0 5.63 0.04c-1.49,-4.46 -3.07,-8.76 -4.62,-13.16l-45.23 -128.93c-1.76,-4.98 -3.16,-8.9 -4.06,-11.38 -1.15,-4.15 -5.31,-10.85 -10.62,-10.85l-24.87 0 -19.8 0 -24.86 0c-5.31,0 -9.46,6.69 -10.62,10.85 -0.9,2.48 -2.3,6.4 -4.06,11.38l-45.23 128.93c-1.55,4.4 -3.13,8.7 -4.62,13.16l5.63 -0.04 24.44 0c4.18,-13.28 9.17,-26.69 13.71,-39.88l6.9 -20.06zm58.52 -33.24l-7.69 0 -30.28 0c-7.85,0 -8.08,-2.31 -5.54,-9.69l10.16 -28.62c1.15,-3 3.23,-4.85 6.23,-4.62 7.5,0 26.95,0 34.45,0 3,-0.23 5.08,1.61 6.23,4.62l10.16 28.62c2.54,7.39 2.31,9.69 -5.54,9.69l-18.17 0z",
+  "M835.89 110.48c0,42.47 32.78,82.17 83.55,82.4 50.78,-0.23 83.56,-39.93 83.56,-82.4 0,-50.55 -34.39,-87.25 -83.56,-87.48 -49.16,0.23 -83.55,36.93 -83.55,87.48zm83.55 55.86c-32.31,-0.23 -48.47,-27.47 -48.24,-55.86 0.23,-31.39 15.93,-60.47 48.24,-60.93 32.31,0.46 48.01,29.54 48.24,60.93 0.23,28.39 -15.93,55.63 -48.24,55.86z",
+  "M738.44 149.73c-0.59,-0.03 -1.2,-0.55 -1.76,-1.56 -2.18,-4 -15.62,-32.03 -28.59,-59.11l-27.27 -56.26 -3.94 -8.12 -13.74 0 -0.26 0 -0.26 0 -0.26 0 -4.5 0 -4.5 0c-0.03,0 -0.06,0 -0.09,0l-9.22 0 10.71 22.06c-0.18,-0.39 -0.35,-0.78 -0.5,-1.16 0.57,1.23 1.17,2.5 1.78,3.79l10.39 21.41c2.38,4.84 4.33,8.81 5.31,10.93 13.42,26.94 31.43,62.02 50.87,98.99 0.67,1.28 1.36,2.35 2.09,3.26 1.62,2.01 3.53,3.32 5.94,4.06 1.77,0.52 3.69,0.69 5.82,0.74 0.23,0.01 0.46,0.01 0.69,0.01l1.31 0 1.31 0c0.23,-0 0.46,-0.01 0.69,-0.01 2.12,-0.05 4.05,-0.22 5.82,-0.74 2.41,-0.74 4.32,-2.06 5.94,-4.06 0.73,-0.91 1.42,-1.98 2.09,-3.26 19.45,-36.97 37.45,-72.06 50.87,-98.99 0.98,-2.12 2.93,-6.09 5.31,-10.93l10.39 -21.41c0.61,-1.29 1.21,-2.56 1.78,-3.79 -0.15,0.38 -0.32,0.76 -0.5,1.16l10.71 -22.06 -9.22 0c-0.03,0 -0.06,0 -0.09,0l-4.5 0 -4.5 0 -0.26 0 -0.26 0 -0.26 0 -13.74 0 -3.94 8.12 -27.27 56.26c-12.98,27.07 -26.41,55.11 -28.59,59.11 -0.56,1.01 -1.17,1.53 -1.76,1.56z",
+];
+
+/** SAVO "S" monogram only (terracotta via currentColor). */
 export function SavoMark({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 120 120"
-      fill="none"
+      viewBox="0 0 224 206.2"
+      fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-hidden="true"
     >
-      {/* main S */}
-      <path
-        d="M86 38 C86 25 68 20 53 26 C34 33 37 51 58 58 C79 65 89 71 84 85 C79 99 58 101 43 92"
-        stroke="currentColor"
-        strokeWidth="15"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* top motion accent */}
-      <path
-        d="M25 31 L47 21"
-        stroke="currentColor"
-        strokeWidth="11"
-        strokeLinecap="round"
-      />
-      {/* bottom motion accent */}
-      <path
-        d="M31 99 L53 89"
-        stroke="currentColor"
-        strokeWidth="11"
-        strokeLinecap="round"
-      />
+      {MARK_PATHS.map((d, i) => (
+        <path key={i} d={d} />
+      ))}
     </svg>
   );
 }
 
-/** Full SAVO logo: monogram + wordmark, in terracotta. */
-export function SavoLogo({
-  className,
-  markClassName,
-  wordClassName,
-}: {
-  className?: string;
-  markClassName?: string;
-  wordClassName?: string;
-}) {
+/** Full SAVO logo: S monogram + wordmark (terracotta via currentColor). */
+export function SavoLogo({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2 text-primary", className)}>
-      <SavoMark className={cn("size-7 shrink-0", markClassName)} />
-      <span
-        className={cn(
-          "font-sans text-2xl font-extrabold tracking-tight",
-          wordClassName,
-        )}
-      >
-        SAVO
-      </span>
-    </span>
+    <svg
+      viewBox="0 0 1003 206.2"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn("text-primary", className)}
+      role="img"
+      aria-label="SAVO"
+    >
+      {[...MARK_PATHS, ...WORD_PATHS].map((d, i) => (
+        <path key={i} d={d} />
+      ))}
+    </svg>
   );
 }

@@ -18,7 +18,7 @@ export default function LoginPage() {
     <main className="flex min-h-dvh items-center justify-center bg-background p-4">
       <div className="w-full max-w-sm space-y-6 savo-in">
         <div className="flex flex-col items-center text-center">
-          <SavoLogo markClassName="size-11" wordClassName="text-4xl" />
+          <SavoLogo className="h-10 w-auto" />
           <p className="mt-2 text-sm text-muted-foreground">Dasbor Operasional</p>
         </div>
 
