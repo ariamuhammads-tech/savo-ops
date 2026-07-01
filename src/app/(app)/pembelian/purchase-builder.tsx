@@ -18,8 +18,17 @@ type IngredientOpt = {
   unit: string;
   last_unit_cost: number;
 };
-type Line = { key: number; ingredientId: string; qty: string; unitCost: string };
+type Line = {
+  key: number;
+  ingredientId: string; // "" unset, "__new__" for a brand-new bahan, else id
+  newName: string;
+  newUnit: string;
+  qty: string;
+  unitCost: string;
+};
 
+const UNITS = ["g", "kg", "ml", "l", "pcs"];
+const NEW = "__new__";
 const initial: FormState = { error: null };
 let counter = 1;
 
@@ -37,7 +46,10 @@ export function PurchaseBuilder({
   const [lines, setLines] = useState<Line[]>([]);
 
   function addLine() {
-    setLines((l) => [...l, { key: counter++, ingredientId: "", qty: "1", unitCost: "0" }]);
+    setLines((l) => [
+      ...l,
+      { key: counter++, ingredientId: "", newName: "", newUnit: "g", qty: "1", unitCost: "0" },
+    ]);
   }
   function removeLine(key: number) {
     setLines((l) => l.filter((x) => x.key !== key));
@@ -52,7 +64,7 @@ export function PurchaseBuilder({
       ),
     );
   }
-  function setField(key: number, field: "qty" | "unitCost", value: string) {
+  function setField(key: number, field: "qty" | "unitCost" | "newName" | "newUnit", value: string) {
     setLines((l) => l.map((x) => (x.key === key ? { ...x, [field]: value } : x)));
   }
 
@@ -63,12 +75,26 @@ export function PurchaseBuilder({
 
   const itemsPayload = JSON.stringify(
     lines
-      .filter((l) => l.ingredientId && Number(l.qty) > 0)
+      .filter(
+        (l) =>
+          Number(l.qty) > 0 &&
+          (l.ingredientId === NEW ? l.newName.trim() : l.ingredientId),
+      )
       .map((l) => {
+        if (l.ingredientId === NEW) {
+          return {
+            ingredient_id: null,
+            name: l.newName.trim(),
+            unit: l.newUnit,
+            qty: Number(l.qty),
+            unit_cost: Number(l.unitCost),
+          };
+        }
         const ing = ingredients.find((x) => x.id === l.ingredientId);
         return {
           ingredient_id: l.ingredientId,
           name: ing?.name ?? "",
+          unit: ing?.unit ?? null,
           qty: Number(l.qty),
           unit_cost: Number(l.unitCost),
         };
@@ -114,7 +140,9 @@ export function PurchaseBuilder({
           )}
 
           {lines.map((l) => {
+            const isNew = l.ingredientId === NEW;
             const ing = ingredients.find((x) => x.id === l.ingredientId);
+            const unitLabel = isNew ? l.newUnit : (ing?.unit ?? "satuan");
             const lineTotal = Number(l.qty || 0) * Number(l.unitCost || 0);
             return (
               <div key={l.key} className="rounded-lg border border-border p-3">
@@ -128,18 +156,37 @@ export function PurchaseBuilder({
                         {i.name}
                       </option>
                     ))}
+                    <option value={NEW}>＋ Bahan baru…</option>
                   </Select>
                   <button type="button" onClick={() => removeLine(l.key)} className="rounded-md p-2 text-muted-foreground hover:text-destructive" aria-label="Hapus">
                     <Trash2 className="size-4" />
                   </button>
                 </div>
+
+                {isNew && (
+                  <div className="mb-2 grid grid-cols-3 gap-2">
+                    <div className="col-span-2 space-y-1">
+                      <Label className="text-xs">Nama bahan baru</Label>
+                      <Input value={l.newName} onChange={(e) => setField(l.key, "newName", e.target.value)} placeholder="mis. Tepung terigu" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Satuan</Label>
+                      <Select value={l.newUnit} onChange={(e) => setField(l.key, "newUnit", e.target.value)}>
+                        {UNITS.map((u) => (
+                          <option key={u} value={u}>{u}</option>
+                        ))}
+                      </Select>
+                    </div>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <Label className="text-xs">Jumlah {ing ? `(${ing.unit})` : ""}</Label>
+                    <Label className="text-xs">Jumlah ({unitLabel})</Label>
                     <Input type="number" inputMode="decimal" min="0" step="any" value={l.qty} onChange={(e) => setField(l.key, "qty", e.target.value)} />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs">Harga / {ing?.unit ?? "satuan"}</Label>
+                    <Label className="text-xs">Harga / {unitLabel}</Label>
                     <Input type="number" inputMode="numeric" min="0" step="any" value={l.unitCost} onChange={(e) => setField(l.key, "unitCost", e.target.value)} />
                   </div>
                 </div>
@@ -164,7 +211,8 @@ export function PurchaseBuilder({
 
       <p className="rounded-lg bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
         Menyimpan pembelian akan <span className="font-medium">menambah stok bahan</span> dan
-        memperbarui harga beli terakhir (dipakai untuk HPP).
+        memperbarui harga beli terakhir. <span className="font-medium">Bahan baru</span> otomatis
+        ditambahkan ke menu Bahan Baku.
       </p>
 
       {state.error && (

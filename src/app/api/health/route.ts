@@ -28,6 +28,7 @@ export async function GET() {
       "purchases",
       "purchase_items",
       "production_batches",
+      "expenses",
     ] as const;
 
     const results = await Promise.all(

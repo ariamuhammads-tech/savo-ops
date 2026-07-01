@@ -462,6 +462,30 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["production_batches"]["Insert"]>;
         Relationships: [];
       };
+      expenses: {
+        Row: {
+          id: string;
+          expense_date: string;
+          category: string | null;
+          description: string | null;
+          amount: number;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          expense_date?: string;
+          category?: string | null;
+          description?: string | null;
+          amount?: number;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["expenses"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -489,3 +513,4 @@ export type Order = Tables["orders"]["Row"];
 export type OrderItem = Tables["order_items"]["Row"];
 export type Payment = Tables["payments"]["Row"];
 export type Invoice = Tables["invoices"]["Row"];
+export type Expense = Tables["expenses"]["Row"];

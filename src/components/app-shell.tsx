@@ -15,6 +15,7 @@ import {
   ReceiptText,
   BarChart3,
   ChefHat,
+  PiggyBank,
   Settings,
   LogOut,
   Menu as MenuIcon,
@@ -38,6 +39,7 @@ const NAV: NavItem[] = [
   { href: "/pelanggan", label: "Pelanggan", icon: Users },
   { href: "/pembayaran", label: "Pembayaran", icon: Wallet },
   { href: "/invoice", label: "Invoice", icon: ReceiptText },
+  { href: "/keuangan", label: "Keuangan", icon: PiggyBank },
   { href: "/laporan", label: "Laporan", icon: BarChart3 },
   { href: "/pengaturan", label: "Pengaturan", icon: Settings },
 ];

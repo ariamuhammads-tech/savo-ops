@@ -9,6 +9,7 @@ export type FormState = { error: string | null };
 type LineInput = {
   ingredient_id: string | null;
   name: string;
+  unit?: string | null;
   qty: number;
   unit_cost: number;
 };
@@ -31,12 +32,46 @@ export async function recordPurchase(
   } catch {
     return { error: "Item pembelian tidak valid." };
   }
-  lines = lines.filter((l) => Number(l.qty) > 0 && l.ingredient_id);
+  lines = lines.filter(
+    (l) => Number(l.qty) > 0 && (l.ingredient_id || (l.name && l.name.trim())),
+  );
   if (lines.length === 0) return { error: "Tambahkan minimal satu bahan." };
+
+  const supabase = await createClient();
+
+  // Resolve ingredients: a line may reference an existing ingredient OR a
+  // brand-new one typed here — find-or-create so it connects to Bahan Baku.
+  for (const l of lines) {
+    if (l.ingredient_id) continue;
+    const nm = (l.name ?? "").trim();
+    if (!nm) continue;
+    const { data: existing } = await supabase
+      .from("ingredients")
+      .select("id")
+      .ilike("name", nm)
+      .limit(1)
+      .maybeSingle();
+    if (existing) {
+      l.ingredient_id = existing.id;
+    } else {
+      const { data: created } = await supabase
+        .from("ingredients")
+        .insert({
+          name: nm,
+          unit: l.unit || "g",
+          last_unit_cost: Number(l.unit_cost) || 0,
+          notes: "Dari pembelian",
+        })
+        .select("id")
+        .single();
+      l.ingredient_id = created?.id ?? null;
+    }
+  }
+  lines = lines.filter((l) => l.ingredient_id);
+  if (lines.length === 0) return { error: "Gagal memproses bahan." };
 
   const total = round2(lines.reduce((s, l) => s + Number(l.qty) * Number(l.unit_cost), 0));
 
-  const supabase = await createClient();
   const year = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta", year: "numeric" });
   const { data: seq, error: seqErr } = await supabase.rpc("next_seq", { p_name: `purchase-${year}` });
   if (seqErr) return { error: "Gagal membuat nomor: " + seqErr.message };
