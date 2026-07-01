@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sheetConfigured } from "@/lib/gsheet";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,7 @@ export async function GET() {
       status: dbOk ? "ok" : "degraded",
       db: dbOk ? "ok" : "error",
       commit: process.env.COMMIT_REF?.slice(0, 7) ?? null,
+      sheet_sync: sheetConfigured() ? "configured" : "off",
       tables,
       at: new Date().toISOString(),
     });
