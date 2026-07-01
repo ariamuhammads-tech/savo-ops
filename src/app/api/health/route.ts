@@ -35,6 +35,7 @@ export async function GET() {
     return NextResponse.json({
       status: dbOk ? "ok" : "degraded",
       db: dbOk ? "ok" : "error",
+      commit: process.env.COMMIT_REF?.slice(0, 7) ?? null,
       tables,
       at: new Date().toISOString(),
     });
