@@ -1,22 +1,65 @@
 import Link from "next/link";
-import { Package, Wheat, TriangleAlert, ArrowRight } from "lucide-react";
+import {
+  Package,
+  Wheat,
+  TriangleAlert,
+  ArrowRight,
+  TrendingUp,
+  CalendarDays,
+  ClipboardList,
+  Wallet,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatNumber } from "@/lib/format";
+import { formatIDR, formatNumber, formatDate } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
 
-  const [{ data: products }, { data: ingredients }] = await Promise.all([
+  const today = formatDate(new Date(), "yyyy-MM-dd");
+  const monthStart = formatDate(new Date(), "yyyy-MM") + "-01";
+
+  const [
+    { data: products },
+    { data: ingredients },
+    { data: orders },
+    { data: items },
+  ] = await Promise.all([
+    supabase.from("products").select("id, name, unit, stock_qty, min_stock"),
+    supabase.from("ingredients").select("id, name, unit, stock_qty, min_stock"),
+    supabase.from("orders").select("order_date, total, status, payment_status"),
     supabase
-      .from("products")
-      .select("id, name, unit, stock_qty, min_stock, is_active"),
-    supabase
-      .from("ingredients")
-      .select("id, name, unit, stock_qty, min_stock"),
+      .from("order_items")
+      .select("name, qty, order:orders(order_date, status)")
+      .limit(2000),
   ]);
+
+  const activeOrders = (orders ?? []).filter((o) => o.status !== "cancelled");
+  const salesToday = activeOrders
+    .filter((o) => o.order_date === today)
+    .reduce((s, o) => s + Number(o.total), 0);
+  const salesMonth = activeOrders
+    .filter((o) => o.order_date >= monthStart)
+    .reduce((s, o) => s + Number(o.total), 0);
+  const openOrders = activeOrders.filter((o) =>
+    ["draft", "confirmed", "in_production", "ready"].includes(o.status),
+  ).length;
+  const unpaidCount = activeOrders.filter((o) => o.payment_status !== "paid").length;
+
+  // Top products this month (by qty)
+  const topMap = new Map<string, number>();
+  for (const it of items ?? []) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ord = (it as any).order;
+    if (!ord || ord.status === "cancelled" || ord.order_date < monthStart) continue;
+    const name = it.name ?? "-";
+    topMap.set(name, (topMap.get(name) ?? 0) + Number(it.qty));
+  }
+  const topProducts = [...topMap.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
 
   const lowProducts = (products ?? []).filter(
     (p) => Number(p.stock_qty) <= Number(p.min_stock) && Number(p.min_stock) > 0,
@@ -29,28 +72,48 @@ export default async function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-3xl font-bold tracking-tight">Dasbor</h1>
-        <p className="text-sm text-muted-foreground">
-          Ringkasan operasional SAVO.
-        </p>
+        <p className="text-sm text-muted-foreground">Ringkasan operasional SAVO.</p>
       </div>
 
-      {/* Quick counts */}
+      {/* Sales KPIs */}
       <div className="grid grid-cols-2 gap-3">
-        <StatCard
-          href="/produk"
-          icon={<Package className="size-5 text-primary" />}
-          label="Produk"
-          value={formatNumber(products?.length ?? 0)}
-        />
-        <StatCard
-          href="/bahan"
-          icon={<Wheat className="size-5 text-primary" />}
-          label="Bahan Baku"
-          value={formatNumber(ingredients?.length ?? 0)}
-        />
+        <Kpi icon={<TrendingUp className="size-5 text-primary" />} label="Penjualan hari ini" value={formatIDR(salesToday)} />
+        <Kpi icon={<CalendarDays className="size-5 text-primary" />} label="Penjualan bulan ini" value={formatIDR(salesMonth)} />
+        <Kpi icon={<ClipboardList className="size-5 text-primary" />} label="Pesanan berjalan" value={formatNumber(openOrders)} href="/pesanan" />
+        <Kpi icon={<Wallet className="size-5 text-primary" />} label="Belum lunas" value={formatNumber(unpaidCount)} href="/pesanan" />
       </div>
 
-      {/* Low stock alerts */}
+      {/* Counts */}
+      <div className="grid grid-cols-2 gap-3">
+        <Kpi icon={<Package className="size-5 text-primary" />} label="Produk" value={formatNumber(products?.length ?? 0)} href="/produk" />
+        <Kpi icon={<Wheat className="size-5 text-primary" />} label="Bahan Baku" value={formatNumber(ingredients?.length ?? 0)} href="/bahan" />
+      </div>
+
+      {/* Top products */}
+      {topProducts.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Produk Terlaris (bulan ini)</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="space-y-2">
+              {topProducts.map(([name, qty], i) => (
+                <li key={name} className="flex items-center justify-between text-sm">
+                  <span className="flex items-center gap-2">
+                    <span className="flex size-5 items-center justify-center rounded-full bg-secondary text-xs font-medium">
+                      {i + 1}
+                    </span>
+                    {name}
+                  </span>
+                  <span className="font-medium">{formatNumber(qty)} terjual</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Low stock */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
@@ -60,78 +123,59 @@ export default async function DashboardPage() {
         </CardHeader>
         <CardContent>
           {lowProducts.length === 0 && lowIngredients.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              Tidak ada stok yang menipis. 👍
-            </p>
+            <p className="text-sm text-muted-foreground">Tidak ada stok yang menipis. 👍</p>
           ) : (
             <ul className="divide-y divide-border">
               {lowProducts.map((p) => (
-                <LowRow
-                  key={p.id}
-                  name={p.name}
-                  qty={Number(p.stock_qty)}
-                  min={Number(p.min_stock)}
-                  unit={p.unit}
-                  tag="Produk"
-                />
+                <LowRow key={p.id} href={`/produk/${p.id}`} name={p.name} qty={Number(p.stock_qty)} min={Number(p.min_stock)} unit={p.unit} tag="Produk" />
               ))}
               {lowIngredients.map((i) => (
-                <LowRow
-                  key={i.id}
-                  name={i.name}
-                  qty={Number(i.stock_qty)}
-                  min={Number(i.min_stock)}
-                  unit={i.unit}
-                  tag="Bahan"
-                />
+                <LowRow key={i.id} href={`/bahan/${i.id}`} name={i.name} qty={Number(i.stock_qty)} min={Number(i.min_stock)} unit={i.unit} tag="Bahan" />
               ))}
             </ul>
           )}
         </CardContent>
       </Card>
-
-      <p className="text-xs text-muted-foreground">
-        KPI penjualan & invoice akan muncul di sini setelah modul Pesanan aktif.
-      </p>
     </div>
   );
 }
 
-function StatCard({
-  href,
+function Kpi({
   icon,
   label,
   value,
+  href,
 }: {
-  href: string;
   icon: React.ReactNode;
   label: string;
   value: string;
+  href?: string;
 }) {
-  return (
-    <Link href={href}>
-      <Card className="transition-colors hover:border-primary/40">
-        <CardContent className="flex items-center justify-between p-4">
-          <div>
-            <p className="text-sm text-muted-foreground">{label}</p>
-            <p className="font-serif text-2xl font-bold">{value}</p>
-          </div>
-          <div className="flex size-10 items-center justify-center rounded-full bg-secondary">
+  const inner = (
+    <Card className={href ? "transition-colors hover:border-primary/40" : ""}>
+      <CardContent className="p-4">
+        <div className="mb-1 flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">{label}</p>
+          <div className="flex size-8 items-center justify-center rounded-full bg-secondary">
             {icon}
           </div>
-        </CardContent>
-      </Card>
-    </Link>
+        </div>
+        <p className="font-serif text-xl font-bold">{value}</p>
+      </CardContent>
+    </Card>
   );
+  return href ? <Link href={href}>{inner}</Link> : inner;
 }
 
 function LowRow({
+  href,
   name,
   qty,
   min,
   unit,
   tag,
 }: {
+  href: string;
   name: string;
   qty: number;
   min: number;
@@ -139,15 +183,17 @@ function LowRow({
   tag: string;
 }) {
   return (
-    <li className="flex items-center justify-between py-2.5">
-      <div className="min-w-0">
-        <p className="truncate text-sm font-medium">{name}</p>
-        <p className="text-xs text-muted-foreground">
-          <span className="rounded bg-secondary px-1.5 py-0.5">{tag}</span>{" "}
-          sisa {formatNumber(qty, 0)} {unit} · min {formatNumber(min, 0)} {unit}
-        </p>
-      </div>
-      <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
+    <li>
+      <Link href={href} className="flex items-center justify-between py-2.5 hover:opacity-80">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-medium">{name}</p>
+          <p className="text-xs text-muted-foreground">
+            <span className="rounded bg-secondary px-1.5 py-0.5">{tag}</span> sisa{" "}
+            {formatNumber(qty, 0)} {unit} · min {formatNumber(min, 0)} {unit}
+          </p>
+        </div>
+        <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
+      </Link>
     </li>
   );
 }
