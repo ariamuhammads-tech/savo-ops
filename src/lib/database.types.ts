@@ -239,9 +239,121 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["customers"]["Insert"]>;
         Relationships: [];
       };
+      orders: {
+        Row: {
+          id: string;
+          order_no: string | null;
+          customer_id: string | null;
+          channel: "wa" | "ig" | "b2b" | "other";
+          order_date: string;
+          status:
+            | "draft"
+            | "confirmed"
+            | "in_production"
+            | "ready"
+            | "delivered"
+            | "completed"
+            | "cancelled";
+          subtotal: number;
+          discount: number;
+          shipping: number;
+          tax: number;
+          total: number;
+          payment_status: "unpaid" | "partial" | "paid";
+          stock_applied: boolean;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_no?: string | null;
+          customer_id?: string | null;
+          channel?: "wa" | "ig" | "b2b" | "other";
+          order_date?: string;
+          status?: Database["public"]["Tables"]["orders"]["Row"]["status"];
+          subtotal?: number;
+          discount?: number;
+          shipping?: number;
+          tax?: number;
+          total?: number;
+          payment_status?: "unpaid" | "partial" | "paid";
+          stock_applied?: boolean;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["orders"]["Insert"]>;
+        Relationships: [];
+      };
+      order_items: {
+        Row: {
+          id: string;
+          order_id: string;
+          product_id: string | null;
+          name: string | null;
+          qty: number;
+          unit_price: number;
+          subtotal: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          product_id?: string | null;
+          name?: string | null;
+          qty?: number;
+          unit_price?: number;
+          subtotal?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["order_items"]["Insert"]>;
+        Relationships: [];
+      };
+      payments: {
+        Row: {
+          id: string;
+          order_id: string;
+          amount: number;
+          method: "cash" | "transfer" | "qris" | "other";
+          status: "pending" | "settled" | "failed";
+          paid_at: string;
+          reference: string | null;
+          provider: string | null;
+          provider_order_id: string | null;
+          provider_txn_id: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          amount?: number;
+          method?: "cash" | "transfer" | "qris" | "other";
+          status?: "pending" | "settled" | "failed";
+          paid_at?: string;
+          reference?: string | null;
+          provider?: string | null;
+          provider_order_id?: string | null;
+          provider_txn_id?: string | null;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["payments"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      next_seq: {
+        Args: { p_name: string };
+        Returns: number;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
@@ -257,3 +369,6 @@ export type StockMovement = Tables["stock_movements"]["Row"];
 export type Recipe = Tables["recipes"]["Row"];
 export type RecipeItem = Tables["recipe_items"]["Row"];
 export type Customer = Tables["customers"]["Row"];
+export type Order = Tables["orders"]["Row"];
+export type OrderItem = Tables["order_items"]["Row"];
+export type Payment = Tables["payments"]["Row"];
