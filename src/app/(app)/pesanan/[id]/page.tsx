@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Trash2, MessageCircle, Wallet } from "lucide-react";
+import { ArrowLeft, Trash2, MessageCircle, Wallet, ReceiptText } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatDate } from "@/lib/format";
@@ -11,6 +11,7 @@ import {
   addPayment,
   deletePayment,
 } from "../actions";
+import { createInvoiceFromOrder } from "../../invoice/actions";
 import {
   ORDER_STATUSES,
   STATUS_LABEL,
@@ -72,6 +73,12 @@ export default async function PesananDetailPage({
 
   if (!data) notFound();
   const order = data as unknown as Detail;
+
+  const { data: invoice } = await supabase
+    .from("invoices")
+    .select("id, invoice_no")
+    .eq("order_id", id)
+    .maybeSingle();
 
   const paid = order.payments
     .reduce((s, p) => s + Number(p.amount), 0);
@@ -262,6 +269,31 @@ export default async function PesananDetailPage({
             </div>
             <SubmitButton className="w-full">Simpan pembayaran</SubmitButton>
           </form>
+        </CardContent>
+      </Card>
+
+      {/* Invoice */}
+      <Card>
+        <CardContent className="flex items-center justify-between gap-3 pt-6">
+          <div className="flex items-center gap-2">
+            <ReceiptText className="size-5 text-primary" />
+            <div>
+              <p className="text-sm font-medium">Invoice</p>
+              <p className="text-xs text-muted-foreground">
+                {invoice ? invoice.invoice_no : "Belum dibuat"}
+              </p>
+            </div>
+          </div>
+          {invoice ? (
+            <Button asChild variant="secondary">
+              <Link href={`/invoice/${invoice.id}`}>Lihat Invoice</Link>
+            </Button>
+          ) : (
+            <form action={createInvoiceFromOrder}>
+              <input type="hidden" name="order_id" value={order.id} />
+              <SubmitButton>Buat Invoice</SubmitButton>
+            </form>
+          )}
         </CardContent>
       </Card>
 

@@ -346,6 +346,36 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["payments"]["Insert"]>;
         Relationships: [];
       };
+      invoices: {
+        Row: {
+          id: string;
+          invoice_no: string | null;
+          order_id: string | null;
+          customer_id: string | null;
+          issue_date: string;
+          due_date: string | null;
+          status: "draft" | "sent" | "paid" | "overdue" | "cancelled";
+          total: number;
+          pdf_url: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          invoice_no?: string | null;
+          order_id?: string | null;
+          customer_id?: string | null;
+          issue_date?: string;
+          due_date?: string | null;
+          status?: Database["public"]["Tables"]["invoices"]["Row"]["status"];
+          total?: number;
+          pdf_url?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["invoices"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -372,3 +402,4 @@ export type Customer = Tables["customers"]["Row"];
 export type Order = Tables["orders"]["Row"];
 export type OrderItem = Tables["order_items"]["Row"];
 export type Payment = Tables["payments"]["Row"];
+export type Invoice = Tables["invoices"]["Row"];

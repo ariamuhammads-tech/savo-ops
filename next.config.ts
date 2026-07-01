@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Keep @react-pdf/renderer out of the bundler; it runs in the Node runtime
+  // (used by the invoice PDF route). Prevents Netlify bundling issues.
+  serverExternalPackages: ["@react-pdf/renderer"],
 };
 
 export default nextConfig;

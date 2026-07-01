@@ -22,6 +22,7 @@ export async function GET() {
       "orders",
       "order_items",
       "payments",
+      "invoices",
     ] as const;
 
     const tables: Record<string, string> = {};
