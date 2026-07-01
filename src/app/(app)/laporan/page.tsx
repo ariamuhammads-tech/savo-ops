@@ -2,7 +2,9 @@ import { Download, Package, Wheat, Users, ClipboardList, Wallet } from "lucide-r
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { sheetConfigured } from "@/lib/gsheet";
 import { ImportPanel } from "./import-panel";
+import { SyncPanel } from "./sync-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +54,8 @@ export default function LaporanPage() {
       </Card>
 
       <ImportPanel />
+
+      <SyncPanel configured={sheetConfigured()} />
     </div>
   );
 }
