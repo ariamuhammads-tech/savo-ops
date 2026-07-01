@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sheetConfigured } from "@/lib/gsheet";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 /**
  * Lightweight health check. Also touches the database so the Supabase
@@ -29,11 +30,13 @@ export async function GET() {
       "production_batches",
     ] as const;
 
-    const tables: Record<string, string> = {};
-    for (const t of tableNames) {
-      const { error } = await supabase.from(t).select("id").limit(1);
-      tables[t] = error ? `error:${error.code ?? error.message}` : "ok";
-    }
+    const results = await Promise.all(
+      tableNames.map(async (t) => {
+        const { error } = await supabase.from(t).select("id").limit(1);
+        return [t, error ? `error:${error.code ?? error.message}` : "ok"] as const;
+      }),
+    );
+    const tables: Record<string, string> = Object.fromEntries(results);
 
     const dbOk = tables.business_settings === "ok";
     return NextResponse.json({
