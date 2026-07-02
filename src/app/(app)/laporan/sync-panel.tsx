@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { RefreshCw, Loader2, RefreshCcw } from "lucide-react";
 
-import { syncSheet, syncAll, type SyncType } from "./sync-actions";
+import { syncSheet, type SyncType } from "./sync-actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -41,10 +41,21 @@ export function SyncPanel({ configured }: { configured: boolean }) {
   function runAll() {
     setBusy("__all__");
     startTransition(async () => {
-      const res = await syncAll();
+      const all = [...TWOWAY, ...PUSH];
+      let done = 0;
+      const failed: string[] = [];
+      for (const item of all) {
+        try {
+          const res = await syncSheet(item.type);
+          if (res.ok) done++;
+          else failed.push(item.label);
+        } catch {
+          failed.push(item.label);
+        }
+      }
       setBusy(null);
-      if (res.ok) toast.success(`Sinkron semua selesai (${res.done} data).`);
-      else toast.error(`Sebagian gagal: ${res.failed.join(", ")}`);
+      if (failed.length === 0) toast.success(`Sinkron semua selesai (${done} data).`);
+      else toast.error(`Selesai ${done}, gagal: ${failed.join(", ")}`);
     });
   }
 

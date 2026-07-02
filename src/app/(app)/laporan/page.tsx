@@ -7,6 +7,8 @@ import { ImportPanel } from "./import-panel";
 import { SyncPanel } from "./sync-panel";
 
 export const dynamic = "force-dynamic";
+// Google Sheets calls are slow; "Sinkron Semua" runs many sequentially.
+export const maxDuration = 60;
 
 const EXPORTS = [
   { type: "produk", label: "Produk", icon: Package },
