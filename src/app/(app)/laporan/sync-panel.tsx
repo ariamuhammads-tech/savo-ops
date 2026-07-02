@@ -12,6 +12,7 @@ const TWOWAY: { type: SyncType; label: string }[] = [
   { type: "produk", label: "Produk" },
   { type: "bahan", label: "Bahan Baku" },
   { type: "pelanggan", label: "Pelanggan" },
+  { type: "pengeluaran", label: "Pengeluaran" },
 ];
 const PUSH: { type: SyncType; label: string }[] = [
   { type: "pesanan", label: "Pesanan" },
@@ -19,7 +20,6 @@ const PUSH: { type: SyncType; label: string }[] = [
   { type: "pembelian", label: "Pembelian" },
   { type: "produksi", label: "Produksi" },
   { type: "invoice", label: "Invoice" },
-  { type: "pengeluaran", label: "Pengeluaran" },
 ];
 
 export function SyncPanel({ configured }: { configured: boolean }) {
@@ -102,19 +102,21 @@ export function SyncPanel({ configured }: { configured: boolean }) {
 
             <div>
               <p className="mb-1.5 text-xs font-medium text-muted-foreground">
-                Dua arah (bisa diedit balik dari Sheets)
+                Data master — edit penuh dua-arah
               </p>
               <div className="grid grid-cols-2 gap-2">{TWOWAY.map(btn)}</div>
             </div>
             <div>
               <p className="mb-1.5 text-xs font-medium text-muted-foreground">
-                Ekspor ke Sheets (transaksi)
+                Transaksi — dua-arah (edit nilai &amp; tanggal)
               </p>
               <div className="grid grid-cols-2 gap-2">{PUSH.map(btn)}</div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Yang terbaru menang; baris tidak dihapus otomatis. Tab dibuat
-              otomatis di Google Sheet.
+              Semua dua-arah: edit di Sheets akan tersimpan balik ke aplikasi
+              saat disinkron (yang terbaru menang). Baris master baru bisa
+              ditambah dari Sheets; kolom abu-abu (nama pelanggan, status)
+              hanya tampilan. Tab dibuat otomatis.
             </p>
           </>
         )}
