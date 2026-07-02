@@ -118,8 +118,8 @@ export function ExpenseForm({ defaultDate }: { defaultDate: string }) {
         ) : (
           <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-border p-3 text-sm text-muted-foreground hover:bg-secondary/50">
             {uploading ? <Loader2 className="size-4 animate-spin" /> : <Camera className="size-4" />}
-            {uploading ? "Mengunggah…" : "Ambil / pilih foto struk"}
-            <input type="file" accept="image/*" capture="environment" className="hidden" onChange={onFile} disabled={uploading} />
+            {uploading ? "Mengunggah…" : "Ambil foto / unggah dari galeri"}
+            <input type="file" accept="image/*" className="hidden" onChange={onFile} disabled={uploading} />
           </label>
         )}
       </div>
