@@ -155,11 +155,84 @@
 .savo-stagger > *:nth-child(5) { animation-delay: 0.18s; }
 .savo-stagger > *:nth-child(6) { animation-delay: 0.22s; }
 
+/* ===== Stove flames (decorative background) ===== */
+.savo-flame {
+  transform-origin: 50% 100%;
+  border-radius: 50% 50% 42% 42% / 72% 72% 28% 28%;
+  background: radial-gradient(
+    ellipse 60% 75% at 50% 88%,
+    #ffe9b0 0%,
+    #ffc35c 22%,
+    #f59e0b 42%,
+    #e0602f 62%,
+    #c0492b 78%,
+    transparent 96%
+  );
+  filter: blur(7px);
+  opacity: 0.85;
+  animation-name: savo-flicker;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.savo-ember {
+  background: radial-gradient(
+    ellipse 70% 100% at 50% 100%,
+    color-mix(in srgb, var(--primary) 45%, transparent),
+    color-mix(in srgb, #f59e0b 30%, transparent) 45%,
+    transparent 75%
+  );
+  animation: savo-ember-pulse 3.2s ease-in-out infinite;
+}
+
+.savo-gasline {
+  background: radial-gradient(
+    ellipse 90% 100% at 50% 100%,
+    rgba(59, 130, 246, 0.55),
+    rgba(59, 130, 246, 0.15) 55%,
+    transparent 80%
+  );
+  animation: savo-ember-pulse 2.4s ease-in-out infinite reverse;
+}
+
+@keyframes savo-flicker {
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1) translateY(0);
+  }
+  20% {
+    transform: scaleY(1.18) scaleX(0.92) translateY(-6px) rotate(-1.5deg);
+  }
+  40% {
+    transform: scaleY(0.88) scaleX(1.08) translateY(2px) rotate(1deg);
+  }
+  60% {
+    transform: scaleY(1.12) scaleX(0.95) translateY(-9px) rotate(1.5deg);
+  }
+  80% {
+    transform: scaleY(0.94) scaleX(1.05) translateY(1px) rotate(-1deg);
+  }
+}
+
+@keyframes savo-ember-pulse {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .savo-in,
   .savo-in-fade,
   .savo-pop,
-  .savo-stagger > * {
+  .savo-stagger > *,
+  .savo-flame,
+  .savo-ember,
+  .savo-gasline {
     animation: none;
   }
 }
