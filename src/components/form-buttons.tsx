@@ -10,11 +10,12 @@ export function SubmitButton({
   children,
   pendingText,
   icon: Icon,
+  disabled,
   ...props
 }: ButtonProps & { pendingText?: string; icon?: LucideIcon }) {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} {...props}>
+    <Button type="submit" disabled={pending || disabled} {...props}>
       {pending ? (
         <Loader2 className="animate-spin" />
       ) : Icon ? (

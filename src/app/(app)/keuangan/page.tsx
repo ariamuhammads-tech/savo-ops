@@ -1,13 +1,14 @@
 import { Suspense } from "react";
-import { TrendingUp, TrendingDown, Wallet, ShoppingBag, Receipt, Trash2 } from "lucide-react";
+import { TrendingUp, TrendingDown, Wallet, ShoppingBag, Receipt, Trash2, Image as ImageIcon } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatDate } from "@/lib/format";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { SubmitButton } from "@/components/form-buttons";
 import { FlashToast } from "@/components/flash-toast";
 import { ExpenseForm } from "./expense-form";
-import { deleteExpense } from "./actions";
+import { deleteExpense, toggleReimburseStatus } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export default async function KeuanganPage() {
       supabase.from("purchases").select("total, purchase_date"),
       supabase
         .from("expenses")
-        .select("id, expense_date, category, description, amount")
+        .select("id, expense_date, category, description, amount, is_reimbursement, reimburse_to, reimburse_status, photo_url")
         .order("expense_date", { ascending: false }),
     ]);
 
@@ -139,16 +140,41 @@ export default async function KeuanganPage() {
           </CardHeader>
           <CardContent>
             <ul className="divide-y divide-border">
-              {(expenses ?? []).slice(0, 30).map((e) => (
+              {(expenses ?? []).slice(0, 40).map((e) => (
                 <li key={e.id} className="flex items-center justify-between gap-2 py-2.5">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{e.description}</p>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <p className="truncate text-sm font-medium">{e.description}</p>
+                      {e.is_reimbursement && (
+                        <Badge variant={e.reimburse_status === "paid" ? "success" : "warning"}>
+                          Reimburse{e.reimburse_to ? ` · ${e.reimburse_to}` : ""}
+                          {e.reimburse_status === "paid" ? " (lunas)" : ""}
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-xs text-muted-foreground">
                       {e.category ? e.category + " · " : ""}
                       {formatDate(e.expense_date)}
+                      {e.photo_url ? (
+                        <>
+                          {" · "}
+                          <a href={e.photo_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-0.5 text-primary underline">
+                            <ImageIcon className="size-3" /> struk
+                          </a>
+                        </>
+                      ) : null}
                     </p>
+                    {e.is_reimbursement && (
+                      <form action={toggleReimburseStatus} className="mt-1">
+                        <input type="hidden" name="id" value={e.id} />
+                        <input type="hidden" name="to" value={e.reimburse_status === "paid" ? "pending" : "paid"} />
+                        <button type="submit" className="text-xs font-medium text-primary hover:underline">
+                          {e.reimburse_status === "paid" ? "Tandai belum dibayar" : "Tandai sudah dibayar"}
+                        </button>
+                      </form>
+                    )}
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex shrink-0 items-center gap-1">
                     <span className="text-sm font-medium text-destructive">
                       −{formatIDR(Number(e.amount))}
                     </span>

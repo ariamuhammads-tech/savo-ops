@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { findOrCreateIngredient } from "@/lib/ingredients";
 
 export type FormState = { error: string | null };
 
@@ -104,20 +105,32 @@ export async function deleteRecipe(formData: FormData) {
 
 export async function addRecipeItem(formData: FormData) {
   const recipeId = String(formData.get("recipe_id") ?? "");
-  const ingredientId = String(formData.get("ingredient_id") ?? "");
+  let ingredientId = String(formData.get("ingredient_id") ?? "");
+  const newName = String(formData.get("new_name") ?? "").trim();
+  const newUnit = String(formData.get("new_unit") ?? "").trim();
   const quantity = Number(formData.get("quantity") ?? 0);
   const unit = String(formData.get("unit") ?? "").trim();
 
-  if (!recipeId || !ingredientId || !Number.isFinite(quantity) || quantity <= 0) {
+  if (!recipeId || !Number.isFinite(quantity) || quantity <= 0) {
     redirect(`/resep/${recipeId}?err=` + encodeURIComponent("Pilih bahan dan isi jumlah > 0."));
   }
 
   const supabase = await createClient();
+
+  // Allow adding a brand-new bahan (connects to Bahan Baku).
+  if (!ingredientId && newName) {
+    const id = await findOrCreateIngredient(supabase, newName, { unit: newUnit || unit || "g" });
+    ingredientId = id ?? "";
+  }
+  if (!ingredientId) {
+    redirect(`/resep/${recipeId}?err=` + encodeURIComponent("Pilih atau isi nama bahan."));
+  }
+
   const { error } = await supabase.from("recipe_items").insert({
     recipe_id: recipeId,
     ingredient_id: ingredientId,
     quantity,
-    unit: unit || null,
+    unit: unit || newUnit || null,
   });
 
   if (error) {
@@ -125,6 +138,7 @@ export async function addRecipeItem(formData: FormData) {
   }
 
   revalidatePath(`/resep/${recipeId}`);
+  revalidatePath("/bahan");
   redirect(`/resep/${recipeId}?msg=` + encodeURIComponent("Bahan ditambahkan."));
 }
 

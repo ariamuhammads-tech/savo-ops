@@ -229,10 +229,7 @@
   .savo-in,
   .savo-in-fade,
   .savo-pop,
-  .savo-stagger > *,
-  .savo-flame,
-  .savo-ember,
-  .savo-gasline {
+  .savo-stagger > * {
     animation: none;
   }
 }

@@ -469,6 +469,10 @@ export interface Database {
           category: string | null;
           description: string | null;
           amount: number;
+          is_reimbursement: boolean;
+          reimburse_to: string | null;
+          reimburse_status: "pending" | "paid";
+          photo_url: string | null;
           notes: string | null;
           created_at: string;
           updated_at: string;
@@ -479,6 +483,10 @@ export interface Database {
           category?: string | null;
           description?: string | null;
           amount?: number;
+          is_reimbursement?: boolean;
+          reimburse_to?: string | null;
+          reimburse_status?: "pending" | "paid";
+          photo_url?: string | null;
           notes?: string | null;
           created_at?: string;
           updated_at?: string;

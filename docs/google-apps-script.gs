@@ -1,32 +1,20 @@
 /**
- * SAVO Ops — Google Sheets sync bridge (Apps Script Web App).
+ * SAVO Ops — Google Sheets sync bridge (Apps Script Web App) — GENERIC.
  *
- * SETUP (owner):
- * 1. Buat 1 Google Sheet baru (beri nama mis. "SAVO Data").
- * 2. Menu Extensions -> Apps Script. Hapus isi default, tempel SELURUH file ini.
- * 3. Save (ikon disket).
- * 4. Deploy -> New deployment -> pilih tipe "Web app".
- *    - Execute as: Me
- *    - Who has access: Anyone
- *    - Deploy. Salin "Web app URL" (diakhiri /exec).
- * 5. Kirim Web app URL itu ke Claude. Token sudah tertanam di bawah.
+ * The app sends the tab name + column headers, so this one script works for
+ * ALL features (produk, bahan, pelanggan, pesanan, pembayaran, pembelian,
+ * produksi, invoice, pengeluaran) without editing this file again.
  *
- * Tab "produk" & "bahan" dibuat otomatis dengan header yang benar saat
- * pertama kali disinkronkan — Anda tidak perlu menatanya sendiri.
+ * SETUP (owner) — do this ONCE:
+ * 1. Open your "SAVO Data" Google Sheet → Extensions → Apps Script.
+ * 2. Delete everything there, paste THIS whole file, Save.
+ * 3. Deploy → Manage deployments → edit (pencil) the existing Web app →
+ *    Version: New version → Deploy. (Keeps the same URL.)
+ *    (Who has access must stay "Anyone".)
+ * That's it — no need to change the URL in the app.
  */
 
 var TOKEN = "savo_b02486887dfd4bdcaee2137393976511d1819a92";
-
-var TABS = {
-  produk: [
-    "SKU", "Nama", "Kategori", "Satuan", "Berat (g)", "Harga B2C",
-    "Harga B2B", "Stok", "Stok Min", "Aktif", "Catatan", "updated_at",
-  ],
-  bahan: [
-    "Nama", "Satuan", "Stok", "Stok Min", "Harga Beli Terakhir",
-    "Pemasok", "Catatan", "updated_at",
-  ],
-};
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
@@ -34,12 +22,11 @@ function json_(obj) {
   );
 }
 
-function ensureSheet_(tab) {
+function sheetFor_(tab, headers) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sh = ss.getSheetByName(tab);
-  var headers = TABS[tab];
-  if (!sh) {
-    sh = ss.insertSheet(tab);
+  if (!sh) sh = ss.insertSheet(tab);
+  if (headers && headers.length) {
     sh.getRange(1, 1, 1, headers.length).setValues([headers]);
     sh.getRange(1, 1, 1, headers.length).setFontWeight("bold");
     sh.setFrozenRows(1);
@@ -48,32 +35,34 @@ function ensureSheet_(tab) {
 }
 
 function readTab_(tab) {
-  var headers = TABS[tab];
-  if (!headers) return [];
-  var sh = ensureSheet_(tab);
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(tab);
+  if (!sh) return [];
   var last = sh.getLastRow();
-  if (last < 2) return [];
-  var values = sh.getRange(2, 1, last - 1, headers.length).getValues();
+  var lastCol = sh.getLastColumn();
+  if (last < 2 || lastCol < 1) return [];
+  var headers = sh.getRange(1, 1, 1, lastCol).getValues()[0];
+  var values = sh.getRange(2, 1, last - 1, lastCol).getValues();
   var rows = [];
   for (var i = 0; i < values.length; i++) {
     var r = values[i];
     var blank = true;
-    var obj = {};
+    var o = {};
     for (var c = 0; c < headers.length; c++) {
-      obj[headers[c]] = r[c];
+      if (!headers[c]) continue;
+      o[headers[c]] = r[c];
       if (String(r[c]).trim() !== "") blank = false;
     }
-    if (!blank) rows.push(obj);
+    if (!blank) rows.push(o);
   }
   return rows;
 }
 
-function writeTab_(tab, rows) {
-  var headers = TABS[tab];
-  if (!headers) return;
-  var sh = ensureSheet_(tab);
+function writeTab_(tab, headers, rows) {
+  var sh = sheetFor_(tab, headers);
+  var lastCol = Math.max(headers.length, 1);
   var last = sh.getLastRow();
-  if (last > 1) sh.getRange(2, 1, last - 1, headers.length).clearContent();
+  if (last > 1) sh.getRange(2, 1, last - 1, lastCol).clearContent();
   if (!rows || !rows.length) return;
   var out = rows.map(function (obj) {
     return headers.map(function (h) {
@@ -86,34 +75,33 @@ function writeTab_(tab, rows) {
 function doGet(e) {
   if (!e || e.parameter.token !== TOKEN) return json_({ error: "unauthorized" });
   var tab = e.parameter.tab;
-  if (!TABS[tab]) return json_({ error: "unknown tab" });
+  if (!tab) return json_({ error: "no tab" });
   return json_({ rows: readTab_(tab) });
 }
 
 function doPost(e) {
-  var body;
+  var b;
   try {
-    body = JSON.parse(e.postData.contents);
+    b = JSON.parse(e.postData.contents);
   } catch (err) {
     return json_({ error: "bad json" });
   }
-  if (!body || body.token !== TOKEN) return json_({ error: "unauthorized" });
-  if (!TABS[body.tab]) return json_({ error: "unknown tab" });
-  writeTab_(body.tab, body.rows || []);
-  return json_({ ok: true, written: (body.rows || []).length });
+  if (!b || b.token !== TOKEN) return json_({ error: "unauthorized" });
+  if (!b.tab || !b.headers) return json_({ error: "missing tab/headers" });
+  writeTab_(b.tab, b.headers, b.rows || []);
+  return json_({ ok: true, written: (b.rows || []).length });
 }
 
-/** Stamp updated_at when a row is edited by hand, so sync knows it changed. */
+/** Stamp updated_at when a row is edited by hand, so two-way sync detects it. */
 function onEdit(e) {
   try {
     var sh = e.range.getSheet();
-    var tab = sh.getName();
-    var headers = TABS[tab];
-    if (!headers) return;
-    var row = e.range.getRow();
-    if (row < 2) return;
+    var lastCol = sh.getLastColumn();
+    var headers = sh.getRange(1, 1, 1, lastCol).getValues()[0];
     var uCol = headers.indexOf("updated_at") + 1;
     if (uCol < 1) return;
+    var row = e.range.getRow();
+    if (row < 2) return;
     sh.getRange(row, uCol).setValue(new Date().toISOString());
   } catch (err) {
     // ignore

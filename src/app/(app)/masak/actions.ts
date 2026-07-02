@@ -3,6 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { findOrCreateIngredient } from "@/lib/ingredients";
+
+/** Quick-add a bahan baku from the Masak tab; connects to Bahan Baku. */
+export async function quickAddIngredient(formData: FormData) {
+  const name = String(formData.get("name") ?? "").trim();
+  const unit = String(formData.get("unit") ?? "g").trim();
+  const stock = Number(formData.get("stock") ?? 0) || 0;
+  const cost = Number(formData.get("last_unit_cost") ?? 0) || 0;
+  if (!name) redirect("/masak?err=" + encodeURIComponent("Nama bahan wajib diisi."));
+
+  const supabase = await createClient();
+  await findOrCreateIngredient(supabase, name, { unit, stock, lastUnitCost: cost });
+  revalidatePath("/masak");
+  revalidatePath("/bahan");
+  redirect("/masak?msg=" + encodeURIComponent("Bahan baku ditambahkan."));
+}
 
 function round2(n: number) {
   return Math.round(n * 100) / 100;
@@ -101,11 +117,47 @@ export async function recordProduction(formData: FormData) {
   redirect("/masak?msg=" + encodeURIComponent(`Produksi ${batchNo} dicatat. Stok diperbarui.`));
 }
 
+/** Edit a production batch record (does not re-run stock effects). */
+export async function editProduction(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const batchCount = Number(formData.get("batch_count") ?? 0);
+  const producedQty = Number(formData.get("produced_qty") ?? 0);
+  const producedAt = String(formData.get("produced_at") ?? "");
+  const notes = String(formData.get("notes") ?? "").trim();
+  if (!id) redirect("/produksi?err=" + encodeURIComponent("ID tidak ditemukan."));
+
+  const supabase = await createClient();
+  const { data: batch } = await supabase
+    .from("production_batches")
+    .select("hpp_total")
+    .eq("id", id)
+    .single();
+  const hppTotal = Number(batch?.hpp_total ?? 0);
+  const hppPerUnit = producedQty > 0 ? round2(hppTotal / producedQty) : 0;
+
+  const { error } = await supabase
+    .from("production_batches")
+    .update({
+      batch_count: batchCount > 0 ? batchCount : 1,
+      produced_qty: producedQty,
+      produced_at: producedAt || undefined,
+      hpp_per_unit: hppPerUnit,
+      notes: notes || null,
+    })
+    .eq("id", id);
+  if (error) redirect(`/produksi/${id}?err=` + encodeURIComponent("Gagal menyimpan."));
+
+  revalidatePath("/produksi");
+  revalidatePath("/masak");
+  redirect(`/produksi/${id}?msg=` + encodeURIComponent("Perubahan disimpan."));
+}
+
 export async function deleteProduction(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const supabase = await createClient();
   // Note: does not reverse stock (production consumes/creates real goods).
   await supabase.from("production_batches").delete().eq("id", id);
   revalidatePath("/masak");
-  redirect("/masak?msg=" + encodeURIComponent("Catatan produksi dihapus."));
+  revalidatePath("/produksi");
+  redirect("/produksi?msg=" + encodeURIComponent("Catatan produksi dihapus."));
 }

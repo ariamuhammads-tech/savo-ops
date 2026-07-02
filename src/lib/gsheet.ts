@@ -19,13 +19,17 @@ export async function sheetGet(tab: string): Promise<SheetRow[]> {
   return (data.rows ?? []) as SheetRow[];
 }
 
-export async function sheetReplace(tab: string, rows: SheetRow[]): Promise<void> {
+export async function sheetReplace(
+  tab: string,
+  headers: string[],
+  rows: SheetRow[],
+): Promise<void> {
   const res = await fetch(URL(), {
     method: "POST",
     redirect: "follow",
     cache: "no-store",
     headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ token: TOKEN(), tab, rows }),
+    body: JSON.stringify({ token: TOKEN(), tab, headers, rows }),
   });
   if (!res.ok) throw new Error(`Sheet POST gagal (HTTP ${res.status})`);
   const data = await res.json();

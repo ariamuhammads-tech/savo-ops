@@ -1,22 +1,21 @@
 /**
- * Decorative stove-flame background: a row of flickering flame tongues
+ * Decorative stove-flame background: an even row of flickering flame tongues
  * rising from the bottom edge (amber core → orange → terracotta, with a
- * faint gas-blue base). Pure CSS animation — no JS. Sits behind content,
- * non-interactive; disabled via prefers-reduced-motion in globals.css.
+ * faint gas-blue base), like a stove burner. Pure CSS animation — no JS.
+ * Deterministic sizes/delays (no Math.random) to keep SSR hydration stable.
  */
-export function StoveFlames({ intensity = 1 }: { intensity?: number }) {
-  // [width, height, left%, delay, duration]
-  const flames: [number, number, number, number, number][] = [
-    [70, 120, 6, 0.0, 1.9],
-    [90, 170, 16, 0.5, 1.6],
-    [60, 110, 27, 0.2, 2.1],
-    [110, 210, 38, 0.8, 1.5],
-    [80, 150, 52, 0.3, 1.8],
-    [120, 230, 63, 0.6, 1.4],
-    [65, 120, 77, 0.1, 2.0],
-    [95, 180, 87, 0.7, 1.7],
-  ];
+const COUNT = 14;
 
+const FLAMES = Array.from({ length: COUNT }, (_, i) => ({
+  // even spacing across the full width, slight breathing room at the edges
+  left: 1.5 + (i * 97) / COUNT,
+  width: 72 + ((i * 37) % 18), // 72–89px — near-uniform
+  height: 140 + ((i * 53) % 30), // 140–169px — near-uniform
+  delay: ((i * 29) % 12) / 10, // 0–1.1s staggered
+  duration: 1.5 + ((i * 41) % 5) / 10, // 1.5–1.9s
+}));
+
+export function StoveFlames({ intensity = 1 }: { intensity?: number }) {
   return (
     <div
       aria-hidden="true"
@@ -27,19 +26,19 @@ export function StoveFlames({ intensity = 1 }: { intensity?: number }) {
       <div className="savo-ember absolute inset-x-0 -bottom-24 h-56 blur-3xl" />
 
       {/* gas-blue base line, like a stove burner */}
-      <div className="savo-gasline absolute inset-x-[8%] -bottom-3 h-10 blur-xl" />
+      <div className="savo-gasline absolute inset-x-[4%] -bottom-3 h-10 blur-xl" />
 
-      {/* flame tongues */}
-      {flames.map(([w, h, left, delay, dur], i) => (
+      {/* flame tongues — even burner row */}
+      {FLAMES.map((f, i) => (
         <span
           key={i}
           className="savo-flame absolute bottom-[-18px]"
           style={{
-            width: w,
-            height: h,
-            left: `${left}%`,
-            animationDelay: `${delay}s`,
-            animationDuration: `${dur}s`,
+            width: f.width,
+            height: f.height,
+            left: `${f.left}%`,
+            animationDelay: `${f.delay}s`,
+            animationDuration: `${f.duration}s`,
           }}
         />
       ))}

@@ -2,30 +2,66 @@
 
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { RefreshCw, Loader2 } from "lucide-react";
+import { RefreshCw, Loader2, RefreshCcw } from "lucide-react";
 
-import { syncSheet, type SyncType } from "./sync-actions";
+import { syncSheet, syncAll, type SyncType } from "./sync-actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+const TWOWAY: { type: SyncType; label: string }[] = [
+  { type: "produk", label: "Produk" },
+  { type: "bahan", label: "Bahan Baku" },
+  { type: "pelanggan", label: "Pelanggan" },
+];
+const PUSH: { type: SyncType; label: string }[] = [
+  { type: "pesanan", label: "Pesanan" },
+  { type: "pembayaran", label: "Pembayaran" },
+  { type: "pembelian", label: "Pembelian" },
+  { type: "produksi", label: "Produksi" },
+  { type: "invoice", label: "Invoice" },
+  { type: "pengeluaran", label: "Pengeluaran" },
+];
+
 export function SyncPanel({ configured }: { configured: boolean }) {
   const [pending, startTransition] = useTransition();
-  const [busyType, setBusyType] = useState<SyncType | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
 
-  function run(type: SyncType) {
-    setBusyType(type);
+  function run(type: SyncType, label: string) {
+    setBusy(type);
     startTransition(async () => {
       const res = await syncSheet(type);
-      setBusyType(null);
-      if (res.ok) {
+      setBusy(null);
+      if (res.ok)
         toast.success(
-          `Sinkron ${type}: ${res.pulled} dari Sheet, ${res.pushed} ke Sheet.`,
+          `${label}: ${res.pulled != null ? `${res.pulled} dari Sheet, ` : ""}${res.pushed} ke Sheet.`,
         );
-      } else {
-        toast.error(res.error ?? "Gagal sinkron.");
-      }
+      else toast.error(`${label}: ${res.error ?? "gagal"}`);
     });
   }
+  function runAll() {
+    setBusy("__all__");
+    startTransition(async () => {
+      const res = await syncAll();
+      setBusy(null);
+      if (res.ok) toast.success(`Sinkron semua selesai (${res.done} data).`);
+      else toast.error(`Sebagian gagal: ${res.failed.join(", ")}`);
+    });
+  }
+
+  const btn = (item: { type: SyncType; label: string }) => (
+    <Button
+      key={item.type}
+      type="button"
+      variant="outline"
+      size="sm"
+      disabled={!configured || pending}
+      onClick={() => run(item.type, item.label)}
+      className="justify-start"
+    >
+      {pending && busy === item.type ? <Loader2 className="animate-spin" /> : <RefreshCw />}
+      {item.label}
+    </Button>
+  );
 
   return (
     <Card>
@@ -38,44 +74,39 @@ export function SyncPanel({ configured }: { configured: boolean }) {
       <CardContent className="space-y-3">
         {!configured ? (
           <p className="rounded-lg bg-secondary/60 px-3 py-2 text-sm text-muted-foreground">
-            Google Sheets belum dihubungkan. Ikuti panduan setup dari admin
-            (tempel skrip ke Sheet &amp; isi env di Netlify), lalu sinkron akan
-            aktif.
+            Google Sheets belum dihubungkan. Setelah skrip &amp; env terpasang,
+            sinkron akan aktif.
           </p>
         ) : (
-          <p className="text-sm text-muted-foreground">
-            Sinkron dua arah (yang terbaru menang). Aman: baris tidak pernah
-            dihapus otomatis.
-          </p>
+          <>
+            <Button
+              type="button"
+              disabled={pending}
+              onClick={runAll}
+              className="w-full"
+            >
+              {pending && busy === "__all__" ? <Loader2 className="animate-spin" /> : <RefreshCcw />}
+              Sinkron Semua
+            </Button>
+
+            <div>
+              <p className="mb-1.5 text-xs font-medium text-muted-foreground">
+                Dua arah (bisa diedit balik dari Sheets)
+              </p>
+              <div className="grid grid-cols-2 gap-2">{TWOWAY.map(btn)}</div>
+            </div>
+            <div>
+              <p className="mb-1.5 text-xs font-medium text-muted-foreground">
+                Ekspor ke Sheets (transaksi)
+              </p>
+              <div className="grid grid-cols-2 gap-2">{PUSH.map(btn)}</div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Yang terbaru menang; baris tidak dihapus otomatis. Tab dibuat
+              otomatis di Google Sheet.
+            </p>
+          </>
         )}
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            disabled={!configured || pending}
-            onClick={() => run("produk")}
-          >
-            {pending && busyType === "produk" ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <RefreshCw />
-            )}
-            Sinkron Produk
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            disabled={!configured || pending}
-            onClick={() => run("bahan")}
-          >
-            {pending && busyType === "bahan" ? (
-              <Loader2 className="animate-spin" />
-            ) : (
-              <RefreshCw />
-            )}
-            Sinkron Bahan
-          </Button>
-        </div>
       </CardContent>
     </Card>
   );
