@@ -326,7 +326,9 @@ const ENTITIES: Record<string, Entity> = {
   },
 };
 
-export const SYNC_TABS = Object.keys(ENTITIES) as (keyof typeof ENTITIES)[];
+// NOTE: a "use server" file may ONLY export async functions (+ types).
+// SYNC_TABS stays internal — exporting a non-function object crashes the
+// server action at runtime and breaks the build if a route imports it.
 export type SyncType = keyof typeof ENTITIES;
 
 function coerce(c: Col, raw: unknown): unknown {
@@ -413,26 +415,5 @@ export async function syncSheet(type: SyncType): Promise<SyncResult> {
     return await runEntity(type, admin);
   } catch (err) {
     return { ok: false, error: (err as Error)?.message ?? String(err) };
-  }
-}
-
-/** Diagnostics: run an entity sync without the auth gate (token-guarded). */
-export async function syncDiag(
-  type: SyncType,
-  token: string,
-): Promise<SyncResult & { diag?: string }> {
-  try {
-    if (!token || token !== (process.env.GOOGLE_SYNC_TOKEN ?? "")) {
-      return { ok: false, error: "forbidden" };
-    }
-    if (!ENTITIES[type]) return { ok: false, error: "unknown type: " + type };
-    const admin = createAdminClient();
-    return await runEntity(type, admin);
-  } catch (err) {
-    return {
-      ok: false,
-      error: (err as Error)?.message ?? String(err),
-      diag: (err as Error)?.stack?.slice(0, 500),
-    };
   }
 }

@@ -38,8 +38,7 @@ export async function updateSession(request: NextRequest) {
   const isPublic =
     path === "/login" ||
     path.startsWith("/auth") ||
-    path.startsWith("/api/health") ||
-    path.startsWith("/api/synctest");
+    path.startsWith("/api/health");
 
   // Not logged in and trying to reach a protected page -> go to /login
   if (!user && !isPublic) {
