@@ -401,13 +401,38 @@ async function runEntity(type: SyncType, admin: Admin): Promise<SyncResult> {
 }
 
 export async function syncSheet(type: SyncType): Promise<SyncResult> {
-  if (!sheetConfigured()) return { ok: false, error: "Google Sheets belum dihubungkan." };
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: "Sesi login tidak ditemukan. Muat ulang halaman." };
+  try {
+    if (!sheetConfigured()) return { ok: false, error: "Google Sheets belum dihubungkan." };
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { ok: false, error: "Sesi login tidak ditemukan. Muat ulang halaman." };
 
-  const admin = createAdminClient();
-  return runEntity(type, admin);
+    const admin = createAdminClient();
+    return await runEntity(type, admin);
+  } catch (err) {
+    return { ok: false, error: (err as Error)?.message ?? String(err) };
+  }
+}
+
+/** Diagnostics: run an entity sync without the auth gate (token-guarded). */
+export async function syncDiag(
+  type: SyncType,
+  token: string,
+): Promise<SyncResult & { diag?: string }> {
+  try {
+    if (!token || token !== (process.env.GOOGLE_SYNC_TOKEN ?? "")) {
+      return { ok: false, error: "forbidden" };
+    }
+    if (!ENTITIES[type]) return { ok: false, error: "unknown type: " + type };
+    const admin = createAdminClient();
+    return await runEntity(type, admin);
+  } catch (err) {
+    return {
+      ok: false,
+      error: (err as Error)?.message ?? String(err),
+      diag: (err as Error)?.stack?.slice(0, 500),
+    };
+  }
 }
