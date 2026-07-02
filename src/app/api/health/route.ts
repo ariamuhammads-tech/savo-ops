@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sheetConfigured, sheetGet } from "@/lib/gsheet";
+import { sheetConfigured, sheetGet, sheetReplace } from "@/lib/gsheet";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
@@ -47,7 +47,14 @@ export async function GET() {
     if (sheetConfigured()) {
       try {
         const rows = await sheetGet("produk");
-        sheet_probe = { ok: true, rows: rows.length };
+        let write = "n/a";
+        try {
+          await sheetReplace("_probe", ["a", "b"], [{ a: "1", b: new Date().toISOString() }]);
+          write = "ok";
+        } catch (e) {
+          write = "err:" + String((e as Error).message).slice(0, 120);
+        }
+        sheet_probe = { ok: true, rows: rows.length, write };
       } catch (e) {
         sheet_probe = { ok: false, err: String((e as Error).message).slice(0, 160) };
       }
