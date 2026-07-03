@@ -129,7 +129,8 @@ export default async function MasakPage() {
                 <Input name="last_unit_cost" type="number" inputMode="numeric" min="0" step="any" defaultValue={0} />
               </div>
             </div>
-            <SubmitButton variant="secondary" icon={Plus} className="w-full">
+            <SubmitButton variant="secondary" pendingText="Menyimpan…" className="w-full">
+              <Plus />
               Simpan bahan
             </SubmitButton>
           </form>

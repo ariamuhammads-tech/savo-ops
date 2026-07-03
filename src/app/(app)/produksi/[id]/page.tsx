@@ -94,7 +94,8 @@ export default async function ProduksiEditPage({
             <p className="text-xs text-muted-foreground">
               Mengubah catatan tidak otomatis menyesuaikan stok (stok sudah tercatat saat produksi). HPP/unit dihitung ulang dari total ÷ hasil.
             </p>
-            <SubmitButton icon={Save} pendingText="Menyimpan…" className="w-full sm:w-auto">
+            <SubmitButton pendingText="Menyimpan…" className="w-full sm:w-auto">
+              <Save />
               Simpan perubahan
             </SubmitButton>
           </form>
