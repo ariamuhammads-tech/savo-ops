@@ -62,10 +62,6 @@ export function Bonfire({ intensity = 1 }: { intensity?: number }) {
               <stop offset="0.5" stopColor="#ffd77a" />
               <stop offset="1" stopColor="#fff8e8" />
             </linearGradient>
-            <linearGradient id="bf-log" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#6b4326" />
-              <stop offset="1" stopColor="#37220f" />
-            </linearGradient>
             <radialGradient id="bf-embertip" cx="0.5" cy="0.5" r="0.5">
               <stop offset="0" stopColor="#ffcf6b" stopOpacity="0.95" />
               <stop offset="0.6" stopColor="#f59e0b" stopOpacity="0.5" />
@@ -73,9 +69,7 @@ export function Bonfire({ intensity = 1 }: { intensity?: number }) {
             </radialGradient>
           </defs>
 
-          {/* Logs + glowing ember bed (behind the flame roots). */}
-          <rect x="122" y="260" width="116" height="15" rx="7.5" fill="url(#bf-log)" transform="rotate(13 180 268)" />
-          <rect x="122" y="260" width="116" height="15" rx="7.5" fill="url(#bf-log)" transform="rotate(-13 180 268)" />
+          {/* Glowing ember bed at the base of the flame (no logs). */}
           <ellipse cx="180" cy="264" rx="54" ry="12" fill="url(#bf-embertip)" />
 
           {/* Flames: back → front (largest/coolest → smallest/hottest). Each
