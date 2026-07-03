@@ -209,146 +209,87 @@
 .savo-stagger > *:nth-child(6) { animation-delay: 0.22s; }
 
 /* =========================================================
-   Bonfire — a single, living campfire rising from stacked
-   logs. Layered flame tongues (terracotta → orange → amber →
-   pale core) flicker asynchronously, embers drift up, and a
-   warm ground glow breathes. Pure CSS, deterministic (SSR-safe).
+   Bonfire — a single, realistic campfire (SVG + turbulence,
+   see components/bonfire.tsx). These helpers drive the warm
+   ground glow and a subtle brightness flicker on each flame
+   layer; the organic edge motion comes from the SVG filter.
    ========================================================= */
 .bonfire-glow {
   background: radial-gradient(
-    ellipse 52% 62% at 50% 92%,
-    color-mix(in srgb, var(--ember) 55%, transparent) 0%,
-    color-mix(in srgb, var(--primary) 32%, transparent) 42%,
-    transparent 72%
+    ellipse 50% 58% at 50% 100%,
+    color-mix(in srgb, var(--ember) 60%, transparent) 0%,
+    color-mix(in srgb, var(--primary) 34%, transparent) 40%,
+    transparent 70%
   );
   animation: bonfire-breathe 3.8s ease-in-out infinite;
   will-change: opacity, transform;
 }
 
-.bonfire-flame {
-  transform-origin: 50% 100%;
-  border-radius: 50% 50% 38% 38% / 66% 66% 34% 34%;
-  filter: blur(6px);
-  animation-name: bonfire-flicker;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  will-change: transform, opacity;
-}
-.bonfire-flame.outer {
-  background: radial-gradient(
-    ellipse 58% 78% at 50% 90%,
-    #ff9d3c 0%,
-    #e0602f 46%,
-    #c0492b 72%,
-    transparent 92%
-  );
-  opacity: 0.78;
-}
-.bonfire-flame.mid {
-  background: radial-gradient(
-    ellipse 56% 76% at 50% 90%,
-    #ffc963 0%,
-    #f59e0b 50%,
-    #e0602f 80%,
-    transparent 94%
-  );
-  opacity: 0.9;
-}
-.bonfire-flame.inner {
-  background: radial-gradient(
-    ellipse 54% 74% at 50% 88%,
-    #fff0c8 0%,
-    #ffd479 46%,
-    #f59e0b 82%,
-    transparent 95%
-  );
-  opacity: 0.95;
-  filter: blur(4px);
-}
-.bonfire-core {
-  background: radial-gradient(
-    ellipse 62% 70% at 50% 82%,
-    #fffdf6 0%,
-    #ffeab4 58%,
-    transparent 86%
-  );
-  filter: blur(3px);
-  border-radius: 50% 50% 40% 40% / 62% 62% 38% 38%;
-  transform-origin: 50% 100%;
-  animation: bonfire-flicker 1.05s ease-in-out infinite;
-  will-change: transform, opacity;
+/* flickering light cast by the flame — cheap opacity/scale pulse */
+.bonfire-flicker {
+  animation: bonfire-flicker-kf 2.3s ease-in-out infinite;
+  will-change: opacity, transform;
 }
 
-.bonfire-log {
-  border-radius: 999px;
-  background: linear-gradient(
-    100deg,
-    #6b4326 0%,
-    #4a2c18 45%,
-    #35200f 100%
-  );
-  box-shadow:
-    inset 0 1px 1px rgba(255, 200, 130, 0.28),
-    0 6px 14px -6px rgba(26, 23, 20, 0.5);
-}
-.bonfire-log::after {
-  /* glowing ember tip where the log meets the fire */
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 999px;
-  background: radial-gradient(
-    ellipse 40% 120% at 50% 50%,
-    color-mix(in srgb, var(--ember) 70%, transparent),
-    transparent 70%
-  );
-  animation: bonfire-breathe 2.6s ease-in-out infinite;
-}
-
+/* embers drifting up from the fire */
 .bonfire-spark {
   border-radius: 999px;
   background: radial-gradient(circle, #ffe1a0 0%, #f59e0b 55%, transparent 78%);
-  animation-name: bonfire-spark;
+  animation-name: bonfire-spark-kf;
   animation-timing-function: ease-out;
   animation-iteration-count: infinite;
   will-change: transform, opacity;
 }
 
-@keyframes bonfire-flicker {
-  0%,
-  100% {
-    transform: scaleY(1) scaleX(1) translateX(0) rotate(0deg);
-  }
-  15% {
-    transform: scaleY(1.13) scaleX(0.92) translateX(-2px) rotate(-2deg);
-  }
-  32% {
-    transform: scaleY(0.93) scaleX(1.06) translateX(2px) rotate(1.5deg);
-  }
-  50% {
-    transform: scaleY(1.17) scaleX(0.9) translateX(-1px) rotate(1deg);
-  }
-  68% {
-    transform: scaleY(0.95) scaleX(1.05) translateX(2px) rotate(-1.5deg);
-  }
-  84% {
-    transform: scaleY(1.08) scaleX(0.95) translateX(-2px) rotate(0.5deg);
-  }
+/* each flame layer licks upward — cheap GPU transform, rooted at its base */
+.flame-lick {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: flame-lick-kf 2.4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.flame-lick.l2 {
+  animation-duration: 1.7s;
+  animation-delay: -0.4s;
+}
+.flame-lick.l3 {
+  animation-duration: 1.15s;
+  animation-delay: -0.2s;
 }
 
 @keyframes bonfire-breathe {
   0%,
   100% {
-    opacity: 0.72;
+    opacity: 0.7;
     transform: scale(1);
   }
   50% {
     opacity: 1;
-    transform: scale(1.05);
+    transform: scale(1.06);
   }
 }
 
-@keyframes bonfire-spark {
+@keyframes bonfire-flicker-kf {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: translateX(-50%) scale(1);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.06, 1.02);
+  }
+  45% {
+    opacity: 0.82;
+    transform: translateX(-50%) scale(0.97, 1.05);
+  }
+  70% {
+    opacity: 0.98;
+    transform: translateX(-50%) scale(1.03, 0.98);
+  }
+}
+
+@keyframes bonfire-spark-kf {
   0% {
     transform: translateY(0) translateX(0) scale(1);
     opacity: 0;
@@ -357,8 +298,28 @@
     opacity: 1;
   }
   100% {
-    transform: translateY(-170px) translateX(var(--sx, 0px)) scale(0.25);
+    transform: translateY(calc(-1 * var(--rise, 180px))) translateX(var(--sx, 0px)) scale(0.25);
     opacity: 0;
+  }
+}
+
+@keyframes flame-lick-kf {
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1) skewX(0deg);
+    opacity: 0.94;
+  }
+  25% {
+    transform: scaleY(1.09) scaleX(0.95) skewX(2.5deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleY(0.95) scaleX(1.04) skewX(-1.5deg);
+    opacity: 0.88;
+  }
+  75% {
+    transform: scaleY(1.05) scaleX(0.98) skewX(1.5deg);
+    opacity: 0.99;
   }
 }
 
@@ -370,11 +331,10 @@
   .savo-in-fade,
   .savo-pop,
   .savo-stagger > *,
-  .bonfire-flame,
-  .bonfire-core,
   .bonfire-glow,
+  .bonfire-flicker,
   .bonfire-spark,
-  .bonfire-log::after {
+  .flame-lick {
     animation: none;
   }
   .bonfire-spark {
