@@ -208,118 +208,73 @@
 .savo-stagger > *:nth-child(5) { animation-delay: 0.18s; }
 .savo-stagger > *:nth-child(6) { animation-delay: 0.22s; }
 
-/* =========================================================
-   Bonfire — a single, realistic campfire (SVG + turbulence,
-   see components/bonfire.tsx). These helpers drive the warm
-   ground glow and a subtle brightness flicker on each flame
-   layer; the organic edge motion comes from the SVG filter.
-   ========================================================= */
-.bonfire-glow {
-  background: radial-gradient(
-    ellipse 50% 58% at 50% 100%,
-    color-mix(in srgb, var(--ember) 60%, transparent) 0%,
-    color-mix(in srgb, var(--primary) 34%, transparent) 40%,
-    transparent 70%
-  );
-  animation: bonfire-breathe 3.8s ease-in-out infinite;
-  will-change: opacity, transform;
-}
-
-/* flickering light cast by the flame — cheap opacity/scale pulse */
-.bonfire-flicker {
-  animation: bonfire-flicker-kf 2.3s ease-in-out infinite;
-  will-change: opacity, transform;
-}
-
-/* embers drifting up from the fire */
-.bonfire-spark {
-  border-radius: 999px;
-  background: radial-gradient(circle, #ffe1a0 0%, #f59e0b 55%, transparent 78%);
-  animation-name: bonfire-spark-kf;
-  animation-timing-function: ease-out;
-  animation-iteration-count: infinite;
-  will-change: transform, opacity;
-}
-
-/* each flame layer licks upward — cheap GPU transform, rooted at its base */
-.flame-lick {
-  transform-box: fill-box;
+/* ===== Stove flames (decorative background) ===== */
+.savo-flame {
   transform-origin: 50% 100%;
-  animation: flame-lick-kf 2.4s ease-in-out infinite;
-  will-change: transform, opacity;
-}
-.flame-lick.l2 {
-  animation-duration: 1.7s;
-  animation-delay: -0.4s;
-}
-.flame-lick.l3 {
-  animation-duration: 1.15s;
-  animation-delay: -0.2s;
+  border-radius: 50% 50% 42% 42% / 72% 72% 28% 28%;
+  background: radial-gradient(
+    ellipse 60% 75% at 50% 88%,
+    #ffe9b0 0%,
+    #ffc35c 22%,
+    #f59e0b 42%,
+    #e0602f 62%,
+    #c0492b 78%,
+    transparent 96%
+  );
+  filter: blur(7px);
+  opacity: 0.85;
+  animation-name: savo-flicker;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform;
 }
 
-@keyframes bonfire-breathe {
+.savo-ember {
+  background: radial-gradient(
+    ellipse 70% 100% at 50% 100%,
+    color-mix(in srgb, var(--primary) 45%, transparent),
+    color-mix(in srgb, #f59e0b 30%, transparent) 45%,
+    transparent 75%
+  );
+  animation: savo-ember-pulse 3.2s ease-in-out infinite;
+}
+
+.savo-gasline {
+  background: radial-gradient(
+    ellipse 90% 100% at 50% 100%,
+    rgba(59, 130, 246, 0.55),
+    rgba(59, 130, 246, 0.15) 55%,
+    transparent 80%
+  );
+  animation: savo-ember-pulse 2.4s ease-in-out infinite reverse;
+}
+
+@keyframes savo-flicker {
+  0%,
+  100% {
+    transform: scaleY(1) scaleX(1) translateY(0);
+  }
+  20% {
+    transform: scaleY(1.18) scaleX(0.92) translateY(-6px) rotate(-1.5deg);
+  }
+  40% {
+    transform: scaleY(0.88) scaleX(1.08) translateY(2px) rotate(1deg);
+  }
+  60% {
+    transform: scaleY(1.12) scaleX(0.95) translateY(-9px) rotate(1.5deg);
+  }
+  80% {
+    transform: scaleY(0.94) scaleX(1.05) translateY(1px) rotate(-1deg);
+  }
+}
+
+@keyframes savo-ember-pulse {
   0%,
   100% {
     opacity: 0.7;
-    transform: scale(1);
   }
   50% {
     opacity: 1;
-    transform: scale(1.06);
-  }
-}
-
-@keyframes bonfire-flicker-kf {
-  0%,
-  100% {
-    opacity: 0.75;
-    transform: translateX(-50%) scale(1);
-  }
-  20% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1.06, 1.02);
-  }
-  45% {
-    opacity: 0.82;
-    transform: translateX(-50%) scale(0.97, 1.05);
-  }
-  70% {
-    opacity: 0.98;
-    transform: translateX(-50%) scale(1.03, 0.98);
-  }
-}
-
-@keyframes bonfire-spark-kf {
-  0% {
-    transform: translateY(0) translateX(0) scale(1);
-    opacity: 0;
-  }
-  12% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(calc(-1 * var(--rise, 180px))) translateX(var(--sx, 0px)) scale(0.25);
-    opacity: 0;
-  }
-}
-
-@keyframes flame-lick-kf {
-  0%,
-  100% {
-    transform: scaleY(1) scaleX(1) skewX(0deg);
-    opacity: 0.94;
-  }
-  25% {
-    transform: scaleY(1.09) scaleX(0.95) skewX(2.5deg);
-    opacity: 1;
-  }
-  50% {
-    transform: scaleY(0.95) scaleX(1.04) skewX(-1.5deg);
-    opacity: 0.88;
-  }
-  75% {
-    transform: scaleY(1.05) scaleX(0.98) skewX(1.5deg);
-    opacity: 0.99;
   }
 }
 
@@ -331,13 +286,9 @@
   .savo-in-fade,
   .savo-pop,
   .savo-stagger > *,
-  .bonfire-glow,
-  .bonfire-flicker,
-  .bonfire-spark,
-  .flame-lick {
+  .savo-flame,
+  .savo-ember,
+  .savo-gasline {
     animation: none;
-  }
-  .bonfire-spark {
-    opacity: 0;
   }
 }

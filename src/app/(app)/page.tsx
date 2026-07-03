@@ -12,7 +12,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatIDR, formatNumber, formatDate } from "@/lib/format";
-import { Bonfire } from "@/components/bonfire";
+import { StoveFlames } from "@/components/stove-flames";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -72,7 +72,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <Bonfire intensity={0.5} />
+      <StoveFlames intensity={0.55} />
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
           SAVO Ops
