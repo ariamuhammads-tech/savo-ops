@@ -4,31 +4,32 @@
 @custom-variant dark (&:is(.dark *));
 
 /* =========================================================
-   SAVO brand palette — warm cream, dark ink, terracotta.
+   SAVO brand palette — warm cream, dark ink, terracotta,
+   with an amber ember accent for the bonfire theme.
    Used as shadcn/ui design tokens (Tailwind v4 CSS vars).
    ========================================================= */
 :root {
-  --radius: 0.75rem;
+  --radius: 0.9rem;
 
-  --background: #fbf9f7;          /* warm bone */
-  --foreground: #1b1c1b;          /* on-surface ink */
+  --background: #fbf8f4;          /* warm bone */
+  --foreground: #1a1714;          /* on-surface ink (slightly warmer/deeper) */
 
   --card: #ffffff;
-  --card-foreground: #1b1c1b;
+  --card-foreground: #1a1714;
 
   --popover: #ffffff;
-  --popover-foreground: #1b1c1b;
+  --popover-foreground: #1a1714;
 
   --primary: #c0492b;            /* SAVO terracotta (logo — unchanged) */
-  --primary-foreground: #ffffff;
+  --primary-foreground: #fff8f4;
 
-  --secondary: #f4f1ee;          /* surface-container-low (warm) */
-  --secondary-foreground: #1b1c1b;
+  --secondary: #f4efe9;          /* surface-container-low (warm) */
+  --secondary-foreground: #1a1714;
 
-  --muted: #f1ede9;
-  --muted-foreground: #6f5b57;   /* warm secondary text */
+  --muted: #f1ebe4;
+  --muted-foreground: #756258;   /* warm secondary text */
 
-  --accent: #f7ece8;             /* warm active tint */
+  --accent: #f8ebe5;             /* warm active tint */
   --accent-foreground: #7a2c19;
 
   --destructive: #ba1a1a;
@@ -36,19 +37,26 @@
 
   --success: #1f7a3d;            /* grounded green */
   --warning: #c9892f;
+  --ember: #f59e0b;             /* amber — bonfire highlight */
 
-  --border: #e8ded8;             /* warm hairline */
-  --input: #e8ded8;
+  --border: #eae0d8;             /* warm hairline */
+  --input: #eae0d8;
   --ring: #c0492b;
 
   --sidebar: #ffffff;
-  --sidebar-foreground: #1b1c1b;
+  --sidebar-foreground: #1a1714;
   --sidebar-primary: #c0492b;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f7ece8;
+  --sidebar-primary-foreground: #fff8f4;
+  --sidebar-accent: #f8ebe5;
   --sidebar-accent-foreground: #7a2c19;
-  --sidebar-border: #e8ded8;
+  --sidebar-border: #eae0d8;
   --sidebar-ring: #c0492b;
+
+  /* Layered soft shadows for premium depth */
+  --shadow-xs: 0 1px 2px rgba(26, 23, 20, 0.05);
+  --shadow-card: 0 1px 2px rgba(26, 23, 20, 0.04), 0 12px 30px -18px rgba(26, 23, 20, 0.22);
+  --shadow-card-hover: 0 2px 4px rgba(26, 23, 20, 0.05), 0 26px 50px -22px rgba(192, 73, 43, 0.32);
+  --shadow-pop: 0 24px 60px -20px rgba(26, 23, 20, 0.35);
 }
 
 @theme inline {
@@ -70,6 +78,7 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-ember: var(--ember);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -97,12 +106,56 @@
     border-color: var(--border);
     outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
+    /* subtle warm wash — cream fading to a faint ember tint at the base */
     background-color: var(--background);
+    background-image:
+      radial-gradient(120% 80% at 50% -10%, #fffdfb 0%, transparent 55%),
+      radial-gradient(140% 90% at 50% 118%, color-mix(in srgb, var(--ember) 9%, transparent) 0%, transparent 60%);
+    background-attachment: fixed;
     color: var(--foreground);
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
+  h1, h2, h3 {
+    letter-spacing: -0.012em;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--primary) 22%, transparent);
+  }
+}
+
+/* ===== Reusable surface / motion utilities ===== */
+.savo-surface {
+  background: color-mix(in srgb, var(--card) 72%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+}
+.savo-lift {
+  transition:
+    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.28s ease;
+}
+.savo-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+/* faint animated gradient hairline used as a hero divider / accent */
+.savo-hairline {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--primary) 45%, transparent),
+    color-mix(in srgb, var(--ember) 55%, transparent),
+    transparent
+  );
 }
 
 /* ===== Motion ===== */
@@ -155,81 +208,176 @@
 .savo-stagger > *:nth-child(5) { animation-delay: 0.18s; }
 .savo-stagger > *:nth-child(6) { animation-delay: 0.22s; }
 
-/* ===== Stove flames (decorative background) ===== */
-.savo-flame {
-  transform-origin: 50% 100%;
-  border-radius: 50% 50% 42% 42% / 72% 72% 28% 28%;
+/* =========================================================
+   Bonfire — a single, living campfire rising from stacked
+   logs. Layered flame tongues (terracotta → orange → amber →
+   pale core) flicker asynchronously, embers drift up, and a
+   warm ground glow breathes. Pure CSS, deterministic (SSR-safe).
+   ========================================================= */
+.bonfire-glow {
   background: radial-gradient(
-    ellipse 60% 75% at 50% 88%,
-    #ffe9b0 0%,
-    #ffc35c 22%,
-    #f59e0b 42%,
-    #e0602f 62%,
-    #c0492b 78%,
-    transparent 96%
+    ellipse 52% 62% at 50% 92%,
+    color-mix(in srgb, var(--ember) 55%, transparent) 0%,
+    color-mix(in srgb, var(--primary) 32%, transparent) 42%,
+    transparent 72%
   );
-  filter: blur(7px);
-  opacity: 0.85;
-  animation-name: savo-flicker;
+  animation: bonfire-breathe 3.8s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+.bonfire-flame {
+  transform-origin: 50% 100%;
+  border-radius: 50% 50% 38% 38% / 66% 66% 34% 34%;
+  filter: blur(6px);
+  animation-name: bonfire-flicker;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
-  will-change: transform;
+  will-change: transform, opacity;
 }
-
-.savo-ember {
+.bonfire-flame.outer {
   background: radial-gradient(
-    ellipse 70% 100% at 50% 100%,
-    color-mix(in srgb, var(--primary) 45%, transparent),
-    color-mix(in srgb, #f59e0b 30%, transparent) 45%,
-    transparent 75%
+    ellipse 58% 78% at 50% 90%,
+    #ff9d3c 0%,
+    #e0602f 46%,
+    #c0492b 72%,
+    transparent 92%
   );
-  animation: savo-ember-pulse 3.2s ease-in-out infinite;
+  opacity: 0.78;
 }
-
-.savo-gasline {
+.bonfire-flame.mid {
   background: radial-gradient(
-    ellipse 90% 100% at 50% 100%,
-    rgba(59, 130, 246, 0.55),
-    rgba(59, 130, 246, 0.15) 55%,
-    transparent 80%
+    ellipse 56% 76% at 50% 90%,
+    #ffc963 0%,
+    #f59e0b 50%,
+    #e0602f 80%,
+    transparent 94%
   );
-  animation: savo-ember-pulse 2.4s ease-in-out infinite reverse;
+  opacity: 0.9;
+}
+.bonfire-flame.inner {
+  background: radial-gradient(
+    ellipse 54% 74% at 50% 88%,
+    #fff0c8 0%,
+    #ffd479 46%,
+    #f59e0b 82%,
+    transparent 95%
+  );
+  opacity: 0.95;
+  filter: blur(4px);
+}
+.bonfire-core {
+  background: radial-gradient(
+    ellipse 62% 70% at 50% 82%,
+    #fffdf6 0%,
+    #ffeab4 58%,
+    transparent 86%
+  );
+  filter: blur(3px);
+  border-radius: 50% 50% 40% 40% / 62% 62% 38% 38%;
+  transform-origin: 50% 100%;
+  animation: bonfire-flicker 1.05s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
-@keyframes savo-flicker {
+.bonfire-log {
+  border-radius: 999px;
+  background: linear-gradient(
+    100deg,
+    #6b4326 0%,
+    #4a2c18 45%,
+    #35200f 100%
+  );
+  box-shadow:
+    inset 0 1px 1px rgba(255, 200, 130, 0.28),
+    0 6px 14px -6px rgba(26, 23, 20, 0.5);
+}
+.bonfire-log::after {
+  /* glowing ember tip where the log meets the fire */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: radial-gradient(
+    ellipse 40% 120% at 50% 50%,
+    color-mix(in srgb, var(--ember) 70%, transparent),
+    transparent 70%
+  );
+  animation: bonfire-breathe 2.6s ease-in-out infinite;
+}
+
+.bonfire-spark {
+  border-radius: 999px;
+  background: radial-gradient(circle, #ffe1a0 0%, #f59e0b 55%, transparent 78%);
+  animation-name: bonfire-spark;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes bonfire-flicker {
   0%,
   100% {
-    transform: scaleY(1) scaleX(1) translateY(0);
+    transform: scaleY(1) scaleX(1) translateX(0) rotate(0deg);
   }
-  20% {
-    transform: scaleY(1.18) scaleX(0.92) translateY(-6px) rotate(-1.5deg);
+  15% {
+    transform: scaleY(1.13) scaleX(0.92) translateX(-2px) rotate(-2deg);
   }
-  40% {
-    transform: scaleY(0.88) scaleX(1.08) translateY(2px) rotate(1deg);
+  32% {
+    transform: scaleY(0.93) scaleX(1.06) translateX(2px) rotate(1.5deg);
   }
-  60% {
-    transform: scaleY(1.12) scaleX(0.95) translateY(-9px) rotate(1.5deg);
+  50% {
+    transform: scaleY(1.17) scaleX(0.9) translateX(-1px) rotate(1deg);
   }
-  80% {
-    transform: scaleY(0.94) scaleX(1.05) translateY(1px) rotate(-1deg);
+  68% {
+    transform: scaleY(0.95) scaleX(1.05) translateX(2px) rotate(-1.5deg);
+  }
+  84% {
+    transform: scaleY(1.08) scaleX(0.95) translateX(-2px) rotate(0.5deg);
   }
 }
 
-@keyframes savo-ember-pulse {
+@keyframes bonfire-breathe {
   0%,
   100% {
-    opacity: 0.7;
+    opacity: 0.72;
+    transform: scale(1);
   }
   50% {
     opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes bonfire-spark {
+  0% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-170px) translateX(var(--sx, 0px)) scale(0.25);
+    opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
   .savo-in,
   .savo-in-fade,
   .savo-pop,
-  .savo-stagger > * {
+  .savo-stagger > *,
+  .bonfire-flame,
+  .bonfire-core,
+  .bonfire-glow,
+  .bonfire-spark,
+  .bonfire-log::after {
     animation: none;
+  }
+  .bonfire-spark {
+    opacity: 0;
   }
 }

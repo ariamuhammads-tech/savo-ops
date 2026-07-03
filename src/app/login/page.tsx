@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { LoginForm } from "./login-form";
 import { SavoLogo } from "@/components/savo-logo";
-import { StoveFlames } from "@/components/stove-flames";
+import { Bonfire } from "@/components/bonfire";
 import {
   Card,
   CardContent,
@@ -17,18 +17,23 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center p-4">
-      <StoveFlames />
-      <div className="w-full max-w-sm space-y-6 savo-in">
+      <Bonfire />
+      <div className="w-full max-w-sm space-y-7 savo-in">
         <div className="flex flex-col items-center text-center">
-          <SavoLogo className="h-10 w-auto" />
-          <p className="mt-2 text-sm text-muted-foreground">Dasbor Operasional</p>
+          <span className="relative">
+            <SavoLogo className="h-11 w-auto" />
+            <span className="absolute -right-2 -top-1 size-2 rounded-full bg-[color:var(--ember)] shadow-[0_0_10px_3px_rgba(245,158,11,0.6)]" />
+          </span>
+          <p className="mt-3 text-sm font-medium tracking-wide text-muted-foreground">
+            Dasbor Operasional
+          </p>
         </div>
 
-        <Card>
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl">Masuk</CardTitle>
+        <Card className="shadow-[var(--shadow-pop)]">
+          <CardHeader className="space-y-1.5 pb-4">
+            <CardTitle className="font-serif text-2xl">Selamat datang</CardTitle>
             <CardDescription>
-              Masukkan email dan kata sandi Anda untuk melanjutkan.
+              Masuk untuk mengelola operasional SAVO.
             </CardDescription>
           </CardHeader>
           <CardContent>

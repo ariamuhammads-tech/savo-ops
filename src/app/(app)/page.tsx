@@ -12,7 +12,8 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatIDR, formatNumber, formatDate } from "@/lib/format";
-import { StoveFlames } from "@/components/stove-flames";
+import { Bonfire } from "@/components/bonfire";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -71,10 +72,16 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <StoveFlames intensity={0.55} />
+      <Bonfire intensity={0.5} />
       <div>
-        <h1 className="font-serif text-3xl font-bold tracking-tight">Dasbor</h1>
-        <p className="text-sm text-muted-foreground">Ringkasan operasional SAVO.</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-primary/80">
+          SAVO Ops
+        </p>
+        <h1 className="mt-1 font-serif text-3xl font-bold tracking-tight">Dasbor</h1>
+        <p className="text-sm text-muted-foreground">
+          Ringkasan operasional {formatDate(new Date(), "dd MMM yyyy")}.
+        </p>
+        <div className="savo-hairline mt-4" />
       </div>
 
       {/* Sales KPIs */}
@@ -154,19 +161,32 @@ function Kpi({
   href?: string;
 }) {
   const inner = (
-    <Card className={href ? "transition-colors hover:border-primary/40" : ""}>
+    <Card
+      className={cn(
+        "relative overflow-hidden",
+        href && "savo-lift hover:border-primary/40",
+      )}
+    >
+      {/* soft ember glow in the corner */}
+      <div className="pointer-events-none absolute -right-8 -top-8 size-20 rounded-full bg-primary/[0.06] blur-2xl" />
       <CardContent className="p-4">
-        <div className="mb-1 flex items-center justify-between">
-          <p className="text-xs text-muted-foreground">{label}</p>
-          <div className="flex size-8 items-center justify-center rounded-full bg-secondary">
+        <div className="mb-2 flex items-center justify-between">
+          <p className="text-xs font-medium text-muted-foreground">{label}</p>
+          <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-inset ring-primary/10">
             {icon}
           </div>
         </div>
-        <p className="font-serif text-xl font-bold">{value}</p>
+        <p className="font-serif text-2xl font-bold tracking-tight">{value}</p>
       </CardContent>
     </Card>
   );
-  return href ? <Link href={href}>{inner}</Link> : inner;
+  return href ? (
+    <Link href={href} className="block">
+      {inner}
+    </Link>
+  ) : (
+    inner
+  );
 }
 
 function LowRow({
