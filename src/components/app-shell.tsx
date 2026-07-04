@@ -17,6 +17,7 @@ import {
   ChefHat,
   Factory,
   PiggyBank,
+  Sparkles,
   Settings,
   LogOut,
   Menu as MenuIcon,
@@ -60,6 +61,7 @@ const SECTIONS: NavSection[] = [
   {
     title: "Lainnya",
     items: [
+      { href: "/asisten", label: "Asisten AI", icon: Sparkles },
       { href: "/pelanggan", label: "Pelanggan", icon: Users },
       { href: "/keuangan", label: "Keuangan", icon: PiggyBank },
       { href: "/laporan", label: "Laporan", icon: BarChart3 },
