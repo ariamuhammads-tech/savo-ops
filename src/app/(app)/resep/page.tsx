@@ -4,7 +4,14 @@ import { Plus, BookOpenCheck, ChevronRight } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatNumber } from "@/lib/format";
-import { calcHppTotal, calcHppPerUnit, calcMargin, effectiveUnitCost } from "@/lib/hpp";
+import {
+  calcHppTotal,
+  calcHppPerUnit,
+  calcMargin,
+  effectiveUnitCost,
+  actualHppStats,
+  type BatchLike,
+} from "@/lib/hpp";
 import { canonicalUnit, convertQty } from "@/lib/units";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -28,14 +35,32 @@ type RecipeRow = {
 
 export default async function ResepPage() {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("recipes")
-    .select(
-      "id, name, yield_qty, overhead_cost, product:products(name, price_b2c, unit), recipe_items(quantity, unit, ingredient:ingredients(unit, last_unit_cost, avg_unit_cost))",
-    )
-    .order("created_at", { ascending: false });
+  const [{ data }, { data: batchData }] = await Promise.all([
+    supabase
+      .from("recipes")
+      .select(
+        "id, name, yield_qty, overhead_cost, product:products(name, price_b2c, unit), recipe_items(quantity, unit, ingredient:ingredients(unit, last_unit_cost, avg_unit_cost))",
+      )
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("production_batches")
+      .select("recipe_id, batch_count, produced_qty, hpp_per_unit")
+      .order("created_at", { ascending: false })
+      .limit(300),
+  ]);
 
   const recipes = (data ?? []) as unknown as RecipeRow[];
+
+  // Last ≤10 real batches per recipe → effective (actual) HPP per recipe.
+  const batchesByRecipe = new Map<string, BatchLike[]>();
+  for (const b of batchData ?? []) {
+    if (!b.recipe_id) continue;
+    const list = batchesByRecipe.get(b.recipe_id) ?? [];
+    if (list.length < 10) {
+      list.push(b);
+      batchesByRecipe.set(b.recipe_id, list);
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -96,8 +121,12 @@ export default async function ResepPage() {
               Number(r.overhead_cost),
             );
             const hppPerUnit = calcHppPerUnit(hppTotal, Number(r.yield_qty));
+            // Effective HPP: actual production average when available,
+            // recipe standard otherwise — same rule as the detail page.
+            const stats = actualHppStats(batchesByRecipe.get(r.id) ?? []);
+            const hppEffective = stats.count > 0 ? stats.avgHpp : hppPerUnit;
             const price = Number(r.product?.price_b2c ?? 0);
-            const margin = calcMargin(price, hppPerUnit);
+            const margin = calcMargin(price, hppEffective);
             return (
               <Link key={r.id} href={`/resep/${r.id}`}>
                 <Card className="flex items-center justify-between gap-3 p-3.5 transition-colors hover:border-primary/40">
@@ -106,7 +135,11 @@ export default async function ResepPage() {
                       {r.product?.name ?? "Produk?"}
                     </p>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                      HPP {formatIDR(hppPerUnit)}/{r.product?.unit ?? "unit"}
+                      HPP {formatIDR(hppEffective)}/{r.product?.unit ?? "unit"}
+                      <span className="text-xs">
+                        {" "}
+                        ({stats.count > 0 ? "nyata" : "standar"})
+                      </span>
                       {price > 0 && (
                         <>
                           {" · "}

@@ -36,6 +36,32 @@ export function calcHppPerUnit(hppTotal: number, yieldQty: number): number {
   return y > 0 ? hppTotal / y : 0;
 }
 
+export type BatchLike = {
+  batch_count: number | string;
+  produced_qty: number | string;
+  hpp_per_unit: number | string;
+};
+
+/**
+ * Aggregate ACTUAL production numbers for a recipe (from production_batches):
+ * weighted-average real yield per batch and real HPP per unit. This is the
+ * "reality" side of costing — the recipe stays the standard.
+ */
+export function actualHppStats(batches: BatchLike[]) {
+  const valid = batches.filter(
+    (b) => Number(b.batch_count) > 0 && Number(b.produced_qty) > 0,
+  );
+  const totalBatches = valid.reduce((s, b) => s + Number(b.batch_count), 0);
+  const totalProduced = valid.reduce((s, b) => s + Number(b.produced_qty), 0);
+  const avgYield = totalBatches > 0 ? totalProduced / totalBatches : 0;
+  const avgHpp =
+    totalProduced > 0
+      ? valid.reduce((s, b) => s + Number(b.hpp_per_unit) * Number(b.produced_qty), 0) /
+        totalProduced
+      : 0;
+  return { count: valid.length, avgYield, avgHpp };
+}
+
 /** Margin as a fraction 0..1: (price - hpp) / price. */
 export function calcMargin(price: number, hppPerUnit: number): number {
   const p = Number(price);

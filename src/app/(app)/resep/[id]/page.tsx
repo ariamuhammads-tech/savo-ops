@@ -5,7 +5,7 @@ import { ArrowLeft, Trash2, Coins, Info, Factory } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatNumber } from "@/lib/format";
-import { calcHppTotal, calcHppPerUnit, effectiveUnitCost } from "@/lib/hpp";
+import { calcHppTotal, calcHppPerUnit, effectiveUnitCost, actualHppStats } from "@/lib/hpp";
 import { canonicalUnit, convertQty, formatQty } from "@/lib/units";
 import { RecipeForm } from "../recipe-form";
 import { HppCalculator } from "../hpp-calculator";
@@ -107,23 +107,14 @@ export default async function ResepDetailPage({
   const hppPerUnit = calcHppPerUnit(hppTotal, Number(recipe.yield_qty));
   const unit = recipe.product?.unit ?? "unit";
 
-  // ===== Production reality check (variable yield per batch) =====
-  // The recipe's yield is a STANDARD (estimate); each recorded production
-  // stores its real result + actual HPP. Compare the two so the owner can
-  // recalibrate the standard when reality drifts.
-  const batches = (batchData ?? []).filter(
-    (b) => Number(b.batch_count) > 0 && Number(b.produced_qty) > 0,
-  );
-  const totalBatches = batches.reduce((s, b) => s + Number(b.batch_count), 0);
-  const totalProduced = batches.reduce((s, b) => s + Number(b.produced_qty), 0);
-  const avgYield = totalBatches > 0 ? totalProduced / totalBatches : 0;
-  const avgHpp =
-    totalProduced > 0
-      ? batches.reduce(
-          (s, b) => s + Number(b.hpp_per_unit) * Number(b.produced_qty),
-          0,
-        ) / totalProduced
-      : 0;
+  // ===== Effective HPP: reality-first, standard as fallback =====
+  // The recipe's yield/HPP is the STANDARD (stable pricing basis, never
+  // auto-mutated). Each recorded production stores its real result + actual
+  // HPP; the EFFECTIVE HPP shown & used for margin follows that reality
+  // automatically, falling back to the standard when nothing was produced yet.
+  const stats = actualHppStats(batchData ?? []);
+  const hasActual = stats.count > 0;
+  const hppEffective = hasActual ? stats.avgHpp : hppPerUnit;
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
@@ -158,7 +149,12 @@ export default async function ResepDetailPage({
           <div className="rounded-xl bg-secondary/60 p-4 text-center">
             <p className="text-sm text-muted-foreground">HPP per {unit}</p>
             <p className="font-serif text-3xl font-bold text-primary">
-              {formatIDR(hppPerUnit)}
+              {formatIDR(hppEffective)}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {hasActual
+                ? `otomatis dari ${stats.count} produksi nyata terakhir`
+                : "dari resep standar — belum ada produksi tercatat"}
             </p>
           </div>
 
@@ -167,13 +163,16 @@ export default async function ResepDetailPage({
             <Row label="Overhead (per batch)" value={formatIDR(Number(recipe.overhead_cost))} />
             <Row label="Total HPP (per batch)" value={formatIDR(hppTotal)} bold />
             <Row
-              label="Hasil per batch"
+              label="Hasil per batch (standar)"
               value={`${formatNumber(Number(recipe.yield_qty))} ${recipe.yield_unit ?? unit}`}
             />
+            {hasActual && (
+              <Row label="HPP standar resep" value={formatIDR(hppPerUnit)} />
+            )}
           </div>
 
           <HppCalculator
-            hppPerUnit={hppPerUnit}
+            hppPerUnit={hppEffective}
             priceB2C={Number(recipe.product?.price_b2c ?? 0)}
             priceB2B={Number(recipe.product?.price_b2b ?? 0)}
           />
@@ -191,14 +190,14 @@ export default async function ResepDetailPage({
       </Card>
 
       {/* ===== Reality check: standard vs actual production ===== */}
-      {batches.length > 0 && (
+      {hasActual && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Factory className="size-5 text-primary" />
               Realisasi Produksi
               <span className="text-xs font-normal text-muted-foreground">
-                ({batches.length} produksi terakhir)
+                ({stats.count} produksi terakhir)
               </span>
             </CardTitle>
           </CardHeader>
@@ -207,7 +206,7 @@ export default async function ResepDetailPage({
               <div className="rounded-xl bg-secondary/60 p-3">
                 <p className="text-xs text-muted-foreground">Hasil nyata / batch</p>
                 <p className="font-serif text-xl font-bold">
-                  {formatNumber(avgYield, avgYield % 1 === 0 ? 0 : 1)}{" "}
+                  {formatNumber(stats.avgYield, stats.avgYield % 1 === 0 ? 0 : 1)}{" "}
                   <span className="text-sm font-normal">{recipe.yield_unit ?? unit}</span>
                 </p>
                 <p className="text-xs text-muted-foreground">
@@ -216,7 +215,7 @@ export default async function ResepDetailPage({
               </div>
               <div className="rounded-xl bg-secondary/60 p-3">
                 <p className="text-xs text-muted-foreground">HPP nyata / {unit}</p>
-                <p className="font-serif text-xl font-bold">{formatIDR(avgHpp)}</p>
+                <p className="font-serif text-xl font-bold">{formatIDR(stats.avgHpp)}</p>
                 <p className="text-xs text-muted-foreground">
                   standar {formatIDR(hppPerUnit)}
                 </p>
@@ -225,10 +224,10 @@ export default async function ResepDetailPage({
             <div className="flex gap-2 rounded-lg bg-secondary/60 p-3 text-xs text-muted-foreground">
               <Info className="size-4 shrink-0 text-primary" />
               <span>
-                Angka nyata dihitung otomatis dari hasil jadi yang dicatat di menu
-                Masak. Jika hasil nyata terus berbeda jauh dari standar, ubah
-                &quot;Hasil per batch&quot; di Detail Resep di bawah agar HPP standar
-                &amp; margin ikut menyesuaikan.
+                HPP utama di atas otomatis mengikuti angka nyata ini setiap kali
+                produksi dicatat di menu Masak. Resep standar tidak berubah
+                sendiri — ubah &quot;Hasil per batch&quot; di Detail Resep hanya
+                jika standar kerjanya memang mau dikoreksi.
               </span>
             </div>
           </CardContent>
