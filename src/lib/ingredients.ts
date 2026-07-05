@@ -30,6 +30,7 @@ export async function findOrCreateIngredient(
       unit: opts.unit || "g",
       stock_qty: opts.stock ?? 0,
       last_unit_cost: opts.lastUnitCost ?? 0,
+      avg_unit_cost: opts.lastUnitCost ?? 0,
       notes: opts.notes ?? null,
     })
     .select("id")

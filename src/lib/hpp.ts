@@ -4,8 +4,24 @@
 
 export type HppItem = {
   quantity: number;
-  unitCost: number; // ingredient.last_unit_cost
+  unitCost: number; // effective cost per ingredient unit (see effectiveUnitCost)
 };
+
+/**
+ * Cost basis for HPP: the weighted-average cost of stock on hand
+ * (recomputed on every purchase), falling back to the last purchase
+ * price for ingredients that predate the average column.
+ */
+export function effectiveUnitCost(
+  ing:
+    | { avg_unit_cost?: number | null; last_unit_cost?: number | null }
+    | null
+    | undefined,
+): number {
+  const avg = Number(ing?.avg_unit_cost ?? 0);
+  if (avg > 0) return avg;
+  return Number(ing?.last_unit_cost ?? 0);
+}
 
 export function calcHppTotal(items: HppItem[], overheadCost: number): number {
   const materials = items.reduce(

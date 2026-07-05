@@ -41,6 +41,8 @@ export async function createIngredient(
   const supabase = await createClient();
   const { error } = await supabase.from("ingredients").insert({
     ...parsed.data,
+    // Bahan baru: rata-rata tertimbang mulai dari harga yang diisi.
+    avg_unit_cost: parsed.data.last_unit_cost,
     supplier_name: parsed.data.supplier_name || null,
     notes: parsed.data.notes || null,
   });
@@ -64,10 +66,22 @@ export async function updateIngredient(
   }
 
   const supabase = await createClient();
+  // Mengubah harga secara MANUAL dianggap override sadar: rata-rata tertimbang
+  // ikut di-reset ke harga baru. Mengedit field lain tidak menyentuh rata-rata
+  // (yang dihitung otomatis dari pembelian).
+  const { data: current } = await supabase
+    .from("ingredients")
+    .select("last_unit_cost")
+    .eq("id", id)
+    .single();
+  const priceChanged =
+    !current || Number(current.last_unit_cost) !== parsed.data.last_unit_cost;
+
   const { error } = await supabase
     .from("ingredients")
     .update({
       ...parsed.data,
+      ...(priceChanged ? { avg_unit_cost: parsed.data.last_unit_cost } : {}),
       supplier_name: parsed.data.supplier_name || null,
       notes: parsed.data.notes || null,
     })

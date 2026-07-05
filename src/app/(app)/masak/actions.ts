@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { findOrCreateIngredient } from "@/lib/ingredients";
+import { convertQty } from "@/lib/units";
+import { effectiveUnitCost } from "@/lib/hpp";
 
 /** Quick-add a bahan baku from the Masak tab; connects to Bahan Baku. */
 export async function quickAddIngredient(formData: FormData) {
@@ -38,7 +40,7 @@ export async function recordProduction(formData: FormData) {
   const { data: recipe } = await supabase
     .from("recipes")
     .select(
-      "product_id, overhead_cost, product:products(name), recipe_items(quantity, ingredient_id, ingredient:ingredients(name, stock_qty, last_unit_cost))",
+      "product_id, overhead_cost, product:products(name), recipe_items(quantity, unit, ingredient_id, ingredient:ingredients(name, unit, stock_qty, last_unit_cost, avg_unit_cost))",
     )
     .eq("id", recipeId)
     .single();
@@ -51,8 +53,13 @@ export async function recordProduction(formData: FormData) {
   // Consume ingredients
   for (const it of rec.recipe_items ?? []) {
     if (!it.ingredient_id) continue;
-    const need = Number(it.quantity) * batchCount;
-    const unitCost = Number(it.ingredient?.last_unit_cost ?? 0);
+    // Stock and last_unit_cost live in the INGREDIENT's unit — convert the
+    // recipe quantity into it first (covers legacy rows saved in g vs kg).
+    const ingUnit = it.ingredient?.unit ?? it.unit ?? "";
+    const perBatch =
+      convertQty(Number(it.quantity), it.unit ?? ingUnit, ingUnit) ?? Number(it.quantity);
+    const need = perBatch * batchCount;
+    const unitCost = effectiveUnitCost(it.ingredient);
     materialCost += need * unitCost;
     const current = Number(it.ingredient?.stock_qty ?? 0);
     const newQty = current - need;

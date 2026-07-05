@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Minus, Plus, Coins, Factory } from "lucide-react";
 
 import { formatIDR, formatNumber } from "@/lib/format";
+import { formatQty } from "@/lib/units";
 import { recordProduction } from "./actions";
 import { ConfirmSubmitButton } from "@/components/form-buttons";
 import { Card, CardContent } from "@/components/ui/card";
@@ -164,21 +165,21 @@ export function CookCalculator({ recipes }: { recipes: CookRecipe[] }) {
                       <td className="py-2 pr-2">
                         <p className="font-medium">{r.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {formatNumber(r.perBatch)} {r.unit}/batch
+                          {formatQty(r.perBatch, r.unit)}/batch
                         </p>
                       </td>
                       <td className="px-2 py-2 text-right font-medium">
-                        {formatNumber(r.total)} {r.unit}
+                        {formatQty(r.total, r.unit)}
                       </td>
                       <td className="px-2 py-2 text-right text-muted-foreground">
-                        {formatNumber(r.stock)} {r.unit}
+                        {formatQty(r.stock, r.unit)}
                       </td>
                       <td className="py-2 pl-2 text-right">
                         {r.enough ? (
                           <span className="text-[color:var(--success)]">cukup</span>
                         ) : (
                           <span className="text-destructive">
-                            kurang {formatNumber(r.shortfall)} {r.unit}
+                            kurang {formatQty(r.shortfall, r.unit)}
                           </span>
                         )}
                       </td>

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 
 import { formatIDR } from "@/lib/format";
+import { formatQty } from "@/lib/units";
 import { addRecipeItem } from "./actions";
 import { SubmitButton } from "@/components/form-buttons";
 import { Input } from "@/components/ui/input";
@@ -115,7 +116,8 @@ export function AddRecipeItemForm({
         selected &&
         qty !== "" && (
           <p className="text-sm text-muted-foreground">
-            Biaya: {Number(qty || 0)} × {formatIDR(Number(selected.last_unit_cost))} ={" "}
+            = <span className="font-medium text-foreground">{formatQty(Number(qty || 0), selected.unit)}</span>
+            {" · "}biaya{" "}
             <span className="font-medium text-foreground">{formatIDR(subtotal)}</span>
           </p>
         )

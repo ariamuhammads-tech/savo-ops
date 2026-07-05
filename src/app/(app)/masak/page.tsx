@@ -4,6 +4,8 @@ import { ChefHat, Factory, Plus, ChevronRight } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatDate, formatNumber } from "@/lib/format";
+import { canonicalUnit, convertQty } from "@/lib/units";
+import { effectiveUnitCost } from "@/lib/hpp";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +34,7 @@ export default async function MasakPage() {
     supabase
       .from("recipes")
       .select(
-        "id, name, yield_qty, yield_unit, overhead_cost, product:products(name, unit), recipe_items(quantity, unit, ingredient:ingredients(name, unit, stock_qty, last_unit_cost))",
+        "id, name, yield_qty, yield_unit, overhead_cost, product:products(name, unit), recipe_items(quantity, unit, ingredient:ingredients(name, unit, stock_qty, last_unit_cost, avg_unit_cost))",
       )
       .order("created_at", { ascending: false }),
     supabase
@@ -55,13 +57,22 @@ export default async function MasakPage() {
       yieldUnit: rec.yield_unit ?? rec.product?.unit ?? "pack",
       overheadCost: Number(rec.overhead_cost),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      items: (rec.recipe_items ?? []).map((it: any) => ({
-        name: it.ingredient?.name ?? "Bahan",
-        unit: it.unit ?? it.ingredient?.unit ?? "",
-        perBatch: Number(it.quantity),
-        stock: Number(it.ingredient?.stock_qty ?? 0),
-        unitCost: Number(it.ingredient?.last_unit_cost ?? 0),
-      })),
+      items: (rec.recipe_items ?? []).map((it: any) => {
+        // Normalize the recipe quantity into the ingredient's own unit so the
+        // stock check, cost math, and display all speak one language — even
+        // for legacy rows saved as "g" while the ingredient is stocked in "kg".
+        const ingUnit = canonicalUnit(it.ingredient?.unit ?? it.unit ?? "");
+        const itemUnit = canonicalUnit(it.unit ?? ingUnit);
+        const perBatch =
+          convertQty(Number(it.quantity), itemUnit, ingUnit) ?? Number(it.quantity);
+        return {
+          name: it.ingredient?.name ?? "Bahan",
+          unit: ingUnit,
+          perBatch,
+          stock: Number(it.ingredient?.stock_qty ?? 0),
+          unitCost: effectiveUnitCost(it.ingredient),
+        };
+      }),
     };
   });
 

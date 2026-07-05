@@ -1,11 +1,12 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Trash2, Coins, Info } from "lucide-react";
+import { ArrowLeft, Trash2, Coins, Info, Factory } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatNumber } from "@/lib/format";
-import { calcHppTotal, calcHppPerUnit } from "@/lib/hpp";
+import { calcHppTotal, calcHppPerUnit, effectiveUnitCost } from "@/lib/hpp";
+import { canonicalUnit, convertQty, formatQty } from "@/lib/units";
 import { RecipeForm } from "../recipe-form";
 import { HppCalculator } from "../hpp-calculator";
 import { AddRecipeItemForm } from "../add-recipe-item-form";
@@ -40,7 +41,13 @@ type Detail = {
     id: string;
     quantity: number;
     unit: string | null;
-    ingredient: { id: string; name: string; unit: string; last_unit_cost: number } | null;
+    ingredient: {
+    id: string;
+    name: string;
+    unit: string;
+    last_unit_cost: number;
+    avg_unit_cost: number;
+  } | null;
   }[];
 };
 
@@ -52,37 +59,71 @@ export default async function ResepDetailPage({
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: recipeData }, { data: ingredientList }] = await Promise.all([
-    supabase
-      .from("recipes")
-      .select(
-        "id, product_id, name, yield_qty, yield_unit, overhead_cost, notes, product:products(name, unit, category, price_b2c, price_b2b), recipe_items(id, quantity, unit, ingredient:ingredients(id, name, unit, last_unit_cost))",
-      )
-      .eq("id", id)
-      .single(),
-    supabase
-      .from("ingredients")
-      .select("id, name, unit, last_unit_cost")
-      .order("name"),
-  ]);
+  const [{ data: recipeData }, { data: ingredientList }, { data: batchData }] =
+    await Promise.all([
+      supabase
+        .from("recipes")
+        .select(
+          "id, product_id, name, yield_qty, yield_unit, overhead_cost, notes, product:products(name, unit, category, price_b2c, price_b2b), recipe_items(id, quantity, unit, ingredient:ingredients(id, name, unit, last_unit_cost, avg_unit_cost))",
+        )
+        .eq("id", id)
+        .single(),
+      supabase
+        .from("ingredients")
+        .select("id, name, unit, last_unit_cost, avg_unit_cost")
+        .order("name"),
+      supabase
+        .from("production_batches")
+        .select("batch_count, produced_qty, hpp_per_unit")
+        .eq("recipe_id", id)
+        .order("created_at", { ascending: false })
+        .limit(10),
+    ]);
 
   if (!recipeData) notFound();
   const recipe = recipeData as unknown as Detail;
 
-  const items = recipe.recipe_items ?? [];
+  // Normalize every recipe quantity into the ingredient's own unit so cost
+  // math is always right (last_unit_cost is per ingredient unit), even for
+  // legacy rows saved in g while the ingredient is stocked in kg.
+  const items = (recipe.recipe_items ?? []).map((it) => {
+    const ingUnit = canonicalUnit(it.ingredient?.unit ?? it.unit ?? "");
+    const qty =
+      convertQty(Number(it.quantity), canonicalUnit(it.unit ?? ingUnit), ingUnit) ??
+      Number(it.quantity);
+    return { ...it, normQty: qty, normUnit: ingUnit };
+  });
   const materials = items.reduce(
-    (s, it) => s + Number(it.quantity) * Number(it.ingredient?.last_unit_cost ?? 0),
+    (s, it) => s + it.normQty * effectiveUnitCost(it.ingredient),
     0,
   );
   const hppTotal = calcHppTotal(
     items.map((it) => ({
-      quantity: Number(it.quantity),
-      unitCost: Number(it.ingredient?.last_unit_cost ?? 0),
+      quantity: it.normQty,
+      unitCost: effectiveUnitCost(it.ingredient),
     })),
     Number(recipe.overhead_cost),
   );
   const hppPerUnit = calcHppPerUnit(hppTotal, Number(recipe.yield_qty));
   const unit = recipe.product?.unit ?? "unit";
+
+  // ===== Production reality check (variable yield per batch) =====
+  // The recipe's yield is a STANDARD (estimate); each recorded production
+  // stores its real result + actual HPP. Compare the two so the owner can
+  // recalibrate the standard when reality drifts.
+  const batches = (batchData ?? []).filter(
+    (b) => Number(b.batch_count) > 0 && Number(b.produced_qty) > 0,
+  );
+  const totalBatches = batches.reduce((s, b) => s + Number(b.batch_count), 0);
+  const totalProduced = batches.reduce((s, b) => s + Number(b.produced_qty), 0);
+  const avgYield = totalBatches > 0 ? totalProduced / totalBatches : 0;
+  const avgHpp =
+    totalProduced > 0
+      ? batches.reduce(
+          (s, b) => s + Number(b.hpp_per_unit) * Number(b.produced_qty),
+          0,
+        ) / totalProduced
+      : 0;
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
@@ -149,6 +190,51 @@ export default async function ResepDetailPage({
         </CardContent>
       </Card>
 
+      {/* ===== Reality check: standard vs actual production ===== */}
+      {batches.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Factory className="size-5 text-primary" />
+              Realisasi Produksi
+              <span className="text-xs font-normal text-muted-foreground">
+                ({batches.length} produksi terakhir)
+              </span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-2 gap-2 text-center">
+              <div className="rounded-xl bg-secondary/60 p-3">
+                <p className="text-xs text-muted-foreground">Hasil nyata / batch</p>
+                <p className="font-serif text-xl font-bold">
+                  {formatNumber(avgYield, avgYield % 1 === 0 ? 0 : 1)}{" "}
+                  <span className="text-sm font-normal">{recipe.yield_unit ?? unit}</span>
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  standar {formatNumber(Number(recipe.yield_qty))}
+                </p>
+              </div>
+              <div className="rounded-xl bg-secondary/60 p-3">
+                <p className="text-xs text-muted-foreground">HPP nyata / {unit}</p>
+                <p className="font-serif text-xl font-bold">{formatIDR(avgHpp)}</p>
+                <p className="text-xs text-muted-foreground">
+                  standar {formatIDR(hppPerUnit)}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2 rounded-lg bg-secondary/60 p-3 text-xs text-muted-foreground">
+              <Info className="size-4 shrink-0 text-primary" />
+              <span>
+                Angka nyata dihitung otomatis dari hasil jadi yang dicatat di menu
+                Masak. Jika hasil nyata terus berbeda jauh dari standar, ubah
+                &quot;Hasil per batch&quot; di Detail Resep di bawah agar HPP standar
+                &amp; margin ikut menyesuaikan.
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* ===== Recipe items ===== */}
       <Card>
         <CardHeader>
@@ -162,8 +248,7 @@ export default async function ResepDetailPage({
           ) : (
             <ul className="divide-y divide-border">
               {items.map((it) => {
-                const cost =
-                  Number(it.quantity) * Number(it.ingredient?.last_unit_cost ?? 0);
+                const cost = it.normQty * effectiveUnitCost(it.ingredient);
                 return (
                   <li
                     key={it.id}
@@ -174,8 +259,7 @@ export default async function ResepDetailPage({
                         {it.ingredient?.name ?? "Bahan?"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {formatNumber(Number(it.quantity))} {it.unit ?? it.ingredient?.unit}{" "}
-                        · {formatIDR(cost)}
+                        {formatQty(it.normQty, it.normUnit)} · {formatIDR(cost)}
                       </p>
                     </div>
                     <form action={deleteRecipeItem}>
@@ -203,7 +287,8 @@ export default async function ResepDetailPage({
                 id: i.id,
                 name: i.name,
                 unit: i.unit,
-                last_unit_cost: Number(i.last_unit_cost),
+                // Cost shown/estimated in the form = the HPP cost basis.
+                last_unit_cost: effectiveUnitCost(i),
               }))}
             />
           </div>

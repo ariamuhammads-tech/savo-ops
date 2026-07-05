@@ -4,6 +4,8 @@ import { Plus, Search, Wheat, ChevronRight } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatNumber } from "@/lib/format";
+import { formatQty } from "@/lib/units";
+import { effectiveUnitCost } from "@/lib/hpp";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -74,10 +76,15 @@ export default async function BahanPage({
                       {low && <Badge variant="warning">Menipis</Badge>}
                     </div>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                      Stok {formatNumber(Number(item.stock_qty))} {item.unit}
-                      {Number(item.last_unit_cost) > 0 && (
-                        <> · {formatIDR(Number(item.last_unit_cost))}/{item.unit}</>
+                      Stok {formatQty(Number(item.stock_qty), item.unit)}
+                      {effectiveUnitCost(item) > 0 && (
+                        <> · modal {formatIDR(effectiveUnitCost(item))}/{item.unit}</>
                       )}
+                      {Number(item.last_unit_cost) > 0 &&
+                        Math.round(Number(item.last_unit_cost)) !==
+                          Math.round(effectiveUnitCost(item)) && (
+                          <> · beli terakhir {formatIDR(Number(item.last_unit_cost))}</>
+                        )}
                     </p>
                   </div>
                   <ChevronRight className="size-5 shrink-0 text-muted-foreground" />

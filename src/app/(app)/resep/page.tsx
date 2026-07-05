@@ -4,7 +4,8 @@ import { Plus, BookOpenCheck, ChevronRight } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatNumber } from "@/lib/format";
-import { calcHppTotal, calcHppPerUnit, calcMargin } from "@/lib/hpp";
+import { calcHppTotal, calcHppPerUnit, calcMargin, effectiveUnitCost } from "@/lib/hpp";
+import { canonicalUnit, convertQty } from "@/lib/units";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -18,7 +19,11 @@ type RecipeRow = {
   yield_qty: number;
   overhead_cost: number;
   product: { name: string; price_b2c: number; unit: string } | null;
-  recipe_items: { quantity: number; ingredient: { last_unit_cost: number } | null }[];
+  recipe_items: {
+    quantity: number;
+    unit: string | null;
+    ingredient: { unit: string; last_unit_cost: number; avg_unit_cost: number } | null;
+  }[];
 };
 
 export default async function ResepPage() {
@@ -26,7 +31,7 @@ export default async function ResepPage() {
   const { data } = await supabase
     .from("recipes")
     .select(
-      "id, name, yield_qty, overhead_cost, product:products(name, price_b2c, unit), recipe_items(quantity, ingredient:ingredients(last_unit_cost))",
+      "id, name, yield_qty, overhead_cost, product:products(name, price_b2c, unit), recipe_items(quantity, unit, ingredient:ingredients(unit, last_unit_cost, avg_unit_cost))",
     )
     .order("created_at", { ascending: false });
 
@@ -76,10 +81,18 @@ export default async function ResepPage() {
         <div className="space-y-2">
           {recipes.map((r) => {
             const hppTotal = calcHppTotal(
-              r.recipe_items.map((it) => ({
-                quantity: Number(it.quantity),
-                unitCost: Number(it.ingredient?.last_unit_cost ?? 0),
-              })),
+              r.recipe_items.map((it) => {
+                // Same normalization as the detail page: cost is per the
+                // ingredient's unit, so convert legacy g↔kg / ml↔l rows first.
+                const ingUnit = canonicalUnit(it.ingredient?.unit ?? it.unit ?? "");
+                const qty =
+                  convertQty(
+                    Number(it.quantity),
+                    canonicalUnit(it.unit ?? ingUnit),
+                    ingUnit,
+                  ) ?? Number(it.quantity);
+                return { quantity: qty, unitCost: effectiveUnitCost(it.ingredient) };
+              }),
               Number(r.overhead_cost),
             );
             const hppPerUnit = calcHppPerUnit(hppTotal, Number(r.yield_qty));

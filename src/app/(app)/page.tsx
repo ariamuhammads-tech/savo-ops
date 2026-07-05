@@ -12,6 +12,7 @@ import {
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatIDR, formatNumber, formatDate } from "@/lib/format";
+import { formatQty } from "@/lib/units";
 import { StoveFlames } from "@/components/stove-flames";
 import { cn } from "@/lib/utils";
 
@@ -211,7 +212,7 @@ function LowRow({
           <p className="truncate text-sm font-medium">{name}</p>
           <p className="text-xs text-muted-foreground">
             <span className="rounded bg-secondary px-1.5 py-0.5">{tag}</span> sisa{" "}
-            {formatNumber(qty, 0)} {unit} · min {formatNumber(min, 0)} {unit}
+            {formatQty(qty, unit)} · min {formatQty(min, unit)}
           </p>
         </div>
         <ArrowRight className="size-4 shrink-0 text-muted-foreground" />

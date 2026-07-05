@@ -60,6 +60,7 @@ export async function recordPurchase(
           name: nm,
           unit: l.unit || "g",
           last_unit_cost: Number(l.unit_cost) || 0,
+          avg_unit_cost: Number(l.unit_cost) || 0,
           notes: "Dari pembelian",
         })
         .select("id")
@@ -100,19 +101,36 @@ export async function recordPurchase(
   }));
   await supabase.from("purchase_items").insert(items);
 
-  // Apply to stock: increment qty, update last_unit_cost, log movement.
+  // Apply to stock: increment qty, roll the weighted-average cost, log movement.
   for (const l of lines) {
     if (!l.ingredient_id) continue;
     const { data: ing } = await supabase
       .from("ingredients")
-      .select("stock_qty")
+      .select("stock_qty, avg_unit_cost, last_unit_cost")
       .eq("id", l.ingredient_id)
       .single();
     if (!ing) continue;
-    const newQty = Number(ing.stock_qty) + Number(l.qty);
+    const qty = Number(l.qty);
+    const price = Number(l.unit_cost);
+    const newQty = Number(ing.stock_qty) + qty;
+
+    // Biaya rata-rata tertimbang: nilai stok lama dicampur dengan pembelian
+    // baru, sehingga HPP mengikuti harga terbaru TANPA memutus hubungan
+    // dengan stok lama yang masih ada.
+    //   avg_baru = (stok_lama × avg_lama + qty_beli × harga_beli) / total_qty
+    const oldQty = Math.max(0, Number(ing.stock_qty)); // stok minus: abaikan untuk biaya
+    const oldAvg =
+      Number(ing.avg_unit_cost) > 0
+        ? Number(ing.avg_unit_cost)
+        : Number(ing.last_unit_cost) > 0
+          ? Number(ing.last_unit_cost)
+          : price;
+    const newAvg =
+      oldQty + qty > 0 ? round2((oldQty * oldAvg + qty * price) / (oldQty + qty)) : price;
+
     await supabase
       .from("ingredients")
-      .update({ stock_qty: newQty, last_unit_cost: Number(l.unit_cost) })
+      .update({ stock_qty: newQty, last_unit_cost: price, avg_unit_cost: newAvg })
       .eq("id", l.ingredient_id);
     await supabase.from("stock_movements").insert({
       item_type: "ingredient",

@@ -63,6 +63,7 @@ export interface Database {
           stock_qty: number;
           min_stock: number;
           last_unit_cost: number;
+          avg_unit_cost: number;
           supplier_name: string | null;
           notes: string | null;
           created_at: string;
@@ -75,6 +76,7 @@ export interface Database {
           stock_qty?: number;
           min_stock?: number;
           last_unit_cost?: number;
+          avg_unit_cost?: number;
           supplier_name?: string | null;
           notes?: string | null;
           created_at?: string;
