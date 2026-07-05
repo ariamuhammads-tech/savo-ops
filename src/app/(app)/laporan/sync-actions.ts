@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isDemoMode } from "@/lib/demo";
 import { sheetGet, sheetReplace, sheetConfigured, type SheetRow } from "@/lib/gsheet";
 import {
   STATUS_LABEL,
@@ -404,6 +405,11 @@ async function runEntity(type: SyncType, admin: Admin): Promise<SyncResult> {
 
 export async function syncSheet(type: SyncType): Promise<SyncResult> {
   try {
+    // Demo mode trains against the sandbox schema; the Sheets bridge works on
+    // REAL data via the admin client — block it so latihan never mixes in.
+    if (await isDemoMode()) {
+      return { ok: false, error: "Sinkron Google Sheets nonaktif selama Mode Demo." };
+    }
     if (!sheetConfigured()) return { ok: false, error: "Google Sheets belum dihubungkan." };
     const supabase = await createClient();
     const {

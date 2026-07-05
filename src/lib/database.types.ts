@@ -503,6 +503,11 @@ export interface Database {
         Args: { p_name: string };
         Returns: number;
       };
+      // Lives in the demo schema; callable when the client runs in demo mode.
+      reset_demo: {
+        Args: Record<string, never>;
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

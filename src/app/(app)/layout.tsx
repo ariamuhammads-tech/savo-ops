@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { isDemoMode } from "@/lib/demo";
 import { AppShell } from "@/components/app-shell";
 
 export default async function AppLayout({
@@ -8,11 +9,18 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [
+    {
+      data: { user },
+    },
+    demo,
+  ] = await Promise.all([supabase.auth.getUser(), isDemoMode()]);
 
   if (!user) redirect("/login");
 
-  return <AppShell userEmail={user.email}>{children}</AppShell>;
+  return (
+    <AppShell userEmail={user.email} isDemo={demo}>
+      {children}
+    </AppShell>
+  );
 }

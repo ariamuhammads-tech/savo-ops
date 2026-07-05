@@ -22,11 +22,13 @@ import {
   LogOut,
   Menu as MenuIcon,
   X,
+  FlaskConical,
   type LucideIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { SavoLogo } from "@/components/savo-logo";
+import { endDemoMode } from "@/app/(app)/pengaturan/demo-actions";
 
 type NavItem = { href: string; label: string; icon: LucideIcon };
 type NavSection = { title: string; items: NavItem[] };
@@ -185,9 +187,11 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
 export function AppShell({
   children,
   userEmail,
+  isDemo = false,
 }: {
   children: React.ReactNode;
   userEmail?: string | null;
+  isDemo?: boolean;
 }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -266,6 +270,32 @@ export function AppShell({
       {/* ===== Main content ===== */}
       <div className="md:pl-72">
         <main className="mx-auto max-w-5xl px-4 py-5 pb-28 md:py-8 md:pb-10">
+          {isDemo && (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[color:var(--warning)]/50 bg-[color:var(--warning)]/10 px-3 py-2 text-sm">
+              <span className="flex items-center gap-2 font-semibold text-[color:var(--warning)]">
+                <FlaskConical className="size-4 shrink-0" />
+                MODE DEMO — data latihan, akan dihapus saat demo diakhiri
+              </span>
+              <form
+                action={endDemoMode}
+                onSubmit={(e) => {
+                  if (
+                    !window.confirm(
+                      "Akhiri mode demo? Semua data latihan akan dihapus permanen.",
+                    )
+                  )
+                    e.preventDefault();
+                }}
+              >
+                <button
+                  type="submit"
+                  className="rounded-lg border border-[color:var(--warning)]/50 px-2.5 py-1 text-xs font-semibold text-[color:var(--warning)] transition-colors hover:bg-[color:var(--warning)]/15"
+                >
+                  Akhiri Demo
+                </button>
+              </form>
+            </div>
+          )}
           <div key={pathname} className="savo-in">
             {children}
           </div>
