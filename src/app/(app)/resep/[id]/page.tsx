@@ -8,7 +8,7 @@ import { formatIDR, formatNumber } from "@/lib/format";
 import { calcHppTotal, calcHppPerUnit, effectiveUnitCost, actualHppStats } from "@/lib/hpp";
 import { canonicalUnit, convertQty, formatQty } from "@/lib/units";
 import { RecipeForm } from "../recipe-form";
-import { HppCalculator } from "../hpp-calculator";
+import { PriceSlider } from "@/components/price-slider";
 import { AddRecipeItemForm } from "../add-recipe-item-form";
 import { updateRecipe, deleteRecipe, deleteRecipeItem } from "../actions";
 import {
@@ -183,8 +183,9 @@ export default async function ResepDetailPage({
             />
           </div>
 
-          <HppCalculator
-            hppPerUnit={hppEstimasi}
+          <PriceSlider
+            productId={recipe.product_id}
+            hpp={hppEstimasi}
             priceB2C={Number(recipe.product?.price_b2c ?? 0)}
             priceB2B={Number(recipe.product?.price_b2b ?? 0)}
           />

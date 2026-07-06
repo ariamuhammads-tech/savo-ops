@@ -5,6 +5,9 @@ import { ArrowLeft, SlidersHorizontal, Trash2 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatNumber } from "@/lib/format";
+import { calcHppTotal, calcHppPerUnit, effectiveUnitCost } from "@/lib/hpp";
+import { canonicalUnit, convertQty } from "@/lib/units";
+import { PriceSlider } from "@/components/price-slider";
 import { ProductForm } from "../product-form";
 import { updateProduct, deleteProduct, adjustProductStock } from "../actions";
 import {
@@ -27,13 +30,40 @@ export default async function ProdukEditPage({
 }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { data: product } = await supabase
-    .from("products")
-    .select("*")
-    .eq("id", id)
-    .single();
+  const [{ data: product }, { data: recipeData }] = await Promise.all([
+    supabase.from("products").select("*").eq("id", id).single(),
+    // HPP estimasi dari resep produk ini (untuk slider harga).
+    supabase
+      .from("recipes")
+      .select(
+        "yield_qty, overhead_cost, recipe_items(quantity, unit, ingredient:ingredients(unit, last_unit_cost, avg_unit_cost))",
+      )
+      .eq("product_id", id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+  ]);
 
   if (!product) notFound();
+
+  // Perhitungan yang sama dengan halaman Resep (konversi satuan + modal rata-rata).
+  let hppEstimasi = 0;
+  if (recipeData) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rec = recipeData as any;
+    const hppTotal = calcHppTotal(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (rec.recipe_items ?? []).map((it: any) => {
+        const ingUnit = canonicalUnit(it.ingredient?.unit ?? it.unit ?? "");
+        const qty =
+          convertQty(Number(it.quantity), canonicalUnit(it.unit ?? ingUnit), ingUnit) ??
+          Number(it.quantity);
+        return { quantity: qty, unitCost: effectiveUnitCost(it.ingredient) };
+      }),
+      Number(rec.overhead_cost),
+    );
+    hppEstimasi = calcHppPerUnit(hppTotal, Number(rec.yield_qty));
+  }
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
@@ -52,6 +82,32 @@ export default async function ProdukEditPage({
       <h1 className="font-serif text-2xl font-bold tracking-tight">
         {product.name}
       </h1>
+
+      {/* Harga & margin (review 2026-07-06 #2: slider juga di Produk) */}
+      <Card className="border-primary/30">
+        <CardHeader>
+          <CardTitle className="text-base">Harga &amp; Margin</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {recipeData ? (
+            <PriceSlider
+              productId={product.id}
+              hpp={hppEstimasi}
+              priceB2C={Number(product.price_b2c)}
+              priceB2B={Number(product.price_b2b)}
+            />
+          ) : (
+            <p className="rounded-lg bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
+              Produk ini belum punya resep, jadi HPP belum bisa dihitung. Buat
+              resepnya di menu{" "}
+              <Link href="/resep" className="font-medium text-primary underline">
+                Resep &amp; HPP
+              </Link>{" "}
+              untuk memakai saran harga.
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Stock adjustment */}
       <Card>

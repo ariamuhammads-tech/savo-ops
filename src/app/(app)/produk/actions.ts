@@ -162,3 +162,35 @@ export async function adjustProductStock(formData: FormData) {
   revalidatePath(`/produk/${id}`);
   redirect("/produk?msg=" + encodeURIComponent("Stok disesuaikan."));
 }
+
+/**
+ * Terapkan harga jual baru dari slider target margin (review 2026-07-06 #2).
+ * Dipanggil dari PriceSlider di halaman Resep & Produk.
+ */
+export async function applyPricesFromMargin(
+  productId: string,
+  priceB2c: number,
+  priceB2b: number,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const b2c = Number(priceB2c);
+  const b2b = Number(priceB2b);
+  if (!productId || !Number.isFinite(b2c) || !Number.isFinite(b2b) || b2c < 0 || b2b < 0) {
+    return { ok: false, error: "Harga tidak valid." };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "Sesi berakhir. Muat ulang halaman." };
+
+  const { error } = await supabase
+    .from("products")
+    .update({ price_b2c: b2c, price_b2b: b2b })
+    .eq("id", productId);
+  if (error) return { ok: false, error: "Gagal menyimpan: " + error.message };
+
+  revalidatePath("/produk");
+  revalidatePath("/resep");
+  return { ok: true };
+}
