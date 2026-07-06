@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { Plus, Search, Users, ChevronRight } from "lucide-react";
+import { Plus, Search, Users, ChevronRight, FileSpreadsheet, FileText } from "lucide-react";
 
 import type { Customer } from "@/lib/database.types";
 import { Button } from "@/components/ui/button";
@@ -38,6 +38,23 @@ export function CustomerList({ customers }: { customers: Customer[] }) {
             <Plus />
             Tambah
           </Link>
+        </Button>
+      </div>
+
+      {/* Ekspor data pelanggan (review 2026-07-06) */}
+      <div className="flex gap-2">
+        <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API route unduhan file, bukan halaman */}
+          <a href="/api/export/pelanggan">
+            <FileSpreadsheet />
+            Ekspor Excel
+          </a>
+        </Button>
+        <Button asChild variant="outline" size="sm" className="flex-1 sm:flex-none">
+          <a href="/api/pelanggan-pdf" target="_blank" rel="noopener noreferrer">
+            <FileText />
+            Ekspor PDF
+          </a>
         </Button>
       </div>
 

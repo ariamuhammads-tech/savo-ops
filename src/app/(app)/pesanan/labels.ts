@@ -13,9 +13,11 @@ export const ORDER_STATUSES = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
+// Review 2026-07-06: istilah mengikuti alur dokumen penjualan —
+// Draf Penawaran → Sales Order → (produksi/kirim) → Selesai, atau Batal.
 export const STATUS_LABEL: Record<OrderStatus, string> = {
-  draft: "Draf",
-  confirmed: "Dikonfirmasi",
+  draft: "Draf Penawaran",
+  confirmed: "Sales Order",
   in_production: "Produksi",
   ready: "Siap",
   delivered: "Dikirim",

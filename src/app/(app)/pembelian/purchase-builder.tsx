@@ -4,6 +4,7 @@ import { useActionState, useMemo, useState } from "react";
 import { Plus, Trash2, ShoppingBag } from "lucide-react";
 
 import { formatIDR } from "@/lib/format";
+import { canonicalUnit, convertQty, formatQty } from "@/lib/units";
 import { recordPurchase, type FormState } from "./actions";
 import { SubmitButton } from "@/components/form-buttons";
 import { Input } from "@/components/ui/input";
@@ -25,10 +26,20 @@ type Line = {
   newUnit: string;
   qty: string;
   unitCost: string;
+  /** Satuan yang dipakai saat MEMBELI — bisa beda dari satuan induk bahan. */
+  buyUnit: string;
 };
 
 const UNITS = ["g", "kg", "ml", "l", "pcs"];
 const NEW = "__new__";
+
+/** Buy-unit choices for a master unit: its weight/volume family, else itself. */
+function buyUnitOptions(masterUnit: string): string[] {
+  const u = canonicalUnit(masterUnit);
+  if (u === "g" || u === "kg") return ["g", "kg"];
+  if (u === "ml" || u === "l") return ["ml", "l"];
+  return [u || "pcs"];
+}
 const initial: FormState = { error: null };
 let counter = 1;
 
@@ -48,7 +59,7 @@ export function PurchaseBuilder({
   function addLine() {
     setLines((l) => [
       ...l,
-      { key: counter++, ingredientId: "", newName: "", newUnit: "g", qty: "1", unitCost: "0" },
+      { key: counter++, ingredientId: "", newName: "", newUnit: "g", qty: "1", unitCost: "0", buyUnit: "" },
     ]);
   }
   function removeLine(key: number) {
@@ -59,12 +70,22 @@ export function PurchaseBuilder({
     setLines((l) =>
       l.map((x) =>
         x.key === key
-          ? { ...x, ingredientId, unitCost: ing ? String(ing.last_unit_cost) : x.unitCost }
+          ? {
+              ...x,
+              ingredientId,
+              unitCost: ing ? String(ing.last_unit_cost) : x.unitCost,
+              // default: beli dalam satuan induk bahan
+              buyUnit: ing ? canonicalUnit(ing.unit) : "",
+            }
           : x,
       ),
     );
   }
-  function setField(key: number, field: "qty" | "unitCost" | "newName" | "newUnit", value: string) {
+  function setField(
+    key: number,
+    field: "qty" | "unitCost" | "newName" | "newUnit" | "buyUnit",
+    value: string,
+  ) {
     setLines((l) => l.map((x) => (x.key === key ? { ...x, [field]: value } : x)));
   }
 
@@ -95,6 +116,7 @@ export function PurchaseBuilder({
           ingredient_id: l.ingredientId,
           name: ing?.name ?? "",
           unit: ing?.unit ?? null,
+          buy_unit: l.buyUnit || canonicalUnit(ing?.unit ?? ""),
           qty: Number(l.qty),
           unit_cost: Number(l.unitCost),
         };
@@ -142,8 +164,16 @@ export function PurchaseBuilder({
           {lines.map((l) => {
             const isNew = l.ingredientId === NEW;
             const ing = ingredients.find((x) => x.id === l.ingredientId);
-            const unitLabel = isNew ? l.newUnit : (ing?.unit ?? "satuan");
+            const masterUnit = isNew ? l.newUnit : canonicalUnit(ing?.unit ?? "");
+            const unitChoices = isNew ? [l.newUnit] : buyUnitOptions(masterUnit);
+            const buyUnit = isNew ? l.newUnit : l.buyUnit || masterUnit;
+            const unitLabel = buyUnit || "satuan";
             const lineTotal = Number(l.qty || 0) * Number(l.unitCost || 0);
+            // Preview konversi ke satuan induk bila satuan beli berbeda.
+            const qtyMaster =
+              !isNew && ing && buyUnit !== masterUnit
+                ? convertQty(Number(l.qty || 0), buyUnit, masterUnit)
+                : null;
             return (
               <div key={l.key} className="rounded-lg border border-border p-3">
                 <div className="mb-2 flex items-start gap-2">
@@ -180,10 +210,24 @@ export function PurchaseBuilder({
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <div className="space-y-1">
-                    <Label className="text-xs">Jumlah ({unitLabel})</Label>
+                    <Label className="text-xs">Jumlah</Label>
                     <Input type="number" inputMode="decimal" min="0" step="any" value={l.qty} onChange={(e) => setField(l.key, "qty", e.target.value)} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Satuan beli</Label>
+                    {unitChoices.length > 1 ? (
+                      <Select value={buyUnit} onChange={(e) => setField(l.key, "buyUnit", e.target.value)}>
+                        {unitChoices.map((u) => (
+                          <option key={u} value={u}>{u}</option>
+                        ))}
+                      </Select>
+                    ) : (
+                      <div className="flex h-11 items-center rounded-lg border border-border/70 bg-secondary/40 px-3.5 text-sm text-muted-foreground">
+                        {unitLabel}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">Harga / {unitLabel}</Label>
@@ -191,6 +235,11 @@ export function PurchaseBuilder({
                   </div>
                 </div>
                 <p className="mt-2 text-right text-sm text-muted-foreground">
+                  {qtyMaster !== null && qtyMaster !== undefined && (
+                    <span className="mr-2 rounded bg-secondary px-1.5 py-0.5 text-xs">
+                      = {formatQty(qtyMaster, masterUnit)} (satuan induk)
+                    </span>
+                  )}
                   Subtotal: <span className="font-medium text-foreground">{formatIDR(lineTotal)}</span>
                 </p>
               </div>

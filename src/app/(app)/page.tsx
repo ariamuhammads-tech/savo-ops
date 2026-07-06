@@ -3,6 +3,7 @@ import {
   Package,
   Wheat,
   TriangleAlert,
+  Timer,
   ArrowRight,
   TrendingUp,
   CalendarDays,
@@ -29,14 +30,31 @@ export default async function DashboardPage() {
     { data: ingredients },
     { data: orders },
     { data: items },
+    { data: payments },
+    { data: purchases },
+    { data: expenses },
+    { data: buyMoves },
   ] = await Promise.all([
     supabase.from("products").select("id, name, unit, stock_qty, min_stock"),
-    supabase.from("ingredients").select("id, name, unit, stock_qty, min_stock"),
+    supabase
+      .from("ingredients")
+      .select("id, name, unit, stock_qty, min_stock, shelf_life_days"),
     supabase.from("orders").select("order_date, total, status, payment_status"),
     supabase
       .from("order_items")
       .select("name, qty, order:orders(order_date, status)")
       .limit(2000),
+    supabase.from("payments").select("amount, paid_at").eq("status", "settled"),
+    supabase.from("purchases").select("total, purchase_date"),
+    supabase.from("expenses").select("amount, expense_date"),
+    // Pembelian terakhir per bahan — dasar "timer" masa segar.
+    supabase
+      .from("stock_movements")
+      .select("item_id, created_at")
+      .eq("item_type", "ingredient")
+      .eq("movement_type", "purchase")
+      .order("created_at", { ascending: false })
+      .limit(500),
   ]);
 
   const activeOrders = (orders ?? []).filter((o) => o.status !== "cancelled");
@@ -71,6 +89,42 @@ export default async function DashboardPage() {
     (i) => Number(i.stock_qty) <= Number(i.min_stock) && Number(i.min_stock) > 0,
   );
 
+  // Keuangan bulan ini (ringkas — tap menuju rinciannya).
+  const inThisMonth = (d: string | null | undefined) =>
+    String(d ?? "").slice(0, 10) >= monthStart;
+  const cashIn = (payments ?? [])
+    .filter((p) => inThisMonth(p.paid_at))
+    .reduce((s, p) => s + Number(p.amount), 0);
+  const cashOut =
+    (purchases ?? [])
+      .filter((p) => inThisMonth(p.purchase_date))
+      .reduce((s, p) => s + Number(p.total), 0) +
+    (expenses ?? [])
+      .filter((e) => inThisMonth(e.expense_date))
+      .reduce((s, e) => s + Number(e.amount), 0);
+
+  // Timer masa segar: umur bahan sejak pembelian terakhir vs shelf_life_days.
+  const lastBuy = new Map<string, string>();
+  for (const m of buyMoves ?? []) {
+    if (m.item_id && !lastBuy.has(m.item_id)) lastBuy.set(m.item_id, m.created_at);
+  }
+  const nowMs = Date.now();
+  const staleIngredients: {
+    id: string;
+    name: string;
+    shelfDays: number;
+    ageDays: number;
+  }[] = [];
+  for (const i of ingredients ?? []) {
+    const shelfDays = Number(i.shelf_life_days ?? 0);
+    if (shelfDays <= 0 || Number(i.stock_qty) <= 0) continue;
+    const bought = lastBuy.get(i.id);
+    if (!bought) continue;
+    const ageDays = Math.floor((nowMs - Date.parse(bought)) / 86400000);
+    if (ageDays > shelfDays)
+      staleIngredients.push({ id: i.id, name: i.name, shelfDays, ageDays });
+  }
+
   return (
     <div className="space-y-6">
       <StoveFlames intensity={0.55} />
@@ -98,6 +152,87 @@ export default async function DashboardPage() {
         <Kpi icon={<Package className="size-5 text-primary" />} label="Produk" value={formatNumber(products?.length ?? 0)} href="/produk" />
         <Kpi icon={<Wheat className="size-5 text-primary" />} label="Bahan Baku" value={formatNumber(ingredients?.length ?? 0)} href="/bahan" />
       </div>
+
+      {/* Keuangan bulan ini — tap menuju rincian (review 2026-07-06) */}
+      <Link href="/keuangan/laba-rugi" className="block">
+        <Card className="savo-lift hover:border-primary/40">
+          <CardContent className="p-4">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground">
+                Keuangan bulan ini
+              </p>
+              <ArrowRight className="size-4 text-muted-foreground" />
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div>
+                <p className="text-[11px] text-muted-foreground">Masuk</p>
+                <p className="text-sm font-semibold text-[color:var(--success)]">
+                  {formatIDR(cashIn)}
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">Keluar</p>
+                <p className="text-sm font-semibold text-destructive">
+                  {formatIDR(cashOut)}
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] text-muted-foreground">Laba</p>
+                <p
+                  className={cn(
+                    "text-sm font-semibold",
+                    cashIn - cashOut < 0
+                      ? "text-destructive"
+                      : "text-[color:var(--success)]",
+                  )}
+                >
+                  {formatIDR(cashIn - cashOut)}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
+
+      {/* Timer kesegaran bahan (review 2026-07-06) */}
+      {staleIngredients.length > 0 && (
+        <Card className="border-[color:var(--warning)]/40">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Timer className="size-5 text-warning" />
+              Cek Kesegaran Bahan
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="divide-y divide-border">
+              {staleIngredients.map((i) => (
+                <li key={i.id}>
+                  <Link
+                    href={`/bahan/${i.id}`}
+                    className="flex items-center justify-between py-2.5 hover:opacity-80"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{i.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        umur {i.ageDays} hari sejak beli terakhir · masa segar{" "}
+                        {i.shelfDays} hari
+                      </p>
+                    </div>
+                    <ArrowRight className="size-4 shrink-0 text-muted-foreground" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Cek fisik bahan-bahan ini; bila rusak, catat lewat{" "}
+              <Link href="/opname" className="font-medium text-primary underline">
+                Stock Opname
+              </Link>
+              .
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Top products */}
       {topProducts.length > 0 && (

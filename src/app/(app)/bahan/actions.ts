@@ -9,21 +9,26 @@ export type FormState = { error: string | null };
 
 const ingredientSchema = z.object({
   name: z.string().trim().min(1, "Nama bahan wajib diisi."),
-  unit: z.string().trim().min(1, "Satuan wajib dipilih."),
-  stock_qty: z.coerce.number().min(0, "Stok tidak boleh negatif."),
+  // Optional: absent on edit — unit & stock are locked there (review 2026-07-06:
+  // stock only moves via pembelian/produksi/opname, unit is immutable).
+  unit: z.string().trim().min(1).optional(),
+  stock_qty: z.coerce.number().min(0, "Stok tidak boleh negatif.").optional(),
   min_stock: z.coerce.number().min(0, "Stok minimum tidak boleh negatif."),
   last_unit_cost: z.coerce.number().min(0, "Harga tidak boleh negatif."),
+  shelf_life_days: z.coerce.number().int().min(0).nullable(),
   supplier_name: z.string().trim().optional(),
   notes: z.string().trim().optional(),
 });
 
 function parse(formData: FormData) {
+  const shelfRaw = String(formData.get("shelf_life_days") ?? "").trim();
   return ingredientSchema.safeParse({
     name: formData.get("name"),
-    unit: formData.get("unit"),
-    stock_qty: formData.get("stock_qty") || 0,
+    unit: formData.get("unit") ?? undefined,
+    stock_qty: formData.get("stock_qty") ?? undefined,
     min_stock: formData.get("min_stock") || 0,
     last_unit_cost: formData.get("last_unit_cost") || 0,
+    shelf_life_days: shelfRaw === "" ? null : shelfRaw,
     supplier_name: formData.get("supplier_name") || undefined,
     notes: formData.get("notes") || undefined,
   });
@@ -41,6 +46,8 @@ export async function createIngredient(
   const supabase = await createClient();
   const { error } = await supabase.from("ingredients").insert({
     ...parsed.data,
+    unit: parsed.data.unit ?? "g",
+    stock_qty: parsed.data.stock_qty ?? 0,
     // Bahan baru: rata-rata tertimbang mulai dari harga yang diisi.
     avg_unit_cost: parsed.data.last_unit_cost,
     supplier_name: parsed.data.supplier_name || null,
@@ -77,10 +84,21 @@ export async function updateIngredient(
   const priceChanged =
     !current || Number(current.last_unit_cost) !== parsed.data.last_unit_cost;
 
+  // Review 2026-07-06: unit & stock are NEVER updated from this form —
+  // stock moves only via pembelian/produksi/opname so every change has a
+  // recorded reason; unit is immutable to keep recipes & history consistent.
+  const {
+    unit: _unit,
+    stock_qty: _stock,
+    ...safe
+  } = parsed.data;
+  void _unit;
+  void _stock;
+
   const { error } = await supabase
     .from("ingredients")
     .update({
-      ...parsed.data,
+      ...safe,
       ...(priceChanged ? { avg_unit_cost: parsed.data.last_unit_cost } : {}),
       supplier_name: parsed.data.supplier_name || null,
       notes: parsed.data.notes || null,

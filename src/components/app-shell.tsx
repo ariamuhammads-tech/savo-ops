@@ -11,6 +11,7 @@ import {
   BookOpenCheck,
   Users,
   ClipboardList,
+  ClipboardCheck,
   Wallet,
   ReceiptText,
   BarChart3,
@@ -49,6 +50,7 @@ const SECTIONS: NavSection[] = [
     items: [
       { href: "/produk", label: "Produk", icon: Package },
       { href: "/bahan", label: "Bahan Baku", icon: Wheat },
+      { href: "/opname", label: "Stock Opname", icon: ClipboardCheck },
       { href: "/resep", label: "Resep & HPP", icon: BookOpenCheck },
     ],
   },

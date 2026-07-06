@@ -67,15 +67,16 @@ export function RecipeForm({
         </div>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="name">Nama resep</Label>
-        <Input
-          id="name"
-          name="name"
-          defaultValue={recipe?.name ?? "Resep Standar"}
-          placeholder="Resep Standar"
-        />
-      </div>
+      {/* Review 2026-07-06: nama resep mengikuti varian/SKU produk — bukan teks
+          bebas. Varian baru = tambah SKU di menu Produk, lalu buat resepnya. */}
+      <input type="hidden" name="name" value={recipe?.name ?? "Resep Standar"} />
+      {!isEdit && (
+        <p className="rounded-lg bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
+          Satu produk (SKU) = satu resep standar. Untuk varian baru (mis. rasa
+          lain), tambah SKU-nya dulu di menu <b>Produk</b>, lalu buat resep untuk
+          SKU tersebut.
+        </p>
+      )}
 
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">

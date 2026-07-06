@@ -121,12 +121,11 @@ export default async function ResepPage() {
               Number(r.overhead_cost),
             );
             const hppPerUnit = calcHppPerUnit(hppTotal, Number(r.yield_qty));
-            // Effective HPP: actual production average when available,
-            // recipe standard otherwise — same rule as the detail page.
+            // Estimasi (harga bahan terkini) = acuan margin; aktual tampil
+            // berdampingan bila resep pernah diproduksi. (Review 2026-07-06)
             const stats = actualHppStats(batchesByRecipe.get(r.id) ?? []);
-            const hppEffective = stats.count > 0 ? stats.avgHpp : hppPerUnit;
             const price = Number(r.product?.price_b2c ?? 0);
-            const margin = calcMargin(price, hppEffective);
+            const margin = calcMargin(price, hppPerUnit);
             return (
               <Link key={r.id} href={`/resep/${r.id}`}>
                 <Card className="flex items-center justify-between gap-3 p-3.5 transition-colors hover:border-primary/40">
@@ -135,11 +134,13 @@ export default async function ResepPage() {
                       {r.product?.name ?? "Produk?"}
                     </p>
                     <p className="mt-0.5 text-sm text-muted-foreground">
-                      HPP {formatIDR(hppEffective)}/{r.product?.unit ?? "unit"}
-                      <span className="text-xs">
-                        {" "}
-                        ({stats.count > 0 ? "nyata" : "standar"})
-                      </span>
+                      HPP est {formatIDR(hppPerUnit)}/{r.product?.unit ?? "unit"}
+                      {stats.count > 0 && (
+                        <span className="text-xs">
+                          {" "}
+                          · aktual {formatIDR(stats.avgHpp)}
+                        </span>
+                      )}
                       {price > 0 && (
                         <>
                           {" · "}

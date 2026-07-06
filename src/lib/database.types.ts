@@ -64,6 +64,7 @@ export interface Database {
           min_stock: number;
           last_unit_cost: number;
           avg_unit_cost: number;
+          shelf_life_days: number | null;
           supplier_name: string | null;
           notes: string | null;
           created_at: string;
@@ -77,6 +78,7 @@ export interface Database {
           min_stock?: number;
           last_unit_cost?: number;
           avg_unit_cost?: number;
+          shelf_life_days?: number | null;
           supplier_name?: string | null;
           notes?: string | null;
           created_at?: string;

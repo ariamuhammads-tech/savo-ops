@@ -277,28 +277,65 @@ export default async function PesananDetailPage({
         </CardContent>
       </Card>
 
-      {/* Invoice */}
+      {/* Dokumen per status: Penawaran → Sales Order → Invoice (review 2026-07-06) */}
       <Card>
-        <CardContent className="flex items-center justify-between gap-3 pt-6">
+        <CardContent className="space-y-3 pt-6">
           <div className="flex items-center gap-2">
             <ReceiptText className="size-5 text-primary" />
-            <div>
-              <p className="text-sm font-medium">Invoice</p>
-              <p className="text-xs text-muted-foreground">
-                {invoice ? invoice.invoice_no : "Belum dibuat"}
-              </p>
-            </div>
+            <p className="text-sm font-medium">Dokumen Pesanan</p>
           </div>
-          {invoice ? (
-            <Button asChild variant="secondary">
-              <Link href={`/invoice/${invoice.id}`}>Lihat Invoice</Link>
+          <p className="text-xs text-muted-foreground">
+            Penawaran untuk follow-up harga · Sales Order sebagai bukti konfirmasi
+            &amp; finalisasi nominal · Invoice untuk penagihan.
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <Button asChild variant="outline" className="w-full">
+              <a
+                href={`/api/dokumen/${order.id}?jenis=penawaran`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Penawaran (PDF)
+              </a>
             </Button>
-          ) : (
-            <form action={createInvoiceFromOrder}>
-              <input type="hidden" name="order_id" value={order.id} />
-              <SubmitButton>Buat Invoice</SubmitButton>
-            </form>
+            <Button
+              asChild
+              variant="outline"
+              className={
+                order.status === "draft" || order.status === "cancelled"
+                  ? "pointer-events-none w-full opacity-40"
+                  : "w-full"
+              }
+            >
+              <a
+                href={`/api/dokumen/${order.id}?jenis=sales-order`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Sales Order (PDF)
+              </a>
+            </Button>
+          </div>
+          {order.status === "draft" && (
+            <p className="text-xs text-muted-foreground">
+              Sales Order tersedia setelah pesanan dikonfirmasi.
+            </p>
           )}
+          <div className="flex items-center justify-between gap-3 border-t border-border pt-3">
+            <p className="text-xs text-muted-foreground">
+              Invoice: {invoice ? invoice.invoice_no : "belum dibuat"}
+            </p>
+            {invoice ? (
+              <Button asChild variant="secondary">
+                <Link href={`/invoice/${invoice.id}`}>Lihat Invoice</Link>
+              </Button>
+            ) : (
+              <form action={createInvoiceFromOrder}>
+                <input type="hidden" name="order_id" value={order.id} />
+                <SubmitButton>Buat Invoice</SubmitButton>
+              </form>
+            )}
+          </div>
         </CardContent>
       </Card>
 

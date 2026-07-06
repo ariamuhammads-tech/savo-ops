@@ -108,13 +108,17 @@ export default async function ResepDetailPage({
   const unit = recipe.product?.unit ?? "unit";
 
   // ===== Effective HPP: reality-first, standard as fallback =====
-  // The recipe's yield/HPP is the STANDARD (stable pricing basis, never
-  // auto-mutated). Each recorded production stores its real result + actual
-  // HPP; the EFFECTIVE HPP shown & used for margin follows that reality
-  // automatically, falling back to the standard when nothing was produced yet.
+  // Review 2026-07-06 — dua angka HPP tampil berdampingan:
+  //  • HPP ESTIMASI: resep standar × harga bahan TERKINI (langsung bergerak
+  //    saat harga beli berubah) → dasar margin & saran harga.
+  //  • HPP AKTUAL: hasil produksi terakhir yang tercatat (plus rata-rata).
   const stats = actualHppStats(batchData ?? []);
   const hasActual = stats.count > 0;
-  const hppEffective = hasActual ? stats.avgHpp : hppPerUnit;
+  const hppEstimasi = hppPerUnit;
+  const lastActual = (batchData ?? []).find(
+    (b) => Number(b.batch_count) > 0 && Number(b.produced_qty) > 0,
+  );
+  const hppAktual = lastActual ? Number(lastActual.hpp_per_unit) : null;
 
   return (
     <div className="mx-auto max-w-xl space-y-4">
@@ -146,16 +150,27 @@ export default async function ResepDetailPage({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="rounded-xl bg-secondary/60 p-4 text-center">
-            <p className="text-sm text-muted-foreground">HPP per {unit}</p>
-            <p className="font-serif text-3xl font-bold text-primary">
-              {formatIDR(hppEffective)}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {hasActual
-                ? `otomatis dari ${stats.count} produksi nyata terakhir`
-                : "dari resep standar — belum ada produksi tercatat"}
-            </p>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="rounded-xl bg-secondary/60 p-4 text-center">
+              <p className="text-xs text-muted-foreground">HPP Estimasi / {unit}</p>
+              <p className="font-serif text-2xl font-bold text-primary">
+                {formatIDR(hppEstimasi)}
+              </p>
+              <p className="mt-1 text-[11px] leading-tight text-muted-foreground">
+                harga bahan terkini — langsung berubah saat harga beli berubah
+              </p>
+            </div>
+            <div className="rounded-xl bg-secondary/60 p-4 text-center">
+              <p className="text-xs text-muted-foreground">HPP Aktual / {unit}</p>
+              <p className="font-serif text-2xl font-bold">
+                {hppAktual !== null ? formatIDR(hppAktual) : "—"}
+              </p>
+              <p className="mt-1 text-[11px] leading-tight text-muted-foreground">
+                {hppAktual !== null
+                  ? `produksi terakhir · rata-rata ${stats.count}×: ${formatIDR(stats.avgHpp)}`
+                  : "belum ada produksi tercatat"}
+              </p>
+            </div>
           </div>
 
           <div className="space-y-1.5 text-sm">
@@ -166,13 +181,10 @@ export default async function ResepDetailPage({
               label="Hasil per batch (standar)"
               value={`${formatNumber(Number(recipe.yield_qty))} ${recipe.yield_unit ?? unit}`}
             />
-            {hasActual && (
-              <Row label="HPP standar resep" value={formatIDR(hppPerUnit)} />
-            )}
           </div>
 
           <HppCalculator
-            hppPerUnit={hppEffective}
+            hppPerUnit={hppEstimasi}
             priceB2C={Number(recipe.product?.price_b2c ?? 0)}
             priceB2B={Number(recipe.product?.price_b2b ?? 0)}
           />
@@ -224,10 +236,10 @@ export default async function ResepDetailPage({
             <div className="flex gap-2 rounded-lg bg-secondary/60 p-3 text-xs text-muted-foreground">
               <Info className="size-4 shrink-0 text-primary" />
               <span>
-                HPP utama di atas otomatis mengikuti angka nyata ini setiap kali
-                produksi dicatat di menu Masak. Resep standar tidak berubah
-                sendiri — ubah &quot;Hasil per batch&quot; di Detail Resep hanya
-                jika standar kerjanya memang mau dikoreksi.
+                Kotak &quot;HPP Aktual&quot; di atas otomatis terisi setiap kali
+                produksi dicatat di menu Masak. Bandingkan dengan HPP Estimasi:
+                jika terus berbeda jauh, koreksi &quot;Hasil per batch&quot; di
+                Detail Resep di bawah.
               </span>
             </div>
           </CardContent>
@@ -313,6 +325,11 @@ export default async function ResepDetailPage({
             }}
             productName={recipe.product?.name}
           />
+          <p className="mt-3 rounded-lg bg-secondary/60 px-3 py-2 text-xs text-muted-foreground">
+            Mengubah resep hanya memengaruhi perhitungan <b>ke depan</b> (HPP
+            estimasi, kalkulator Masak). Catatan produksi &amp; HPP aktual yang
+            sudah tersimpan tidak ikut berubah.
+          </p>
         </CardContent>
       </Card>
 

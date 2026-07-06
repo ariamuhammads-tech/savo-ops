@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { convertQty } from "@/lib/units";
 
 export type FormState = { error: string | null };
 
@@ -10,6 +11,8 @@ type LineInput = {
   ingredient_id: string | null;
   name: string;
   unit?: string | null;
+  /** Satuan saat membeli (bisa beda keluarga g/kg, ml/l dari satuan induk). */
+  buy_unit?: string | null;
   qty: number;
   unit_cost: number;
 };
@@ -91,18 +94,42 @@ export async function recordPurchase(
     .single();
   if (error || !purchase) return { error: "Gagal menyimpan: " + (error?.message ?? "") };
 
-  const items = lines.map((l) => ({
+  // Konversi setiap baris ke SATUAN INDUK bahan sebelum apa pun disimpan
+  // (review 2026-07-06: satuan pembelian bisa beda — mis. beli gram untuk
+  // bahan ber-satuan kg). Subtotal rupiah tidak berubah oleh konversi.
+  const prepared: {
+    l: LineInput;
+    qtyMaster: number;
+    pricePerMaster: number;
+  }[] = [];
+  for (const l of lines) {
+    if (!l.ingredient_id) continue;
+    const { data: ingUnitRow } = await supabase
+      .from("ingredients")
+      .select("unit")
+      .eq("id", l.ingredient_id)
+      .single();
+    const masterUnit = ingUnitRow?.unit ?? l.unit ?? "";
+    const qty = Number(l.qty);
+    const price = Number(l.unit_cost);
+    const qtyMaster = convertQty(qty, l.buy_unit ?? masterUnit, masterUnit) ?? qty;
+    const pricePerMaster =
+      qtyMaster > 0 ? round2((qty * price) / qtyMaster) : price;
+    prepared.push({ l, qtyMaster, pricePerMaster });
+  }
+
+  const items = prepared.map(({ l, qtyMaster, pricePerMaster }) => ({
     purchase_id: purchase.id,
     ingredient_id: l.ingredient_id,
     name: l.name,
-    qty: Number(l.qty),
-    unit_cost: Number(l.unit_cost),
+    qty: qtyMaster,
+    unit_cost: pricePerMaster,
     subtotal: round2(Number(l.qty) * Number(l.unit_cost)),
   }));
   await supabase.from("purchase_items").insert(items);
 
   // Apply to stock: increment qty, roll the weighted-average cost, log movement.
-  for (const l of lines) {
+  for (const { l, qtyMaster, pricePerMaster } of prepared) {
     if (!l.ingredient_id) continue;
     const { data: ing } = await supabase
       .from("ingredients")
@@ -110,8 +137,8 @@ export async function recordPurchase(
       .eq("id", l.ingredient_id)
       .single();
     if (!ing) continue;
-    const qty = Number(l.qty);
-    const price = Number(l.unit_cost);
+    const qty = qtyMaster;
+    const price = pricePerMaster;
     const newQty = Number(ing.stock_qty) + qty;
 
     // Biaya rata-rata tertimbang: nilai stok lama dicampur dengan pembelian
@@ -130,13 +157,19 @@ export async function recordPurchase(
 
     await supabase
       .from("ingredients")
-      .update({ stock_qty: newQty, last_unit_cost: price, avg_unit_cost: newAvg })
+      .update({
+        stock_qty: newQty,
+        last_unit_cost: price,
+        avg_unit_cost: newAvg,
+        // Pemasok master terisi otomatis dari pembelian terakhir (review 2026-07-06).
+        ...(supplier ? { supplier_name: supplier } : {}),
+      })
       .eq("id", l.ingredient_id);
     await supabase.from("stock_movements").insert({
       item_type: "ingredient",
       item_id: l.ingredient_id,
       movement_type: "purchase",
-      qty_change: Number(l.qty),
+      qty_change: qty, // sudah dalam satuan induk
       balance_after: newQty,
       ref_type: "purchase",
       ref_id: purchase.id,

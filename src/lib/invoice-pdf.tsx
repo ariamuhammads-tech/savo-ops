@@ -9,7 +9,18 @@ import {
 } from "@react-pdf/renderer";
 import { formatIDR, formatDate } from "@/lib/format";
 
+/** Jenis dokumen penjualan — satu layout untuk tiga status (review 2026-07-06). */
+export type SalesDocType = "invoice" | "penawaran" | "sales_order";
+
+export const DOC_TITLE: Record<SalesDocType, string> = {
+  invoice: "INVOICE",
+  penawaran: "PENAWARAN",
+  sales_order: "SALES ORDER",
+};
+
 export type InvoicePdfData = {
+  /** default: "invoice" */
+  doc_type?: SalesDocType;
   business: {
     business_name: string;
     address?: string | null;
@@ -97,6 +108,7 @@ const s = StyleSheet.create({
 
 export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
   const { business, invoice, customer, order, items } = data;
+  const docType: SalesDocType = data.doc_type ?? "invoice";
   return (
     <Document>
       <Page size="A4" style={s.page}>
@@ -126,13 +138,18 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
             </Text>
           </View>
           <View>
-            <Text style={s.invTitle}>INVOICE</Text>
+            <Text style={s.invTitle}>{DOC_TITLE[docType]}</Text>
             <Text style={s.invMeta}>{invoice.invoice_no}</Text>
             <Text style={s.invMeta}>Tanggal: {formatDate(invoice.issue_date)}</Text>
             {invoice.due_date ? (
-              <Text style={s.invMeta}>Jatuh tempo: {formatDate(invoice.due_date)}</Text>
+              <Text style={s.invMeta}>
+                {docType === "penawaran" ? "Berlaku s.d." : "Jatuh tempo"}:{" "}
+                {formatDate(invoice.due_date)}
+              </Text>
             ) : null}
-            <Text style={s.invMeta}>Status: {invoice.payment_status_label}</Text>
+            {docType === "invoice" ? (
+              <Text style={s.invMeta}>Status: {invoice.payment_status_label}</Text>
+            ) : null}
           </View>
         </View>
 
@@ -140,7 +157,9 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
 
         <View style={s.twoCol}>
           <View style={{ maxWidth: 260 }}>
-            <Text style={s.label}>Ditagihkan kepada</Text>
+            <Text style={s.label}>
+              {docType === "invoice" ? "Ditagihkan kepada" : "Kepada"}
+            </Text>
             <Text style={s.strong}>{customer?.name ?? "Pelanggan Umum"}</Text>
             {customer?.business_name ? <Text>{customer.business_name}</Text> : null}
             {customer?.address ? <Text style={{ color: MUTED }}>{customer.address}</Text> : null}
@@ -199,6 +218,19 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
         </View>
 
         <View style={s.footer}>
+          {docType === "penawaran" ? (
+            <Text style={s.note}>
+              Dokumen ini adalah penawaran harga — bukan tagihan. Harga & ketersediaan
+              berlaku sampai tanggal di atas (bila diisi) atau maksimal 14 hari.
+            </Text>
+          ) : null}
+          {docType === "sales_order" ? (
+            <Text style={s.note}>
+              Sales Order ini adalah konfirmasi pesanan beserta finalisasi harga,
+              diskon, dan ketentuan transaksi. Invoice diterbitkan terpisah untuk
+              penagihan.
+            </Text>
+          ) : null}
           {business.bank_name || business.bank_account_no ? (
             <View style={s.bankBox}>
               <Text style={s.label}>Pembayaran transfer ke</Text>

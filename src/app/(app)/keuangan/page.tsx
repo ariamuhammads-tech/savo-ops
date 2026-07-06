@@ -1,5 +1,6 @@
 import { Suspense } from "react";
-import { TrendingUp, TrendingDown, Wallet, ShoppingBag, Receipt, Trash2, Image as ImageIcon } from "lucide-react";
+import Link from "next/link";
+import { TrendingUp, TrendingDown, Wallet, ShoppingBag, Receipt, Trash2, Image as ImageIcon, ChevronRight } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatDate } from "@/lib/format";
@@ -60,35 +61,47 @@ export default async function KeuanganPage() {
         <p className="text-sm text-muted-foreground">Ringkasan bulan ini.</p>
       </div>
 
-      {/* KPIs */}
+      {/* KPIs — review 2026-07-06: setiap kotak bisa ditap ke rinciannya */}
       <div className="grid grid-cols-2 gap-3">
         <Kpi
           icon={<TrendingUp className="size-5 text-[color:var(--success)]" />}
           label="Pemasukan"
           value={formatIDR(revenueMonth)}
+          href="/keuangan/pemasukan"
         />
         <Kpi
           icon={<TrendingDown className="size-5 text-destructive" />}
           label="Pengeluaran"
           value={formatIDR(outMonth)}
+          href="/keuangan/pengeluaran"
         />
       </div>
-      <Card className="border-primary/30">
-        <CardContent className="flex items-center justify-between p-4">
-          <div className="flex items-center gap-2">
-            <Wallet className="size-5 text-primary" />
-            <span className="font-medium">Laba bersih (bulan ini)</span>
-          </div>
-          <span
-            className={
-              "font-serif text-2xl font-bold " +
-              (netMonth < 0 ? "text-destructive" : "text-[color:var(--success)]")
-            }
-          >
-            {formatIDR(netMonth)}
-          </span>
-        </CardContent>
-      </Card>
+      <Link href="/keuangan/laba-rugi" className="block">
+        <Card className="savo-lift border-primary/30 hover:border-primary/60">
+          <CardContent className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-2">
+              <Wallet className="size-5 text-primary" />
+              <div>
+                <span className="font-medium">Laba bersih (bulan ini)</span>
+                <p className="text-xs text-muted-foreground">
+                  Ketuk untuk laporan laba rugi
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span
+                className={
+                  "font-serif text-2xl font-bold " +
+                  (netMonth < 0 ? "text-destructive" : "text-[color:var(--success)]")
+                }
+              >
+                {formatIDR(netMonth)}
+              </span>
+              <ChevronRight className="size-4 text-muted-foreground" />
+            </div>
+          </CardContent>
+        </Card>
+      </Link>
 
       {/* Breakdown */}
       <Card>
@@ -195,17 +208,39 @@ export default async function KeuanganPage() {
   );
 }
 
-function Kpi({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <Card>
+function Kpi({
+  icon,
+  label,
+  value,
+  href,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  href?: string;
+}) {
+  const card = (
+    <Card className={href ? "savo-lift hover:border-primary/40" : ""}>
       <CardContent className="p-4">
         <div className="mb-1 flex items-center justify-between">
           <p className="text-xs text-muted-foreground">{label}</p>
           <div className="flex size-8 items-center justify-center rounded-full bg-secondary">{icon}</div>
         </div>
         <p className="font-serif text-xl font-bold">{value}</p>
+        {href && (
+          <p className="mt-0.5 flex items-center gap-0.5 text-[11px] text-muted-foreground">
+            Lihat rincian <ChevronRight className="size-3" />
+          </p>
+        )}
       </CardContent>
     </Card>
+  );
+  return href ? (
+    <Link href={href} className="block">
+      {card}
+    </Link>
+  ) : (
+    card
   );
 }
 
