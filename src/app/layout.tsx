@@ -27,7 +27,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
+      <head>
+        {/* Tema dipasang SEBELUM paint agar tidak berkedip (anti-FOUC):
+            'savo-theme' di localStorage menang; tanpa itu ikuti sistem. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('savo-theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark')}catch(e){}",
+          }}
+        />
+      </head>
       <body className={`${sans.variable} ${serif.variable} antialiased`}>
         <ParallaxBg />
         {children}

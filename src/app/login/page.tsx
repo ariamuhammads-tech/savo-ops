@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LoginForm } from "./login-form";
 import { SavoLogo } from "@/components/savo-logo";
 import { StoveFlames } from "@/components/stove-flames";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Card,
   CardContent,
@@ -17,6 +18,9 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center p-4">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <StoveFlames />
       <div className="w-full max-w-sm space-y-7 savo-in">
         <div className="flex flex-col items-center text-center">

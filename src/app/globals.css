@@ -59,6 +59,59 @@
   --shadow-pop: 0 24px 60px -20px rgba(26, 23, 20, 0.35);
 }
 
+/* =========================================================
+   Dark mode — palet gelap hangat SAVO (aksen terakota tetap).
+   Kelas .dark dipasang di <html> oleh skrip tema (localStorage
+   'savo-theme', default mengikuti preferensi sistem).
+   ========================================================= */
+.dark {
+  --background: #17120e; /* coklat tua hangat, bukan hitam pekat */
+  --foreground: #f2eae1;
+
+  --card: #201a15;
+  --card-foreground: #f2eae1;
+
+  --popover: #201a15;
+  --popover-foreground: #f2eae1;
+
+  --primary: #e0603c; /* terakota lebih terang agar kontras di gelap */
+  --primary-foreground: #fff8f4;
+
+  --secondary: #2a231d;
+  --secondary-foreground: #f2eae1;
+
+  --muted: #2a231d;
+  --muted-foreground: #a79a8c;
+
+  --accent: #3a2a21;
+  --accent-foreground: #f0ac93;
+
+  --destructive: #e45b4f;
+  --destructive-foreground: #ffffff;
+
+  --success: #4fb582;
+  --warning: #dca74d;
+  --ember: #f5a623;
+
+  --border: #362e26;
+  --input: #362e26;
+  --ring: #e0603c;
+
+  --sidebar: #201a15;
+  --sidebar-foreground: #f2eae1;
+  --sidebar-primary: #e0603c;
+  --sidebar-primary-foreground: #fff8f4;
+  --sidebar-accent: #3a2a21;
+  --sidebar-accent-foreground: #f0ac93;
+  --sidebar-border: #362e26;
+  --sidebar-ring: #e0603c;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 30px -18px rgba(0, 0, 0, 0.7);
+  --shadow-card-hover: 0 2px 4px rgba(0, 0, 0, 0.4), 0 26px 50px -22px rgba(224, 96, 60, 0.35);
+  --shadow-pop: 0 24px 60px -20px rgba(0, 0, 0, 0.8);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -120,6 +173,11 @@
     font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+  }
+  .dark body {
+    background-image:
+      radial-gradient(120% 80% at 50% -10%, #1e1813 0%, transparent 55%),
+      radial-gradient(140% 90% at 50% 118%, color-mix(in srgb, var(--ember) 7%, transparent) 0%, transparent 60%);
   }
   h1, h2, h3 {
     letter-spacing: -0.012em;

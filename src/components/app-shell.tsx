@@ -30,6 +30,7 @@ import {
 
 import { cn } from "@/lib/utils";
 import { SavoLogo } from "@/components/savo-logo";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { endDemoMode } from "@/app/(app)/pengaturan/demo-actions";
 
 type NavItem = { href: string; label: string; icon: LucideIcon };
@@ -122,7 +123,7 @@ function NavLink({
           "flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors",
           active
             ? "bg-white/15 text-primary-foreground"
-            : "bg-secondary/70 text-muted-foreground group-hover:bg-white group-hover:text-primary",
+            : "bg-secondary/70 text-muted-foreground group-hover:bg-card group-hover:text-primary",
         )}
       >
         <Icon className="size-[18px]" />
@@ -203,7 +204,7 @@ export function AppShell({
   return (
     <div className="min-h-dvh">
       {/* ===== Desktop sidebar ===== */}
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r border-border bg-gradient-to-b from-white/80 to-white/55 backdrop-blur-xl md:flex">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r border-border bg-gradient-to-b from-card/85 to-card/60 backdrop-blur-xl md:flex">
         <div className="px-5 py-5">
           <Brand />
         </div>
@@ -218,6 +219,12 @@ export function AppShell({
                 {userEmail.slice(0, 1)}
               </span>
               <p className="truncate text-xs text-muted-foreground">{userEmail}</p>
+              <ThemeToggle className="ml-auto shrink-0" />
+            </div>
+          )}
+          {!userEmail && (
+            <div className="mb-1 flex justify-end px-1">
+              <ThemeToggle />
             </div>
           )}
           <SignOutButton />
@@ -227,14 +234,17 @@ export function AppShell({
       {/* ===== Mobile top header ===== */}
       <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card/85 px-4 py-3 backdrop-blur-xl md:hidden">
         <Brand />
-        <button
-          type="button"
-          onClick={() => setMenuOpen(true)}
-          aria-label="Buka menu"
-          className="rounded-xl border border-border bg-secondary/60 p-2 text-foreground transition-colors hover:bg-secondary"
-        >
-          <MenuIcon className="size-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Buka menu"
+            className="rounded-xl border border-border bg-secondary/60 p-2 text-foreground transition-colors hover:bg-secondary"
+          >
+            <MenuIcon className="size-5" />
+          </button>
+        </div>
       </header>
 
       {/* ===== Mobile full menu overlay ===== */}
