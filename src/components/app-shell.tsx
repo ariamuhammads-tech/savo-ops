@@ -19,6 +19,7 @@ import {
   Factory,
   PiggyBank,
   Sparkles,
+  Wrench,
   Settings,
   LogOut,
   Menu as MenuIcon,
@@ -60,6 +61,7 @@ const SECTIONS: NavSection[] = [
       { href: "/pembelian", label: "Pembelian", icon: ShoppingBag },
       { href: "/masak", label: "Masak", icon: ChefHat },
       { href: "/produksi", label: "Produksi", icon: Factory },
+      { href: "/equipment", label: "Equipment", icon: Wrench },
     ],
   },
   {

@@ -16,6 +16,7 @@ const ingredientSchema = z.object({
   min_stock: z.coerce.number().min(0, "Stok minimum tidak boleh negatif."),
   last_unit_cost: z.coerce.number().min(0, "Harga tidak boleh negatif."),
   shelf_life_days: z.coerce.number().int().min(0).nullable(),
+  category: z.string().trim().optional(),
   supplier_name: z.string().trim().optional(),
   notes: z.string().trim().optional(),
 });
@@ -29,6 +30,7 @@ function parse(formData: FormData) {
     min_stock: formData.get("min_stock") || 0,
     last_unit_cost: formData.get("last_unit_cost") || 0,
     shelf_life_days: shelfRaw === "" ? null : shelfRaw,
+    category: String(formData.get("category") ?? ""),
     supplier_name: formData.get("supplier_name") || undefined,
     notes: formData.get("notes") || undefined,
   });
@@ -50,6 +52,7 @@ export async function createIngredient(
     stock_qty: parsed.data.stock_qty ?? 0,
     // Bahan baru: rata-rata tertimbang mulai dari harga yang diisi.
     avg_unit_cost: parsed.data.last_unit_cost,
+    category: parsed.data.category || null,
     supplier_name: parsed.data.supplier_name || null,
     notes: parsed.data.notes || null,
   });
@@ -100,6 +103,7 @@ export async function updateIngredient(
     .update({
       ...safe,
       ...(priceChanged ? { avg_unit_cost: parsed.data.last_unit_cost } : {}),
+      category: parsed.data.category || null,
       supplier_name: parsed.data.supplier_name || null,
       notes: parsed.data.notes || null,
     })

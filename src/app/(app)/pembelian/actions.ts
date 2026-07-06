@@ -8,7 +8,10 @@ import { convertQty } from "@/lib/units";
 export type FormState = { error: string | null };
 
 type LineInput = {
+  /** "bahan" (default) atau "equipment" — review 2026-07-06. */
+  item_type?: "bahan" | "equipment";
   ingredient_id: string | null;
+  equipment_id?: string | null;
   name: string;
   unit?: string | null;
   /** Satuan saat membeli (bisa beda keluarga g/kg, ml/l dari satuan induk). */
@@ -36,15 +39,21 @@ export async function recordPurchase(
     return { error: "Item pembelian tidak valid." };
   }
   lines = lines.filter(
-    (l) => Number(l.qty) > 0 && (l.ingredient_id || (l.name && l.name.trim())),
+    (l) =>
+      Number(l.qty) > 0 &&
+      (l.item_type === "equipment"
+        ? l.equipment_id
+        : l.ingredient_id || (l.name && l.name.trim())),
   );
-  if (lines.length === 0) return { error: "Tambahkan minimal satu bahan." };
+  if (lines.length === 0) return { error: "Tambahkan minimal satu item." };
 
   const supabase = await createClient();
 
   // Resolve ingredients: a line may reference an existing ingredient OR a
   // brand-new one typed here — find-or-create so it connects to Bahan Baku.
+  // (Equipment lines always reference an existing item — skipped here.)
   for (const l of lines) {
+    if (l.item_type === "equipment") continue;
     if (l.ingredient_id) continue;
     const nm = (l.name ?? "").trim();
     if (!nm) continue;
@@ -71,8 +80,10 @@ export async function recordPurchase(
       l.ingredient_id = created?.id ?? null;
     }
   }
-  lines = lines.filter((l) => l.ingredient_id);
-  if (lines.length === 0) return { error: "Gagal memproses bahan." };
+  lines = lines.filter((l) =>
+    l.item_type === "equipment" ? l.equipment_id : l.ingredient_id,
+  );
+  if (lines.length === 0) return { error: "Gagal memproses item." };
 
   const total = round2(lines.reduce((s, l) => s + Number(l.qty) * Number(l.unit_cost), 0));
 
@@ -103,13 +114,16 @@ export async function recordPurchase(
     pricePerMaster: number;
   }[] = [];
   for (const l of lines) {
-    if (!l.ingredient_id) continue;
-    const { data: ingUnitRow } = await supabase
-      .from("ingredients")
+    const isEquip = l.item_type === "equipment";
+    const table = isEquip ? "equipment" : "ingredients";
+    const targetId = isEquip ? l.equipment_id : l.ingredient_id;
+    if (!targetId) continue;
+    const { data: unitRow } = await supabase
+      .from(table)
       .select("unit")
-      .eq("id", l.ingredient_id)
+      .eq("id", targetId)
       .single();
-    const masterUnit = ingUnitRow?.unit ?? l.unit ?? "";
+    const masterUnit = unitRow?.unit ?? l.unit ?? "";
     const qty = Number(l.qty);
     const price = Number(l.unit_cost);
     const qtyMaster = convertQty(qty, l.buy_unit ?? masterUnit, masterUnit) ?? qty;
@@ -120,7 +134,8 @@ export async function recordPurchase(
 
   const items = prepared.map(({ l, qtyMaster, pricePerMaster }) => ({
     purchase_id: purchase.id,
-    ingredient_id: l.ingredient_id,
+    ingredient_id: l.item_type === "equipment" ? null : l.ingredient_id,
+    equipment_id: l.item_type === "equipment" ? (l.equipment_id ?? null) : null,
     name: l.name,
     qty: qtyMaster,
     unit_cost: pricePerMaster,
@@ -130,11 +145,14 @@ export async function recordPurchase(
 
   // Apply to stock: increment qty, roll the weighted-average cost, log movement.
   for (const { l, qtyMaster, pricePerMaster } of prepared) {
-    if (!l.ingredient_id) continue;
+    const isEquip = l.item_type === "equipment";
+    const table = isEquip ? ("equipment" as const) : ("ingredients" as const);
+    const targetId = isEquip ? l.equipment_id : l.ingredient_id;
+    if (!targetId) continue;
     const { data: ing } = await supabase
-      .from("ingredients")
+      .from(table)
       .select("stock_qty, avg_unit_cost, last_unit_cost")
-      .eq("id", l.ingredient_id)
+      .eq("id", targetId)
       .single();
     if (!ing) continue;
     const qty = qtyMaster;
@@ -155,19 +173,26 @@ export async function recordPurchase(
     const newAvg =
       oldQty + qty > 0 ? round2((oldQty * oldAvg + qty * price) / (oldQty + qty)) : price;
 
-    await supabase
-      .from("ingredients")
-      .update({
-        stock_qty: newQty,
-        last_unit_cost: price,
-        avg_unit_cost: newAvg,
-        // Pemasok master terisi otomatis dari pembelian terakhir (review 2026-07-06).
-        ...(supplier ? { supplier_name: supplier } : {}),
-      })
-      .eq("id", l.ingredient_id);
+    if (isEquip) {
+      await supabase
+        .from("equipment")
+        .update({ stock_qty: newQty, last_unit_cost: price, avg_unit_cost: newAvg })
+        .eq("id", targetId);
+    } else {
+      await supabase
+        .from("ingredients")
+        .update({
+          stock_qty: newQty,
+          last_unit_cost: price,
+          avg_unit_cost: newAvg,
+          // Pemasok master terisi otomatis dari pembelian terakhir.
+          ...(supplier ? { supplier_name: supplier } : {}),
+        })
+        .eq("id", targetId);
+    }
     await supabase.from("stock_movements").insert({
-      item_type: "ingredient",
-      item_id: l.ingredient_id,
+      item_type: isEquip ? "equipment" : "ingredient",
+      item_id: targetId,
       movement_type: "purchase",
       qty_change: qty, // sudah dalam satuan induk
       balance_after: newQty,
@@ -185,24 +210,27 @@ export async function deletePurchase(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const supabase = await createClient();
 
-  // Reverse the stock quantities added by this purchase.
+  // Reverse the stock quantities added by this purchase (bahan & equipment).
   const { data: items } = await supabase
     .from("purchase_items")
-    .select("ingredient_id, qty")
+    .select("ingredient_id, equipment_id, qty")
     .eq("purchase_id", id);
   for (const it of items ?? []) {
-    if (!it.ingredient_id) continue;
+    const isEquip = Boolean(it.equipment_id);
+    const table = isEquip ? ("equipment" as const) : ("ingredients" as const);
+    const targetId = isEquip ? it.equipment_id : it.ingredient_id;
+    if (!targetId) continue;
     const { data: ing } = await supabase
-      .from("ingredients")
+      .from(table)
       .select("stock_qty")
-      .eq("id", it.ingredient_id)
+      .eq("id", targetId)
       .single();
     if (!ing) continue;
     const newQty = Number(ing.stock_qty) - Number(it.qty);
-    await supabase.from("ingredients").update({ stock_qty: newQty }).eq("id", it.ingredient_id);
+    await supabase.from(table).update({ stock_qty: newQty }).eq("id", targetId);
     await supabase.from("stock_movements").insert({
-      item_type: "ingredient",
-      item_id: it.ingredient_id,
+      item_type: isEquip ? "equipment" : "ingredient",
+      item_id: targetId,
       movement_type: "adjustment",
       qty_change: -Number(it.qty),
       balance_after: newQty,

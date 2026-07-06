@@ -15,17 +15,50 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // Dokumen penjualan per status pesanan (review 2026-07-06):
-//   /api/dokumen/[orderId]?jenis=penawaran    → PENAWARAN (quotation)
-//   /api/dokumen/[orderId]?jenis=sales-order  → SALES ORDER (konfirmasi)
-// Invoice tetap lewat /api/invoice/[invoiceId].
+//   GET  /api/dokumen/[orderId]?jenis=penawaran|sales-order  → apa adanya pesanan
+//   POST /api/dokumen/[orderId]  body { jenis, items, promo_note, down_payment }
+//        → generator kustom (harga/qty/produk bisa diubah per dokumen)
+// Invoice resmi tetap lewat /api/invoice/[invoiceId].
+
+type CustomPayload = {
+  jenis?: string;
+  items?: { name?: string; qty?: number; unit_price?: number }[];
+  promo_note?: string;
+  down_payment?: number;
+};
+
+function toDocType(jenis: string | null | undefined): SalesDocType {
+  if (jenis === "sales-order" || jenis === "sales_order") return "sales_order";
+  if (jenis === "invoice") return "invoice";
+  return "penawaran";
+}
+
+export async function POST(
+  req: NextRequest,
+  ctx: { params: Promise<{ id: string }> },
+) {
+  let payload: CustomPayload = {};
+  try {
+    payload = await req.json();
+  } catch {
+    /* body kosong → pakai data pesanan apa adanya */
+  }
+  return buildDocument(ctx, toDocType(payload.jenis), payload);
+}
+
 export async function GET(
   req: NextRequest,
+  ctx: { params: Promise<{ id: string }> },
+) {
+  return buildDocument(ctx, toDocType(req.nextUrl.searchParams.get("jenis")), {});
+}
+
+async function buildDocument(
   { params }: { params: Promise<{ id: string }> },
+  docType: SalesDocType,
+  payload: CustomPayload,
 ) {
   const { id } = await params;
-  const jenisParam = req.nextUrl.searchParams.get("jenis") ?? "penawaran";
-  const docType: SalesDocType =
-    jenisParam === "sales-order" ? "sales_order" : "penawaran";
 
   const supabase = await createClient();
   const { data: order } = await supabase
@@ -58,11 +91,45 @@ export async function GET(
     };
   }
 
-  const prefix = docType === "penawaran" ? "PEN" : "SO";
+  // Item bisa di-override dari generator (produk/qty/harga per dokumen);
+  // subtotal & total dihitung ulang, diskon/ongkir/pajak ikut pesanan.
+  const customItems = (payload.items ?? [])
+    .map((it) => ({
+      name: String(it.name ?? "").trim() || "-",
+      qty: Number(it.qty ?? 0),
+      unit_price: Number(it.unit_price ?? 0),
+    }))
+    .filter((it) => it.qty > 0);
+  const useCustom = customItems.length > 0;
+
+  const baseItems = useCustom
+    ? customItems.map((it) => ({ ...it, subtotal: it.qty * it.unit_price }))
+    : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (o.order_items ?? []).map((it: any) => ({
+        name: it.name ?? "-",
+        qty: Number(it.qty),
+        unit_price: Number(it.unit_price),
+        subtotal: Number(it.subtotal),
+      }));
+
+  const subtotal = useCustom
+    ? baseItems.reduce((s: number, it: { subtotal: number }) => s + it.subtotal, 0)
+    : Number(o.subtotal ?? 0);
+  const discount = Number(o.discount ?? 0);
+  const shipping = Number(o.shipping ?? 0);
+  const tax = Number(o.tax ?? 0);
+  const total = useCustom
+    ? Math.max(0, subtotal - discount + shipping + tax)
+    : Number(o.total ?? 0);
+
+  const prefix =
+    docType === "penawaran" ? "PEN" : docType === "sales_order" ? "SO" : "INV";
   const docNo = `${prefix}/${o.order_no ?? "-"}`;
 
   const data: InvoicePdfData = {
     doc_type: docType,
+    promo_note: (payload.promo_note ?? "").trim() || null,
+    down_payment: Math.max(0, Number(payload.down_payment ?? 0)),
     business: {
       business_name: business?.business_name ?? "SAVO",
       address: business?.address,
@@ -83,19 +150,13 @@ export async function GET(
     customer,
     order: {
       order_no: o.order_no,
-      subtotal: Number(o.subtotal ?? 0),
-      discount: Number(o.discount ?? 0),
-      shipping: Number(o.shipping ?? 0),
-      tax: Number(o.tax ?? 0),
-      total: Number(o.total ?? 0),
+      subtotal,
+      discount,
+      shipping,
+      tax,
+      total,
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    items: (o.order_items ?? []).map((it: any) => ({
-      name: it.name ?? "-",
-      qty: Number(it.qty),
-      unit_price: Number(it.unit_price),
-      subtotal: Number(it.subtotal),
-    })),
+    items: baseItems,
   };
 
   const element = createElement(InvoiceDocument, {

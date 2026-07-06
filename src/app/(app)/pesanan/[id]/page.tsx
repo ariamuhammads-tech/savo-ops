@@ -286,17 +286,15 @@ export default async function PesananDetailPage({
           </div>
           <p className="text-xs text-muted-foreground">
             Penawaran untuk follow-up harga · Sales Order sebagai bukti konfirmasi
-            &amp; finalisasi nominal · Invoice untuk penagihan.
+            &amp; finalisasi nominal · Invoice untuk penagihan. Setiap generator
+            bisa mengubah produk, qty, harga, promo &amp; DP tanpa menyentuh
+            pesanan aslinya.
           </p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             <Button asChild variant="outline" className="w-full">
-              <a
-                href={`/api/dokumen/${order.id}?jenis=penawaran`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Penawaran (PDF)
-              </a>
+              <Link href={`/pesanan/${order.id}/dokumen?jenis=penawaran`}>
+                Penawaran
+              </Link>
             </Button>
             <Button
               asChild
@@ -307,13 +305,14 @@ export default async function PesananDetailPage({
                   : "w-full"
               }
             >
-              <a
-                href={`/api/dokumen/${order.id}?jenis=sales-order`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Sales Order (PDF)
-              </a>
+              <Link href={`/pesanan/${order.id}/dokumen?jenis=sales-order`}>
+                Sales Order
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full">
+              <Link href={`/pesanan/${order.id}/dokumen?jenis=invoice`}>
+                Invoice
+              </Link>
             </Button>
           </div>
           {order.status === "draft" && (

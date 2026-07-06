@@ -14,17 +14,29 @@ import { FlashToast } from "@/components/flash-toast";
 
 export const dynamic = "force-dynamic";
 
+const CATEGORIES = [
+  "Bahan Mentah",
+  "Bumbu Kering",
+  "Bumbu Basah",
+  "Bahan Setengah Jadi",
+];
+
 export default async function BahanPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; kategori?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, kategori } = await searchParams;
   const supabase = await createClient();
 
   let query = supabase.from("ingredients").select("*").order("name");
   if (q) query = query.ilike("name", `%${q}%`);
+  if (kategori === "lainnya") query = query.is("category", null);
+  else if (kategori) query = query.eq("category", kategori);
   const { data: ingredients } = await query;
+
+  const chipHref = (k: string) =>
+    `/bahan?${new URLSearchParams({ ...(q ? { q } : {}), ...(k ? { kategori: k } : {}) }).toString()}`;
 
   return (
     <div className="space-y-4">
@@ -50,6 +62,7 @@ export default async function BahanPage({
       </div>
 
       <form className="relative">
+        {kategori && <input type="hidden" name="kategori" value={kategori} />}
         <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           name="q"
@@ -58,6 +71,19 @@ export default async function BahanPage({
           className="pl-9"
         />
       </form>
+
+      {/* Filter kategori (review 2026-07-06) */}
+      <div className="flex flex-wrap gap-1.5">
+        <CategoryChip href={chipHref("")} active={!kategori} label="Semua" />
+        {CATEGORIES.map((c) => (
+          <CategoryChip key={c} href={chipHref(c)} active={kategori === c} label={c} />
+        ))}
+        <CategoryChip
+          href={chipHref("lainnya")}
+          active={kategori === "lainnya"}
+          label="Belum dikategorikan"
+        />
+      </div>
 
       {!ingredients || ingredients.length === 0 ? (
         <EmptyState hasQuery={!!q} />
@@ -73,6 +99,7 @@ export default async function BahanPage({
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="truncate font-medium">{item.name}</p>
+                      {item.category && <Badge variant="outline">{item.category}</Badge>}
                       {low && <Badge variant="warning">Menipis</Badge>}
                     </div>
                     <p className="mt-0.5 text-sm text-muted-foreground">
@@ -95,6 +122,30 @@ export default async function BahanPage({
         </div>
       )}
     </div>
+  );
+}
+
+function CategoryChip({
+  href,
+  active,
+  label,
+}: {
+  href: string;
+  active: boolean;
+  label: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className={
+        "rounded-full border px-3 py-1.5 text-xs font-medium " +
+        (active
+          ? "border-primary bg-accent text-accent-foreground"
+          : "border-border bg-card text-muted-foreground")
+      }
+    >
+      {label}
+    </Link>
   );
 }
 

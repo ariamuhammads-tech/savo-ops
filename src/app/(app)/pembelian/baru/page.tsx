@@ -10,10 +10,10 @@ export const dynamic = "force-dynamic";
 
 export default async function PembelianBaruPage() {
   const supabase = await createClient();
-  const { data: ingredients } = await supabase
-    .from("ingredients")
-    .select("id, name, unit, last_unit_cost")
-    .order("name");
+  const [{ data: ingredients }, { data: equipment }] = await Promise.all([
+    supabase.from("ingredients").select("id, name, unit, last_unit_cost").order("name"),
+    supabase.from("equipment").select("id, name, unit, last_unit_cost").order("name"),
+  ]);
 
   const today = formatDate(new Date(), "yyyy-MM-dd");
 
@@ -46,6 +46,12 @@ export default async function PembelianBaruPage() {
             name: i.name,
             unit: i.unit,
             last_unit_cost: Number(i.last_unit_cost),
+          }))}
+          equipment={(equipment ?? []).map((e) => ({
+            id: e.id,
+            name: e.name,
+            unit: e.unit,
+            last_unit_cost: Number(e.last_unit_cost),
           }))}
           defaultDate={today}
         />

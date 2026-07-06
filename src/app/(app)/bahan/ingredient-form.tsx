@@ -15,6 +15,13 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 const UNITS = ["g", "kg", "ml", "l", "pcs"];
+// Review 2026-07-06: kategori bahan tetap 4 pilihan ini (barang jadi = menu Produk).
+const CATEGORIES = [
+  "Bahan Mentah",
+  "Bumbu Kering",
+  "Bumbu Basah",
+  "Bahan Setengah Jadi",
+];
 
 const initial: FormState = { error: null };
 
@@ -73,6 +80,18 @@ export function IngredientForm({
             required
           />
         )}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="category">Kategori</Label>
+        <Select id="category" name="category" defaultValue={ingredient?.category ?? ""}>
+          <option value="">— Belum dikategorikan —</option>
+          {CATEGORIES.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </Select>
       </div>
 
       <div className="grid grid-cols-2 gap-3">

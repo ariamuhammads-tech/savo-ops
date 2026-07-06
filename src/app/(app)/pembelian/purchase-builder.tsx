@@ -21,6 +21,8 @@ type IngredientOpt = {
 };
 type Line = {
   key: number;
+  /** Jenis baris: bahan baku atau equipment (review 2026-07-06). */
+  itemType: "bahan" | "equipment";
   ingredientId: string; // "" unset, "__new__" for a brand-new bahan, else id
   newName: string;
   newUnit: string;
@@ -45,9 +47,11 @@ let counter = 1;
 
 export function PurchaseBuilder({
   ingredients,
+  equipment = [],
   defaultDate,
 }: {
   ingredients: IngredientOpt[];
+  equipment?: IngredientOpt[];
   defaultDate: string;
 }) {
   const [state, formAction] = useActionState(recordPurchase, initial);
@@ -59,26 +63,33 @@ export function PurchaseBuilder({
   function addLine() {
     setLines((l) => [
       ...l,
-      { key: counter++, ingredientId: "", newName: "", newUnit: "g", qty: "1", unitCost: "0", buyUnit: "" },
+      { key: counter++, itemType: "bahan", ingredientId: "", newName: "", newUnit: "g", qty: "1", unitCost: "0", buyUnit: "" },
     ]);
   }
   function removeLine(key: number) {
     setLines((l) => l.filter((x) => x.key !== key));
   }
-  function setIngredient(key: number, ingredientId: string) {
-    const ing = ingredients.find((x) => x.id === ingredientId);
+  function setItemType(key: number, itemType: "bahan" | "equipment") {
     setLines((l) =>
       l.map((x) =>
-        x.key === key
-          ? {
-              ...x,
-              ingredientId,
-              unitCost: ing ? String(ing.last_unit_cost) : x.unitCost,
-              // default: beli dalam satuan induk bahan
-              buyUnit: ing ? canonicalUnit(ing.unit) : "",
-            }
-          : x,
+        x.key === key ? { ...x, itemType, ingredientId: "", buyUnit: "" } : x,
       ),
+    );
+  }
+  function setIngredient(key: number, ingredientId: string) {
+    setLines((l) =>
+      l.map((x) => {
+        if (x.key !== key) return x;
+        const list = x.itemType === "equipment" ? equipment : ingredients;
+        const ing = list.find((o) => o.id === ingredientId);
+        return {
+          ...x,
+          ingredientId,
+          unitCost: ing ? String(ing.last_unit_cost) : x.unitCost,
+          // default: beli dalam satuan induk item
+          buyUnit: ing ? canonicalUnit(ing.unit) : "",
+        };
+      }),
     );
   }
   function setField(
@@ -102,8 +113,22 @@ export function PurchaseBuilder({
           (l.ingredientId === NEW ? l.newName.trim() : l.ingredientId),
       )
       .map((l) => {
+        if (l.itemType === "equipment") {
+          const eq = equipment.find((x) => x.id === l.ingredientId);
+          return {
+            item_type: "equipment",
+            ingredient_id: null,
+            equipment_id: l.ingredientId,
+            name: eq?.name ?? "",
+            unit: eq?.unit ?? null,
+            buy_unit: l.buyUnit || canonicalUnit(eq?.unit ?? ""),
+            qty: Number(l.qty),
+            unit_cost: Number(l.unitCost),
+          };
+        }
         if (l.ingredientId === NEW) {
           return {
+            item_type: "bahan",
             ingredient_id: null,
             name: l.newName.trim(),
             unit: l.newUnit,
@@ -113,6 +138,7 @@ export function PurchaseBuilder({
         }
         const ing = ingredients.find((x) => x.id === l.ingredientId);
         return {
+          item_type: "bahan",
           ingredient_id: l.ingredientId,
           name: ing?.name ?? "",
           unit: ing?.unit ?? null,
@@ -162,8 +188,10 @@ export function PurchaseBuilder({
           )}
 
           {lines.map((l) => {
-            const isNew = l.ingredientId === NEW;
-            const ing = ingredients.find((x) => x.id === l.ingredientId);
+            const isEquip = l.itemType === "equipment";
+            const isNew = !isEquip && l.ingredientId === NEW;
+            const list = isEquip ? equipment : ingredients;
+            const ing = list.find((x) => x.id === l.ingredientId);
             const masterUnit = isNew ? l.newUnit : canonicalUnit(ing?.unit ?? "");
             const unitChoices = isNew ? [l.newUnit] : buyUnitOptions(masterUnit);
             const buyUnit = isNew ? l.newUnit : l.buyUnit || masterUnit;
@@ -176,22 +204,45 @@ export function PurchaseBuilder({
                 : null;
             return (
               <div key={l.key} className="rounded-lg border border-border p-3">
+                {/* Jenis baris */}
+                <div className="mb-2 flex gap-1.5">
+                  {(["bahan", "equipment"] as const).map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setItemType(l.key, t)}
+                      className={
+                        "rounded-full border px-3 py-1 text-xs font-medium " +
+                        (l.itemType === t
+                          ? "border-primary bg-accent text-accent-foreground"
+                          : "border-border bg-card text-muted-foreground")
+                      }
+                    >
+                      {t === "bahan" ? "Bahan Baku" : "Equipment"}
+                    </button>
+                  ))}
+                </div>
                 <div className="mb-2 flex items-start gap-2">
                   <Select value={l.ingredientId} onChange={(e) => setIngredient(l.key, e.target.value)} className="flex-1">
                     <option value="" disabled>
-                      — Pilih bahan —
+                      {isEquip ? "— Pilih item equipment —" : "— Pilih bahan —"}
                     </option>
-                    {ingredients.map((i) => (
+                    {list.map((i) => (
                       <option key={i.id} value={i.id}>
                         {i.name}
                       </option>
                     ))}
-                    <option value={NEW}>＋ Bahan baru…</option>
+                    {!isEquip && <option value={NEW}>＋ Bahan baru…</option>}
                   </Select>
                   <button type="button" onClick={() => removeLine(l.key)} className="rounded-md p-2 text-muted-foreground hover:text-destructive" aria-label="Hapus">
                     <Trash2 className="size-4" />
                   </button>
                 </div>
+                {isEquip && equipment.length === 0 && (
+                  <p className="mb-2 text-xs text-muted-foreground">
+                    Belum ada item equipment — tambahkan dulu di menu Equipment.
+                  </p>
+                )}
 
                 {isNew && (
                   <div className="mb-2 grid grid-cols-3 gap-2">

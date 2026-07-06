@@ -21,6 +21,10 @@ export const DOC_TITLE: Record<SalesDocType, string> = {
 export type InvoicePdfData = {
   /** default: "invoice" */
   doc_type?: SalesDocType;
+  /** Keterangan promo — tercetak di bawah total (review 2026-07-06). */
+  promo_note?: string | null;
+  /** Down payment (Rp) — tercetak beserta sisa tagihan. */
+  down_payment?: number;
   business: {
     business_name: string;
     address?: string | null;
@@ -60,29 +64,31 @@ const MUTED = "#6B6258";
 const ACCENT = "#C0492B";
 const BORDER = "#E7DDCC";
 
+// Review 2026-07-06: tipografi diperbesar agar nyaman dibaca di layar HP
+// (dokumen sering dibagikan & dibuka lewat WhatsApp).
 const s = StyleSheet.create({
-  page: { padding: 36, fontSize: 10, color: INK, fontFamily: "Helvetica" },
+  page: { padding: 30, fontSize: 12, lineHeight: 1.35, color: INK, fontFamily: "Helvetica" },
   headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
   brandRow: { flexDirection: "row", alignItems: "center" },
-  brand: { fontSize: 24, fontFamily: "Helvetica-Bold", color: ACCENT, marginLeft: 6 },
-  biz: { fontSize: 9, color: MUTED, marginTop: 2, maxWidth: 240 },
-  invTitle: { fontSize: 18, fontFamily: "Helvetica-Bold", textAlign: "right" },
-  invMeta: { fontSize: 9, color: MUTED, textAlign: "right", marginTop: 2 },
-  hr: { borderBottomWidth: 1, borderBottomColor: BORDER, marginVertical: 14 },
+  brand: { fontSize: 27, fontFamily: "Helvetica-Bold", color: ACCENT, marginLeft: 7 },
+  biz: { fontSize: 10.5, color: MUTED, marginTop: 3, maxWidth: 250 },
+  invTitle: { fontSize: 23, fontFamily: "Helvetica-Bold", textAlign: "right" },
+  invMeta: { fontSize: 10.5, color: MUTED, textAlign: "right", marginTop: 2.5 },
+  hr: { borderBottomWidth: 1, borderBottomColor: BORDER, marginVertical: 15 },
   twoCol: { flexDirection: "row", justifyContent: "space-between" },
-  label: { fontSize: 8, color: MUTED, textTransform: "uppercase", marginBottom: 3 },
+  label: { fontSize: 10, color: MUTED, textTransform: "uppercase", marginBottom: 3.5 },
   strong: { fontFamily: "Helvetica-Bold" },
   tableHead: {
     flexDirection: "row",
     backgroundColor: "#F1E9DC",
-    paddingVertical: 6,
-    paddingHorizontal: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 7,
     marginTop: 16,
   },
   row: {
     flexDirection: "row",
-    paddingVertical: 6,
-    paddingHorizontal: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 7,
     borderBottomWidth: 1,
     borderBottomColor: BORDER,
   },
@@ -90,20 +96,20 @@ const s = StyleSheet.create({
   cQty: { flex: 1.2, textAlign: "right" },
   cPrice: { flex: 2, textAlign: "right" },
   cSub: { flex: 2, textAlign: "right" },
-  totals: { marginTop: 12, alignSelf: "flex-end", width: 220 },
-  totalRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 2 },
+  totals: { marginTop: 14, alignSelf: "flex-end", width: 260 },
+  totalRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 3 },
   grand: {
     flexDirection: "row",
     justifyContent: "space-between",
     borderTopWidth: 1,
     borderTopColor: BORDER,
-    marginTop: 4,
-    paddingTop: 4,
+    marginTop: 5,
+    paddingTop: 6,
   },
-  grandText: { fontSize: 13, fontFamily: "Helvetica-Bold", color: ACCENT },
+  grandText: { fontSize: 16, fontFamily: "Helvetica-Bold", color: ACCENT },
   footer: { marginTop: 22 },
-  bankBox: { backgroundColor: "#FBF7F0", borderWidth: 1, borderColor: BORDER, borderRadius: 4, padding: 10, marginTop: 8 },
-  note: { fontSize: 8, color: MUTED, marginTop: 12 },
+  bankBox: { backgroundColor: "#FBF7F0", borderWidth: 1, borderColor: BORDER, borderRadius: 5, padding: 12, marginTop: 8 },
+  note: { fontSize: 10, color: MUTED, marginTop: 12 },
 });
 
 export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
@@ -215,7 +221,28 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
             <Text style={s.grandText}>TOTAL</Text>
             <Text style={s.grandText}>{formatIDR(order.total)}</Text>
           </View>
+          {Number(data.down_payment ?? 0) > 0 ? (
+            <>
+              <View style={s.totalRow}>
+                <Text style={{ color: MUTED }}>Down Payment (DP)</Text>
+                <Text>- {formatIDR(Number(data.down_payment))}</Text>
+              </View>
+              <View style={s.grand}>
+                <Text style={s.grandText}>SISA TAGIHAN</Text>
+                <Text style={s.grandText}>
+                  {formatIDR(Math.max(0, order.total - Number(data.down_payment)))}
+                </Text>
+              </View>
+            </>
+          ) : null}
         </View>
+
+        {data.promo_note ? (
+          <View style={[s.bankBox, { marginTop: 14 }]}>
+            <Text style={s.label}>Keterangan</Text>
+            <Text>{data.promo_note}</Text>
+          </View>
+        ) : null}
 
         <View style={s.footer}>
           {docType === "penawaran" ? (

@@ -65,6 +65,7 @@ export interface Database {
           last_unit_cost: number;
           avg_unit_cost: number;
           shelf_life_days: number | null;
+          category: string | null;
           supplier_name: string | null;
           notes: string | null;
           created_at: string;
@@ -79,12 +80,43 @@ export interface Database {
           last_unit_cost?: number;
           avg_unit_cost?: number;
           shelf_life_days?: number | null;
+          category?: string | null;
           supplier_name?: string | null;
           notes?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["ingredients"]["Insert"]>;
+        Relationships: [];
+      };
+      equipment: {
+        Row: {
+          id: string;
+          name: string;
+          category: string;
+          unit: string;
+          stock_qty: number;
+          min_stock: number;
+          last_unit_cost: number;
+          avg_unit_cost: number;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          category?: string;
+          unit?: string;
+          stock_qty?: number;
+          min_stock?: number;
+          last_unit_cost?: number;
+          avg_unit_cost?: number;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["equipment"]["Insert"]>;
         Relationships: [];
       };
       products: {
@@ -178,7 +210,7 @@ export interface Database {
       stock_movements: {
         Row: {
           id: string;
-          item_type: "product" | "ingredient";
+          item_type: "product" | "ingredient" | "equipment";
           item_id: string;
           movement_type:
             | "adjustment"
@@ -197,7 +229,7 @@ export interface Database {
         };
         Insert: {
           id?: string;
-          item_type: "product" | "ingredient";
+          item_type: "product" | "ingredient" | "equipment";
           item_id: string;
           movement_type: Database["public"]["Tables"]["stock_movements"]["Row"]["movement_type"];
           qty_change: number;
@@ -413,6 +445,7 @@ export interface Database {
           id: string;
           purchase_id: string;
           ingredient_id: string | null;
+          equipment_id: string | null;
           name: string | null;
           qty: number;
           unit_cost: number;
@@ -424,6 +457,7 @@ export interface Database {
           id?: string;
           purchase_id: string;
           ingredient_id?: string | null;
+          equipment_id?: string | null;
           name?: string | null;
           qty?: number;
           unit_cost?: number;
@@ -521,6 +555,7 @@ type Tables = Database["public"]["Tables"];
 export type Profile = Tables["profiles"]["Row"];
 export type BusinessSettings = Tables["business_settings"]["Row"];
 export type Ingredient = Tables["ingredients"]["Row"];
+export type Equipment = Tables["equipment"]["Row"];
 export type Product = Tables["products"]["Row"];
 export type StockMovement = Tables["stock_movements"]["Row"];
 export type Recipe = Tables["recipes"]["Row"];
