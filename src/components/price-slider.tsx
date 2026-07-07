@@ -8,70 +8,98 @@ import { Calculator, Check, Loader2 } from "lucide-react";
 import { formatIDR } from "@/lib/format";
 import { calcMargin, suggestedPrice } from "@/lib/hpp";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { applyPricesFromMargin } from "@/app/(app)/produk/actions";
 
 /** Harga "cantik": bulatkan ke ratusan terdekat. */
 const nice = (n: number) => (Number.isFinite(n) ? Math.round(n / 100) * 100 : 0);
-
 const clampPct = (n: number) => Math.min(90, Math.max(0, Math.round(n)));
+const num = (s: string) => {
+  const n = Number(String(s).replace(/[^\d.-]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+};
 
-function SliderRow({
+/**
+ * Satu baris harga — DUA ARAH (review 2026-07-06):
+ * geser slider mengisi harga, mengetik harga menggeser slider. Sumber
+ * kebenaran = harga (string); margin & posisi slider diturunkan darinya.
+ */
+function PriceRow({
   label,
   currentPrice,
   hpp,
-  target,
-  onTarget,
+  price,
+  onPrice,
 }: {
   label: string;
   currentPrice: number;
   hpp: number;
-  target: number;
-  onTarget: (n: number) => void;
+  price: string;
+  onPrice: (v: string) => void;
 }) {
-  const newPrice = nice(suggestedPrice(hpp, target));
-  const changed = newPrice !== nice(currentPrice);
+  const priceNum = num(price);
+  const margin = hpp > 0 && priceNum > 0 ? calcMargin(priceNum, hpp) : 0;
+  const sliderPct = clampPct(margin * 100);
+  const changed = nice(priceNum) !== nice(currentPrice);
+  const marginColor =
+    priceNum <= 0
+      ? "text-muted-foreground"
+      : margin < 0
+        ? "text-destructive"
+        : "text-[color:var(--success)]";
+
   return (
     <div className="rounded-lg bg-secondary/60 p-3">
-      <div className="mb-1.5 flex items-center justify-between text-sm">
+      <div className="mb-2 flex items-center justify-between text-sm">
         <span className="font-medium">{label}</span>
         <span className="text-xs text-muted-foreground">
           sekarang {currentPrice > 0 ? formatIDR(currentPrice) : "—"}
-          {currentPrice > 0 && hpp > 0 && (
-            <> · margin {(calcMargin(currentPrice, hpp) * 100).toFixed(0)}%</>
-          )}
         </span>
       </div>
-      <div className="flex items-center gap-3">
+
+      <div className="mb-2 flex items-center gap-3">
         <input
           type="range"
           min={0}
           max={90}
           step={1}
-          value={target}
-          onChange={(e) => onTarget(Number(e.target.value))}
+          value={sliderPct}
+          onChange={(e) => onPrice(String(nice(suggestedPrice(hpp, Number(e.target.value)))))}
           className="min-w-0 flex-1 accent-[color:var(--primary)]"
           aria-label={`Target margin ${label}`}
         />
-        <span className="w-10 text-right text-sm font-semibold tabular-nums">
-          {target}%
+        <span className={"w-16 text-right text-sm font-semibold tabular-nums " + marginColor}>
+          {priceNum > 0 ? `${(margin * 100).toFixed(0)}%` : "—"}
+          <span className="block text-[10px] font-normal text-muted-foreground">margin</span>
         </span>
-        <span
-          className={
-            "w-24 text-right font-serif text-base font-bold " +
-            (changed ? "text-primary" : "text-muted-foreground")
-          }
-        >
-          {formatIDR(newPrice)}
-        </span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <span className="text-xs text-muted-foreground">Rp</span>
+        <Input
+          type="number"
+          inputMode="numeric"
+          min="0"
+          step="any"
+          value={price}
+          onChange={(e) => onPrice(e.target.value)}
+          className="h-10 text-right font-serif text-base font-bold"
+          aria-label={`Harga jual ${label}`}
+        />
+        {changed && (
+          <span className="whitespace-nowrap text-[11px] font-medium text-primary">
+            {priceNum > currentPrice ? "▲" : "▼"}{" "}
+            {formatIDR(Math.abs(priceNum - currentPrice))}
+          </span>
+        )}
       </div>
     </div>
   );
 }
 
 /**
- * Saran harga dari target margin — geser slider, harga B2C & B2B baru
- * langsung terlihat, lalu "Terapkan" menyimpannya ke produk
- * (review 2026-07-06 #2: dipakai di halaman Resep DAN Produk).
+ * Saran harga dari target margin — geser slider ATAU ketik harga langsung
+ * (dua arah), lalu "Terapkan" menyimpan ke produk. Dipakai di Resep & Produk.
  */
 export function PriceSlider({
   productId,
@@ -86,15 +114,17 @@ export function PriceSlider({
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [tB2c, setTB2c] = useState(() =>
-    priceB2C > 0 && hpp > 0 ? clampPct(calcMargin(priceB2C, hpp) * 100) : 40,
+  // Sumber kebenaran = string harga (bisa diketik). Awal = harga sekarang,
+  // atau saran default bila belum ada harga.
+  const [pB2c, setPB2c] = useState(() =>
+    String(priceB2C > 0 ? nice(priceB2C) : hpp > 0 ? nice(suggestedPrice(hpp, 40)) : 0),
   );
-  const [tB2b, setTB2b] = useState(() =>
-    priceB2B > 0 && hpp > 0 ? clampPct(calcMargin(priceB2B, hpp) * 100) : 30,
+  const [pB2b, setPB2b] = useState(() =>
+    String(priceB2B > 0 ? nice(priceB2B) : hpp > 0 ? nice(suggestedPrice(hpp, 30)) : 0),
   );
 
-  const newB2c = nice(suggestedPrice(hpp, tB2c));
-  const newB2b = nice(suggestedPrice(hpp, tB2b));
+  const newB2c = nice(num(pB2c));
+  const newB2b = nice(num(pB2b));
   const dirty = newB2c !== nice(priceB2C) || newB2b !== nice(priceB2B);
 
   function apply() {
@@ -128,25 +158,13 @@ export function PriceSlider({
     <div className="space-y-2 rounded-lg border border-dashed border-border p-3">
       <div className="flex items-center gap-2 text-sm font-medium">
         <Calculator className="size-4 text-primary" />
-        Saran harga dari target margin
+        Harga &amp; target margin
         <span className="text-xs font-normal text-muted-foreground">
           (HPP {formatIDR(hpp)}/unit)
         </span>
       </div>
-      <SliderRow
-        label="Harga B2C"
-        currentPrice={priceB2C}
-        hpp={hpp}
-        target={tB2c}
-        onTarget={setTB2c}
-      />
-      <SliderRow
-        label="Harga B2B"
-        currentPrice={priceB2B}
-        hpp={hpp}
-        target={tB2b}
-        onTarget={setTB2b}
-      />
+      <PriceRow label="Harga B2C" currentPrice={priceB2C} hpp={hpp} price={pB2c} onPrice={setPB2c} />
+      <PriceRow label="Harga B2B" currentPrice={priceB2B} hpp={hpp} price={pB2b} onPrice={setPB2b} />
       <Button
         onClick={apply}
         disabled={pending || !dirty}
@@ -166,8 +184,9 @@ export function PriceSlider({
         )}
       </Button>
       <p className="text-[11px] leading-tight text-muted-foreground">
-        Harga dibulatkan ke ratusan. Menerapkan harga mengubah harga jual produk
-        untuk pesanan berikutnya — pesanan lama tidak berubah.
+        Geser slider atau ketik harga langsung — keduanya saling menyesuaikan.
+        Menerapkan harga mengubah harga jual untuk pesanan berikutnya; pesanan
+        lama tidak berubah.
       </p>
     </div>
   );

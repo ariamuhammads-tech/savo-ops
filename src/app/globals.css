@@ -336,6 +336,53 @@
   }
 }
 
+/* ===== Animated parallax orbs (ambient drift) =====
+   The wrapper gets scroll + pointer parallax from JS; the inner orb
+   drifts on its own via these keyframes so the two compose cleanly. */
+.parallax-orb {
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  will-change: transform;
+}
+.parallax-orb.a {
+  animation-name: parallax-drift-a;
+  animation-duration: 26s;
+}
+.parallax-orb.b {
+  animation-name: parallax-drift-b;
+  animation-duration: 34s;
+}
+.parallax-orb.c {
+  animation-name: parallax-drift-c;
+  animation-duration: 22s;
+}
+
+@keyframes parallax-drift-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(46px, -34px, 0) scale(1.12);
+  }
+}
+@keyframes parallax-drift-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(-38px, 28px, 0) scale(1.06);
+  }
+}
+@keyframes parallax-drift-c {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(30px, 22px, 0) scale(0.92);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -348,5 +395,9 @@
   .savo-ember,
   .savo-gasline {
     animation: none;
+  }
+  /* !important: beats the higher-specificity .parallax-orb.a/.b/.c rules */
+  .parallax-orb {
+    animation: none !important;
   }
 }
