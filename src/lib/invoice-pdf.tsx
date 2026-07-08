@@ -59,69 +59,119 @@ export type InvoicePdfData = {
   items: { name: string; qty: number; unit_price: number; subtotal: number }[];
 };
 
-const INK = "#1F1A17";
-const MUTED = "#6B6258";
+const INK = "#241E19";
+const MUTED = "#7A6E62";
 const ACCENT = "#C0492B";
+const ACCENT_INK = "#8A2F1A";
 const BORDER = "#E7DDCC";
+const CREAM = "#FBF6EE";
+const CREAM_2 = "#F3E9D9";
+const ZEBRA = "#FBF8F3";
+const GREEN = "#2F7D5B";
+const AMBER = "#B77A22";
 
-// Review 2026-07-06: tipografi diperbesar agar nyaman dibaca di layar HP
-// (dokumen sering dibagikan & dibuka lewat WhatsApp).
+const PAD = 34;
+
+// Editorial "Claude" redesign (2026-07-06): warm cream header band, serif
+// display type, status pill, zebra table, and a filled amount-due box.
+// Semua data & percabangan dipertahankan — hanya tampilan yang berubah.
 const s = StyleSheet.create({
-  page: { padding: 30, fontSize: 12, lineHeight: 1.35, color: INK, fontFamily: "Helvetica" },
-  headerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
-  brandRow: { flexDirection: "row", alignItems: "center" },
-  brand: { fontSize: 27, fontFamily: "Helvetica-Bold", color: ACCENT, marginLeft: 7 },
-  biz: { fontSize: 10.5, color: MUTED, marginTop: 3, maxWidth: 250 },
-  invTitle: { fontSize: 23, fontFamily: "Helvetica-Bold", textAlign: "right" },
-  invMeta: { fontSize: 10.5, color: MUTED, textAlign: "right", marginTop: 2.5 },
-  hr: { borderBottomWidth: 1, borderBottomColor: BORDER, marginVertical: 15 },
-  twoCol: { flexDirection: "row", justifyContent: "space-between" },
-  label: { fontSize: 10, color: MUTED, textTransform: "uppercase", marginBottom: 3.5 },
-  strong: { fontFamily: "Helvetica-Bold" },
-  tableHead: {
-    flexDirection: "row",
-    backgroundColor: "#F1E9DC",
-    paddingVertical: 8,
-    paddingHorizontal: 7,
-    marginTop: 16,
-  },
-  row: {
-    flexDirection: "row",
-    paddingVertical: 8,
-    paddingHorizontal: 7,
+  page: { paddingBottom: PAD, fontSize: 11, lineHeight: 1.4, color: INK, fontFamily: "Helvetica" },
+  accentBar: { height: 6, backgroundColor: ACCENT },
+
+  header: {
+    backgroundColor: CREAM,
     borderBottomWidth: 1,
     borderBottomColor: BORDER,
+    paddingHorizontal: PAD,
+    paddingTop: 22,
+    paddingBottom: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
+  brandRow: { flexDirection: "row", alignItems: "center" },
+  brand: { fontSize: 26, fontFamily: "Times-Bold", color: ACCENT, marginLeft: 8, letterSpacing: 1 },
+  biz: { fontSize: 9.5, color: MUTED, marginTop: 6, maxWidth: 230, lineHeight: 1.5 },
+
+  docTitle: { fontSize: 26, fontFamily: "Times-Bold", color: INK, textAlign: "right", letterSpacing: 1 },
+  invMeta: { fontSize: 10, color: MUTED, textAlign: "right", marginTop: 3 },
+  invMetaStrong: { fontSize: 10.5, color: INK, fontFamily: "Helvetica-Bold", textAlign: "right", marginTop: 3 },
+  pillWrap: { flexDirection: "row", justifyContent: "flex-end", marginTop: 7 },
+  pill: { borderRadius: 999, paddingVertical: 3, paddingHorizontal: 10, fontSize: 9, fontFamily: "Helvetica-Bold" },
+
+  body: { paddingHorizontal: PAD, paddingTop: 22 },
+  twoCol: { flexDirection: "row", justifyContent: "space-between", gap: 20 },
+  label: { fontSize: 8.5, color: MUTED, textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 4 },
+  partyName: { fontSize: 13, fontFamily: "Times-Bold" },
+  strong: { fontFamily: "Helvetica-Bold" },
+  soft: { color: MUTED },
+
+  tableHead: {
+    flexDirection: "row",
+    backgroundColor: CREAM_2,
+    paddingVertical: 8,
+    paddingHorizontal: 9,
+    marginTop: 20,
+    borderRadius: 4,
+  },
+  headText: { fontSize: 9, fontFamily: "Helvetica-Bold", color: ACCENT_INK, textTransform: "uppercase", letterSpacing: 0.5 },
+  row: { flexDirection: "row", paddingVertical: 8, paddingHorizontal: 9, borderBottomWidth: 1, borderBottomColor: BORDER },
+  rowAlt: { backgroundColor: ZEBRA },
   cName: { flex: 4 },
   cQty: { flex: 1.2, textAlign: "right" },
   cPrice: { flex: 2, textAlign: "right" },
-  cSub: { flex: 2, textAlign: "right" },
-  totals: { marginTop: 14, alignSelf: "flex-end", width: 260 },
-  totalRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 3 },
-  grand: {
+  cSub: { flex: 2, textAlign: "right", fontFamily: "Helvetica-Bold" },
+
+  totals: { marginTop: 16, alignSelf: "flex-end", width: 268 },
+  totalRow: { flexDirection: "row", justifyContent: "space-between", paddingVertical: 3.5 },
+  totalTop: { borderTopWidth: 1, borderTopColor: BORDER, marginTop: 4, paddingTop: 7 },
+  totalBold: { fontFamily: "Helvetica-Bold", fontSize: 12 },
+  dueBox: {
     flexDirection: "row",
     justifyContent: "space-between",
-    borderTopWidth: 1,
-    borderTopColor: BORDER,
-    marginTop: 5,
-    paddingTop: 6,
+    alignItems: "center",
+    backgroundColor: ACCENT,
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    marginTop: 8,
   },
-  grandText: { fontSize: 16, fontFamily: "Helvetica-Bold", color: ACCENT },
-  footer: { marginTop: 22 },
-  bankBox: { backgroundColor: "#FBF7F0", borderWidth: 1, borderColor: BORDER, borderRadius: 5, padding: 12, marginTop: 8 },
-  note: { fontSize: 10, color: MUTED, marginTop: 12 },
+  dueLabel: { fontSize: 11, fontFamily: "Helvetica-Bold", color: "#FFF3EE", letterSpacing: 0.5 },
+  dueValue: { fontSize: 16, fontFamily: "Helvetica-Bold", color: "#FFFFFF" },
+
+  panel: { backgroundColor: CREAM, borderWidth: 1, borderColor: BORDER, borderRadius: 6, padding: 13, marginTop: 14 },
+  note: { fontSize: 9.5, color: MUTED, marginTop: 12, lineHeight: 1.5 },
+  thanks: { fontSize: 10.5, fontFamily: "Times-Italic", color: INK, marginTop: 16 },
 });
+
+function statusPillStyle(label: string) {
+  const l = label.toLowerCase();
+  if (l.includes("lunas")) return { backgroundColor: "#E6F1EB", color: GREEN };
+  if (l.includes("sebagian") || l.includes("partial"))
+    return { backgroundColor: "#FBF1DF", color: AMBER };
+  return { backgroundColor: "#F7E7E2", color: ACCENT };
+}
 
 export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
   const { business, invoice, customer, order, items } = data;
   const docType: SalesDocType = data.doc_type ?? "invoice";
+  const dp = Number(data.down_payment ?? 0);
+  const hasDp = dp > 0;
+  const dueLabel = hasDp ? "SISA TAGIHAN" : docType === "invoice" ? "TOTAL TAGIHAN" : "TOTAL";
+  const dueValue = hasDp ? Math.max(0, order.total - dp) : order.total;
+  const pill = statusPillStyle(invoice.payment_status_label);
+
   return (
     <Document>
       <Page size="A4" style={s.page}>
-        <View style={s.headerRow}>
+        <View style={s.accentBar} />
+
+        {/* ===== Header band ===== */}
+        <View style={s.header}>
           <View>
             <View style={s.brandRow}>
-              <Svg viewBox="0 0 224 206.2" width={26} height={24}>
+              <Svg viewBox="0 0 224 206.2" width={28} height={26}>
                 <Path
                   d="M29.93 180.44l-29.93 25.76 150.1 0c13.34,0 36.8,-3.12 36.99,-25.09l-157.17 -0.67z"
                   fill={ACCENT}
@@ -144,8 +194,8 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
             </Text>
           </View>
           <View>
-            <Text style={s.invTitle}>{DOC_TITLE[docType]}</Text>
-            <Text style={s.invMeta}>{invoice.invoice_no}</Text>
+            <Text style={s.docTitle}>{DOC_TITLE[docType]}</Text>
+            <Text style={s.invMetaStrong}>{invoice.invoice_no}</Text>
             <Text style={s.invMeta}>Tanggal: {formatDate(invoice.issue_date)}</Text>
             {invoice.due_date ? (
               <Text style={s.invMeta}>
@@ -154,101 +204,105 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
               </Text>
             ) : null}
             {docType === "invoice" ? (
-              <Text style={s.invMeta}>Status: {invoice.payment_status_label}</Text>
+              <View style={s.pillWrap}>
+                <Text style={[s.pill, { backgroundColor: pill.backgroundColor, color: pill.color }]}>
+                  {invoice.payment_status_label.toUpperCase()}
+                </Text>
+              </View>
             ) : null}
           </View>
         </View>
 
-        <View style={s.hr} />
+        {/* ===== Body ===== */}
+        <View style={s.body}>
+          <View style={s.twoCol}>
+            <View style={{ maxWidth: 280 }}>
+              <Text style={s.label}>
+                {docType === "invoice" ? "Ditagihkan kepada" : "Kepada"}
+              </Text>
+              <Text style={s.partyName}>{customer?.name ?? "Pelanggan Umum"}</Text>
+              {customer?.business_name ? <Text>{customer.business_name}</Text> : null}
+              {customer?.address ? <Text style={s.soft}>{customer.address}</Text> : null}
+              {customer?.phone_wa ? <Text style={s.soft}>WA: {customer.phone_wa}</Text> : null}
+            </View>
+            {order.order_no ? (
+              <View>
+                <Text style={[s.label, { textAlign: "right" }]}>No. Pesanan</Text>
+                <Text style={[s.strong, { textAlign: "right" }]}>{order.order_no}</Text>
+              </View>
+            ) : null}
+          </View>
 
-        <View style={s.twoCol}>
-          <View style={{ maxWidth: 260 }}>
-            <Text style={s.label}>
-              {docType === "invoice" ? "Ditagihkan kepada" : "Kepada"}
-            </Text>
-            <Text style={s.strong}>{customer?.name ?? "Pelanggan Umum"}</Text>
-            {customer?.business_name ? <Text>{customer.business_name}</Text> : null}
-            {customer?.address ? <Text style={{ color: MUTED }}>{customer.address}</Text> : null}
-            {customer?.phone_wa ? <Text style={{ color: MUTED }}>WA: {customer.phone_wa}</Text> : null}
+          {/* Items */}
+          <View style={s.tableHead}>
+            <Text style={[s.cName, s.headText]}>Produk</Text>
+            <Text style={[s.cQty, s.headText]}>Qty</Text>
+            <Text style={[s.cPrice, s.headText]}>Harga</Text>
+            <Text style={[s.cSub, s.headText]}>Subtotal</Text>
           </View>
-          {order.order_no ? (
-            <View>
-              <Text style={s.label}>No. Pesanan</Text>
-              <Text style={s.strong}>{order.order_no}</Text>
+          {items.map((it, i) => (
+            <View style={i % 2 === 1 ? [s.row, s.rowAlt] : s.row} key={i} wrap={false}>
+              <Text style={s.cName}>{it.name}</Text>
+              <Text style={s.cQty}>{it.qty}</Text>
+              <Text style={s.cPrice}>{formatIDR(it.unit_price)}</Text>
+              <Text style={s.cSub}>{formatIDR(it.subtotal)}</Text>
             </View>
-          ) : null}
-        </View>
+          ))}
 
-        <View style={s.tableHead}>
-          <Text style={[s.cName, s.strong]}>Produk</Text>
-          <Text style={[s.cQty, s.strong]}>Qty</Text>
-          <Text style={[s.cPrice, s.strong]}>Harga</Text>
-          <Text style={[s.cSub, s.strong]}>Subtotal</Text>
-        </View>
-        {items.map((it, i) => (
-          <View style={s.row} key={i}>
-            <Text style={s.cName}>{it.name}</Text>
-            <Text style={s.cQty}>{it.qty}</Text>
-            <Text style={s.cPrice}>{formatIDR(it.unit_price)}</Text>
-            <Text style={s.cSub}>{formatIDR(it.subtotal)}</Text>
-          </View>
-        ))}
-
-        <View style={s.totals}>
-          <View style={s.totalRow}>
-            <Text style={{ color: MUTED }}>Subtotal</Text>
-            <Text>{formatIDR(order.subtotal)}</Text>
-          </View>
-          {order.discount > 0 ? (
+          {/* Totals */}
+          <View style={s.totals}>
             <View style={s.totalRow}>
-              <Text style={{ color: MUTED }}>Diskon</Text>
-              <Text>- {formatIDR(order.discount)}</Text>
+              <Text style={s.soft}>Subtotal</Text>
+              <Text>{formatIDR(order.subtotal)}</Text>
             </View>
-          ) : null}
-          {order.shipping > 0 ? (
-            <View style={s.totalRow}>
-              <Text style={{ color: MUTED }}>Ongkir</Text>
-              <Text>{formatIDR(order.shipping)}</Text>
-            </View>
-          ) : null}
-          {order.tax > 0 ? (
-            <View style={s.totalRow}>
-              <Text style={{ color: MUTED }}>Pajak</Text>
-              <Text>{formatIDR(order.tax)}</Text>
-            </View>
-          ) : null}
-          <View style={s.grand}>
-            <Text style={s.grandText}>TOTAL</Text>
-            <Text style={s.grandText}>{formatIDR(order.total)}</Text>
-          </View>
-          {Number(data.down_payment ?? 0) > 0 ? (
-            <>
+            {order.discount > 0 ? (
               <View style={s.totalRow}>
-                <Text style={{ color: MUTED }}>Down Payment (DP)</Text>
-                <Text>- {formatIDR(Number(data.down_payment))}</Text>
+                <Text style={s.soft}>Diskon</Text>
+                <Text>- {formatIDR(order.discount)}</Text>
               </View>
-              <View style={s.grand}>
-                <Text style={s.grandText}>SISA TAGIHAN</Text>
-                <Text style={s.grandText}>
-                  {formatIDR(Math.max(0, order.total - Number(data.down_payment)))}
-                </Text>
+            ) : null}
+            {order.shipping > 0 ? (
+              <View style={s.totalRow}>
+                <Text style={s.soft}>Ongkir</Text>
+                <Text>{formatIDR(order.shipping)}</Text>
               </View>
-            </>
-          ) : null}
-        </View>
-
-        {data.promo_note ? (
-          <View style={[s.bankBox, { marginTop: 14 }]}>
-            <Text style={s.label}>Keterangan</Text>
-            <Text>{data.promo_note}</Text>
+            ) : null}
+            {order.tax > 0 ? (
+              <View style={s.totalRow}>
+                <Text style={s.soft}>Pajak</Text>
+                <Text>{formatIDR(order.tax)}</Text>
+              </View>
+            ) : null}
+            <View style={[s.totalRow, s.totalTop]}>
+              <Text style={s.totalBold}>Total</Text>
+              <Text style={s.totalBold}>{formatIDR(order.total)}</Text>
+            </View>
+            {hasDp ? (
+              <View style={s.totalRow}>
+                <Text style={s.soft}>Down Payment (DP)</Text>
+                <Text>- {formatIDR(dp)}</Text>
+              </View>
+            ) : null}
+            <View style={s.dueBox}>
+              <Text style={s.dueLabel}>{dueLabel}</Text>
+              <Text style={s.dueValue}>{formatIDR(dueValue)}</Text>
+            </View>
           </View>
-        ) : null}
 
-        <View style={s.footer}>
+          {/* Promo / keterangan */}
+          {data.promo_note ? (
+            <View style={s.panel}>
+              <Text style={s.label}>Keterangan</Text>
+              <Text>{data.promo_note}</Text>
+            </View>
+          ) : null}
+
+          {/* Footer notes + bank */}
           {docType === "penawaran" ? (
             <Text style={s.note}>
-              Dokumen ini adalah penawaran harga — bukan tagihan. Harga & ketersediaan
-              berlaku sampai tanggal di atas (bila diisi) atau maksimal 14 hari.
+              Dokumen ini adalah penawaran harga — bukan tagihan. Harga &amp;
+              ketersediaan berlaku sampai tanggal di atas (bila diisi) atau maksimal
+              14 hari.
             </Text>
           ) : null}
           {docType === "sales_order" ? (
@@ -259,18 +313,21 @@ export function InvoiceDocument({ data }: { data: InvoicePdfData }) {
             </Text>
           ) : null}
           {business.bank_name || business.bank_account_no ? (
-            <View style={s.bankBox}>
+            <View style={s.panel}>
               <Text style={s.label}>Pembayaran transfer ke</Text>
               <Text style={s.strong}>
-                {business.bank_name} {business.bank_account_no ? `- ${business.bank_account_no}` : ""}
+                {business.bank_name}{" "}
+                {business.bank_account_no ? `- ${business.bank_account_no}` : ""}
               </Text>
               {business.bank_account_name ? (
-                <Text style={{ color: MUTED }}>a.n. {business.bank_account_name}</Text>
+                <Text style={s.soft}>a.n. {business.bank_account_name}</Text>
               ) : null}
             </View>
           ) : null}
           {business.invoice_notes ? <Text style={s.note}>{business.invoice_notes}</Text> : null}
-          <Text style={s.note}>Terima kasih atas pesanan Anda. — {business.business_name || "SAVO"}</Text>
+          <Text style={s.thanks}>
+            Terima kasih atas kepercayaan Anda. — {business.business_name || "SAVO"}
+          </Text>
         </View>
       </Page>
     </Document>
