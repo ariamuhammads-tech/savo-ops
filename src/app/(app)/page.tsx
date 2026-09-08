@@ -244,7 +244,7 @@ export default function TargetKafePage() {
               setShowScoutModal(true);
               if (scoutCandidates.length === 0) handleRunScout(scoutArea);
             }}
-            className="rounded-full bg-foreground text-background text-xs font-medium px-5 py-2 hover:opacity-90 inline-flex items-center gap-1.5 transition-opacity cursor-pointer"
+            className="px-4 py-2 bg-foreground text-background text-xs font-medium hover:opacity-90 inline-flex items-center gap-1.5 transition-opacity cursor-pointer"
           >
             <Sparkles className="size-3.5" />
             <span>Hades Scout 5 Kafe</span>
@@ -253,7 +253,7 @@ export default function TargetKafePage() {
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="rounded-full border border-border/60 text-foreground text-xs font-medium px-5 py-2 inline-flex items-center gap-1.5 hover:border-foreground transition-colors cursor-pointer"
+            className="px-4 py-2 border border-border/60 text-foreground text-xs font-medium inline-flex items-center gap-1.5 hover:border-foreground transition-colors cursor-pointer"
           >
             <Plus className="size-3.5" />
             <span>Tambah Manual</span>
@@ -376,35 +376,35 @@ export default function TargetKafePage() {
                       </div>
                     </td>
 
-                    <td className="py-4 px-4 text-right">
+                    <td className="py-4 px-4 text-right whitespace-nowrap">
                       <div className="flex items-center justify-end gap-3 text-xs">
                         {isReadyToSend && (
                           <Link
                             href={`/outbox?leadId=${lead.id}`}
-                            className="rounded-full bg-foreground text-background px-4 py-1.5 text-xs font-medium inline-flex items-center gap-1 hover:opacity-90 transition-opacity"
+                            className="group inline-flex items-center gap-1.5 text-xs font-medium text-foreground hover:text-stone-600 transition-colors whitespace-nowrap"
                           >
                             <span>Siapkan Penawaran</span>
-                            <ArrowRight className="size-3" />
+                            <ArrowRight className="size-3 transition-transform duration-150 group-hover:translate-x-0.5" />
                           </Link>
                         )}
 
                         {isSent && (
                           <Link
                             href="/follow-up"
-                            className="text-foreground hover:underline font-medium inline-flex items-center gap-1"
+                            className="group inline-flex items-center gap-1.5 text-xs font-medium text-foreground hover:text-stone-600 transition-colors whitespace-nowrap"
                           >
                             <span>Pantau di Follow-Up</span>
-                            <ArrowRight className="size-3 text-muted-foreground" />
+                            <ArrowRight className="size-3 text-muted-foreground transition-transform duration-150 group-hover:translate-x-0.5" />
                           </Link>
                         )}
 
                         {isPartner && (
                           <Link
                             href={`/invoice/baru?leadId=${lead.id}&recipient=${encodeURIComponent(lead.name)}&email=${encodeURIComponent(lead.email)}&address=${encodeURIComponent(lead.address || "")}&product=${lead.targetProduct}`}
-                            className="rounded-full bg-foreground text-background px-4 py-1.5 text-xs font-medium inline-flex items-center gap-1 hover:opacity-90 transition-opacity"
+                            className="group inline-flex items-center gap-1.5 text-xs font-medium text-foreground hover:text-stone-600 transition-colors whitespace-nowrap"
                           >
-                            <FileText className="size-3" />
                             <span>Buat Invoice</span>
+                            <ArrowRight className="size-3 transition-transform duration-150 group-hover:translate-x-0.5" />
                           </Link>
                         )}
                       </div>
@@ -522,7 +522,7 @@ export default function TargetKafePage() {
                   type="button"
                   disabled={selectedIndices.length === 0}
                   onClick={handleImportScouted}
-                  className="rounded-full bg-foreground text-background px-5 py-2 font-medium hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
+                  className="px-4 py-2 text-xs font-medium bg-foreground text-background hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
                 >
                   Tambahkan ke Target ({selectedIndices.length})
                 </button>
@@ -658,7 +658,7 @@ export default function TargetKafePage() {
               </button>
               <button
                 type="submit"
-                className="rounded-full bg-foreground text-background px-5 py-2 font-medium hover:opacity-90 transition-opacity cursor-pointer"
+                className="px-4 py-2 text-xs font-medium bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer"
               >
                 Simpan &amp; Lanjut ke Penawaran
               </button>

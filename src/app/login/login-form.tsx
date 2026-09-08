@@ -17,7 +17,7 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-full bg-foreground text-background py-2.5 text-xs font-medium hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2"
+      className="w-full bg-foreground text-background py-2.5 text-xs font-medium hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50 inline-flex items-center justify-center gap-2"
     >
       {pending && <Loader2 className="animate-spin size-3.5" />}
       <span>{pending ? "Memproses…" : "Masuk"}</span>
@@ -81,7 +81,7 @@ export function LoginForm() {
       <form action={loginDirect}>
         <button
           type="submit"
-          className="w-full rounded-full border border-border py-2 text-xs font-medium text-foreground hover:border-foreground transition-colors cursor-pointer"
+          className="w-full border border-border py-2 text-xs font-medium text-foreground hover:border-foreground transition-colors cursor-pointer"
         >
           Masuk Otomatis (Akses Cepat)
         </button>

@@ -205,7 +205,7 @@ export default function FollowUpPage() {
           {filter === "all" && (
             <Link
               href="/outbox"
-              className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-foreground text-background px-5 py-2 text-xs font-medium hover:opacity-90 transition-opacity"
+              className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-background text-xs font-medium hover:opacity-90 transition-opacity"
             >
               <span>Buka Tahap 2: Draf Penawaran</span>
               <ArrowRight className="size-3.5" />
@@ -266,15 +266,15 @@ export default function FollowUpPage() {
                 {/* Action Strip */}
                 <div className="pt-2 flex flex-wrap items-center justify-between gap-4 text-xs">
                   {/* Quick Toggles */}
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-3 flex-wrap">
                     <span className="text-[11px] text-muted-foreground mr-1">Tandai Respon:</span>
                     <button
                       type="button"
                       onClick={() => handleSetStatus(lead.id, "replied_email")}
-                      className={`px-3 py-1 rounded-full border transition-colors cursor-pointer ${
+                      className={`pb-0.5 border-b text-xs transition-colors cursor-pointer ${
                         lead.status === "replied_email"
-                          ? "bg-foreground text-background border-foreground font-medium"
-                          : "border-border/60 text-muted-foreground hover:text-foreground"
+                          ? "border-foreground text-foreground font-semibold"
+                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-border/60"
                       }`}
                     >
                       Balas Email
@@ -282,10 +282,10 @@ export default function FollowUpPage() {
                     <button
                       type="button"
                       onClick={() => handleSetStatus(lead.id, "replied_whatsapp")}
-                      className={`px-3 py-1 rounded-full border transition-colors cursor-pointer ${
+                      className={`pb-0.5 border-b text-xs transition-colors cursor-pointer ${
                         lead.status === "replied_whatsapp"
-                          ? "bg-foreground text-background border-foreground font-medium"
-                          : "border-border/60 text-muted-foreground hover:text-foreground"
+                          ? "border-foreground text-foreground font-semibold"
+                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-border/60"
                       }`}
                     >
                       Balas WA/IG
@@ -293,10 +293,10 @@ export default function FollowUpPage() {
                     <button
                       type="button"
                       onClick={() => handleSetStatus(lead.id, "sample_arranged")}
-                      className={`px-3 py-1 rounded-full border transition-colors cursor-pointer ${
+                      className={`pb-0.5 border-b text-xs transition-colors cursor-pointer ${
                         lead.status === "sample_arranged"
-                          ? "bg-foreground text-background border-foreground font-medium"
-                          : "border-border/60 text-muted-foreground hover:text-foreground"
+                          ? "border-foreground text-foreground font-semibold"
+                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-border/60"
                       }`}
                     >
                       Jadwal Tester Disepakati
@@ -304,10 +304,10 @@ export default function FollowUpPage() {
                     <button
                       type="button"
                       onClick={() => handleSetStatus(lead.id, "partner")}
-                      className={`px-3 py-1 rounded-full border transition-colors cursor-pointer ${
+                      className={`pb-0.5 border-b text-xs transition-colors cursor-pointer ${
                         lead.status === "partner"
-                          ? "bg-emerald-600 text-white border-emerald-600 font-medium"
-                          : "border-border/60 text-muted-foreground hover:text-foreground"
+                          ? "border-emerald-600 text-emerald-600 font-semibold"
+                          : "border-transparent text-muted-foreground hover:text-foreground hover:border-border/60"
                       }`}
                     >
                       Sepakat Jadi Mitra
@@ -315,20 +315,21 @@ export default function FollowUpPage() {
                   </div>
 
                   {/* Primary Next Action */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     {aging?.isActionRequired && lead.status === "sent" && (
                       <button
                         type="button"
                         disabled={isGeneratingFollowUp === lead.id}
                         onClick={() => handleGenerateFollowUp(lead)}
-                        className="rounded-full bg-foreground text-background px-4 py-1.5 text-xs font-medium inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity cursor-pointer"
+                        className="group inline-flex items-center gap-1.5 text-xs font-medium text-foreground hover:text-stone-600 transition-colors cursor-pointer disabled:opacity-50 whitespace-nowrap"
                       >
                         <Sparkles className="size-3" />
                         <span>
                           {isGeneratingFollowUp === lead.id
                             ? "Menyusun Draf..."
-                            : "⚡ Buat Draf Follow-Up Hades"}
+                            : "Buat Draf Follow-Up Hades"}
                         </span>
+                        <ArrowRight className="size-3 transition-transform duration-150 group-hover:translate-x-0.5" />
                       </button>
                     )}
 
@@ -339,10 +340,11 @@ export default function FollowUpPage() {
                         )}&email=${encodeURIComponent(lead.email)}&address=${encodeURIComponent(
                           lead.address || ""
                         )}&product=${lead.targetProduct}`}
-                        className="rounded-full bg-foreground text-background px-4 py-1.5 text-xs font-medium inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity"
+                        className="group inline-flex items-center gap-1.5 text-xs font-medium text-foreground hover:text-stone-600 transition-colors whitespace-nowrap"
                       >
                         <FileText className="size-3" />
-                        <span>Lanjut Buat Invoice &amp; Order →</span>
+                        <span>Lanjut Buat Invoice &amp; Order</span>
+                        <ArrowRight className="size-3 transition-transform duration-150 group-hover:translate-x-0.5" />
                       </Link>
                     )}
                   </div>

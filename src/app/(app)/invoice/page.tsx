@@ -91,7 +91,7 @@ export default async function InvoicePage() {
           </Link>
           <Link
             href="/invoice/baru"
-            className="inline-flex items-center gap-2 rounded-full bg-foreground text-background px-5 py-2 text-xs font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-foreground text-background text-xs font-medium hover:opacity-90 transition-opacity"
           >
             <Plus className="size-3.5" />
             <span>Buat Invoice Baru</span>
@@ -101,18 +101,18 @@ export default async function InvoicePage() {
 
       {invoices.length === 0 ? (
         <div className="flex flex-col items-center gap-4 py-20 px-6 text-center border-t border-b border-border/40">
-          <div className="flex size-12 items-center justify-center rounded-full bg-muted/40 text-foreground">
+          <div className="flex size-12 items-center justify-center bg-muted/40 text-foreground">
             <FileSpreadsheet className="size-5 text-muted-foreground" />
           </div>
           <div className="space-y-1">
             <p className="text-base font-medium text-foreground">Belum Ada Invoice Aktif</p>
             <p className="max-w-md text-xs text-muted-foreground leading-relaxed">
-              Buat invoice B2B instan untuk kafe, resto, atau lounge mitra SAVO di Bandung. Dilengkapi preset harga grosir Baso Goreng & Bitterballen serta unduh PDF langsung.
+              Buat invoice B2B instan untuk kafe, resto, atau lounge mitra SAVO di Bandung. Dilengkapi preset harga grosir Baso Goreng &amp; Bitterballen serta unduh PDF langsung.
             </p>
           </div>
           <Link
             href="/invoice/baru"
-            className="mt-2 inline-flex items-center gap-2 rounded-full bg-foreground text-background px-6 py-2.5 text-xs font-medium hover:opacity-90 transition-opacity"
+            className="mt-2 inline-flex items-center gap-2 px-5 py-2 bg-foreground text-background text-xs font-medium hover:opacity-90 transition-opacity"
           >
             <Plus className="size-3.5" />
             <span>Mulai Buat Invoice Pertama</span>

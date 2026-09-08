@@ -499,7 +499,7 @@ export default function OutboxPage() {
                     type="button"
                     disabled={isRefining}
                     onClick={() => handleRefine("touch1")}
-                    className="rounded-full px-3.5 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    className="px-3 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
                   >
                     <span>Touch 1: Menu Tambahan</span>
                   </button>
@@ -508,7 +508,7 @@ export default function OutboxPage() {
                     type="button"
                     disabled={isRefining}
                     onClick={() => handleRefine("touch2")}
-                    className="rounded-full px-3.5 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    className="px-3 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
                   >
                     <span>Touch 2: Rincian &amp; Margin</span>
                   </button>
@@ -517,7 +517,7 @@ export default function OutboxPage() {
                     type="button"
                     disabled={isRefining}
                     onClick={() => handleRefine("followup")}
-                    className="rounded-full px-3.5 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    className="px-3 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
                   >
                     <span>Follow-up Santai</span>
                   </button>
@@ -526,7 +526,7 @@ export default function OutboxPage() {
                     type="button"
                     disabled={isRefining}
                     onClick={() => handleRefine("shorten")}
-                    className="rounded-full px-3.5 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    className="px-3 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:opacity-50"
                   >
                     <span>Persingkat Draf</span>
                   </button>
@@ -657,7 +657,7 @@ export default function OutboxPage() {
                   type="button"
                   disabled={isSending || currentLead.status === "sent"}
                   onClick={handleSend}
-                  className="rounded-full bg-foreground text-background px-6 py-2.5 text-xs font-medium inline-flex items-center gap-2 cursor-pointer hover:opacity-90 disabled:opacity-50 transition-all"
+                  className="px-5 py-2 text-xs font-medium bg-foreground text-background inline-flex items-center gap-2 cursor-pointer hover:opacity-90 disabled:opacity-50 transition-all"
                 >
                   {isSending ? (
                     <>

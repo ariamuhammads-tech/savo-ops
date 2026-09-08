@@ -157,7 +157,7 @@ export default function KatalogB2BPage() {
           </button>
           <Link
             href="/outbox"
-            className="rounded-full bg-foreground text-background px-5 py-2 text-xs font-medium inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity"
+            className="px-4 py-2 bg-foreground text-background text-xs font-medium inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity"
           >
             <span>Buka Outbox Email</span>
             <ArrowRight className="size-3" />
@@ -195,7 +195,7 @@ export default function KatalogB2BPage() {
                       <button
                         type="button"
                         onClick={handleSaveEdit}
-                        className="rounded-full bg-foreground text-background px-4 py-1.5 text-xs font-medium hover:opacity-90 cursor-pointer"
+                        className="px-4 py-2 text-xs font-medium bg-foreground text-background hover:opacity-90 cursor-pointer"
                       >
                         Simpan Perubahan
                       </button>

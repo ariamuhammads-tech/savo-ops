@@ -68,12 +68,12 @@ export function PipelineStepper({ currentStep, stats }: PipelineStepperProps) {
               key={s.step}
               href={s.href}
               className={cn(
-                "group relative py-2.5 px-3 transition-colors border-b-2",
+                "group relative py-2 transition-colors border-b",
                 isActive
-                  ? "border-foreground bg-muted/10 text-foreground"
+                  ? "border-foreground text-foreground"
                   : isPast
                   ? "border-border/60 hover:border-foreground/60 text-muted-foreground hover:text-foreground"
-                  : "border-transparent hover:border-border/60 text-muted-foreground/60 hover:text-muted-foreground"
+                  : "border-transparent hover:border-border/40 text-muted-foreground/40 hover:text-muted-foreground"
               )}
             >
               <div className="flex items-center justify-between gap-1">
