@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { callHadesLLM } from "@/lib/hades-llm";
 
 export const dynamic = "force-dynamic";
 
@@ -53,40 +54,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Pesan tidak boleh kosong." }, { status: 400 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
-    const model = process.env.GEMINI_MODEL || "gemini-3.6-flash";
+    // Call Unified Hades LLM (Groq Primary + Gemini Fallback)
+    const reply = await callHadesLLM(
+      SYSTEM_PROMPT,
+      `Instruksi Aria Muhammad: ${message}`,
+      { temperature: 0.5 }
+    );
 
-    // Call Gemini API
-    if (apiKey) {
-      try {
-        const contents = [
-          {
-            role: "user",
-            parts: [{ text: `${SYSTEM_PROMPT}\n\nInstruksi Aria Muhammad: ${message}` }],
-          },
-        ];
-
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ contents }),
-          }
-        );
-
-        if (res.ok) {
-          const data = await res.json();
-          const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (reply) {
-            return NextResponse.json({ reply });
-          }
-        } else {
-          console.warn("[Hades Chat] Gemini API non-200:", await res.text());
-        }
-      } catch (geminiErr) {
-        console.warn("[Hades Chat] Gemini call failed, falling back to local heuristic:", geminiErr);
-      }
+    if (reply) {
+      return NextResponse.json({ reply });
     }
 
     // Heuristic Fallback

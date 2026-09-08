@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { callHadesLLM } from "@/lib/hades-llm";
 
 export const dynamic = "force-dynamic";
 
@@ -14,8 +15,6 @@ export async function POST(req: Request) {
       instruction,
     } = await req.json();
 
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
-    const model = process.env.GEMINI_MODEL || "gemini-3.6-flash";
 
     const systemPrompt = `
 Kamu adalah Hades, AI B2B Copywriter & Acquisition Scout resmi Savo Eats Bandung milik Aria Muhammad.
@@ -69,45 +68,24 @@ Isi:
 ${currentBody || "-"}
 `;
 
-    if (apiKey) {
+    const prompt = `Instruksi Aksi: ${action || "custom"}. Catatan/Instruksi Tambahan dari Aria: ${instruction || "Tulis draf terbaik untuk kafe ini sesuai formula."}\n\nKembalikan HANYA format JSON persis:\n{\n  "subject": "Subjek email",\n  "body": "Isi lengkap email penawaran SPOK santun"\n}`;
+
+    const text = await callHadesLLM(systemPrompt, prompt, {
+      jsonMode: true,
+      temperature: 0.3,
+    });
+
+    if (text) {
       try {
-        const prompt = `Instruksi Aksi: ${action || "custom"}. Catatan/Instruksi Tambahan dari Aria: ${instruction || "Tulis draf terbaik untuk kafe ini sesuai formula."}`;
-        const payload = {
-          contents: [{ parts: [{ text: `${systemPrompt}\n\n${prompt}` }] }],
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: "OBJECT",
-              properties: {
-                subject: { type: "STRING" },
-                body: { type: "STRING" },
-              },
-              required: ["subject", "body"],
-            },
-          },
-        };
-
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
-
-        if (res.ok) {
-          const data = await res.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) {
-            const parsed = JSON.parse(text);
-            if (parsed.subject && parsed.body) {
-              return NextResponse.json(parsed);
-            }
-          }
+        const parsed = JSON.parse(text);
+        if (parsed.subject && parsed.body) {
+          return NextResponse.json({
+            subject: parsed.subject,
+            body: parsed.body,
+          });
         }
       } catch (err) {
-        console.warn("[Hades Refine] Gemini call failed, falling back:", err);
+        console.warn("[Hades Refine] JSON parse failed:", err);
       }
     }
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { callHadesLLM } from "@/lib/hades-llm";
 
 export const dynamic = "force-dynamic";
 
@@ -1098,8 +1099,6 @@ export async function POST(req: Request) {
   try {
     const { area } = await req.json();
     const selectedArea = area && area !== "Semua Area" ? area : "Buah Batu / Lengkong";
-    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
-    const model = process.env.GEMINI_MODEL || "gemini-3.6-flash";
     const firecrawlKey = process.env.FIRECRAWL_API_KEY || "";
 
     let verifiedCandidates = VERIFIED_DIRECTORY[selectedArea];
@@ -1147,67 +1146,41 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3. AI Curation via Gemini (timeout 5s)
-    if (apiKey) {
-      try {
-        const searchContext = liveWebResults.length > 0
-          ? liveWebResults.map((r, i) => `${i + 1}. ${r.title} (${r.url}): ${r.description}`).join("\n\n")
-          : "";
+    // 3. AI Curation via Hades LLM (Groq Primary + Gemini Fallback)
+    try {
+      const searchContext = liveWebResults.length > 0
+        ? liveWebResults.map((r, i) => `${i + 1}. ${r.title} (${r.url}): ${r.description}`).join("\n\n")
+        : "";
 
-        const systemPrompt = `Kamu adalah Hades, AI B2B Acquisition resmi Savo Eats Bandung milik Aria Muhammad.
+      const systemPrompt = `Kamu adalah Hades, AI B2B Acquisition resmi Savo Eats Bandung milik Aria Muhammad.
 Tugas: Mengurasi TEPAT 5 kafe / coffee shop NYATA dan aktif yang berlokasi KHUSUS di area: ${selectedArea}, Bandung.
 MUTLAK: DILARANG mengembalikan kafe dari area lain (misal jangan kembalikan kafe Dago jika area adalah Buah Batu).
 Gunakan bahasa Indonesia baku, santun (SPOK), sapa tim kafe dengan hormat (DILARANG KATA 'KALIAN'), tawarkan sampel tester cuma-cuma, zero prep 3-4 menit.`;
 
-        const payload = {
-          contents: [
-            {
-              role: "user",
-              parts: [
-                {
-                  text: `${systemPrompt}\n\nKonteks Web:\n${searchContext}\n\nKembalikan JSON format:\n{\n  "candidates": [\n    {\n      "name": "Nama Kafe di ${selectedArea}",\n      "category": "coffee_shop",\n      "area": "${selectedArea}",\n      "address": "Alamat nyata di ${selectedArea} Bandung",\n      "email": "email",\n      "instagram": "@ig",\n      "whatsapp": "+628...",\n      "contactPerson": "Tim Purchasing / Barista Lead",\n      "targetProduct": "bitterballen_cheese",\n      "fitReason": "Alasan spesifik kecocokan dengan Savo Eats",\n      "stagedDraft": {\n        "subject": "Peluang kerja sama menu camilan untuk [Nama Kafe]",\n        "body": "Draf email 35-50 kata SPOK santun"\n      }\n    }\n  ]\n}`,
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            responseMimeType: "application/json",
-          },
-        };
+      const userPrompt = `Konteks Web:\n${searchContext}\n\nKurasi 5 kafe nyata di ${selectedArea}. Kembalikan persis JSON format:\n{\n  "candidates": [\n    {\n      "name": "Nama Kafe di ${selectedArea}",\n      "category": "coffee_shop",\n      "area": "${selectedArea}",\n      "address": "Alamat nyata di ${selectedArea} Bandung",\n      "email": "email",\n      "instagram": "@ig",\n      "whatsapp": "+628...",\n      "contactPerson": "Tim Purchasing / Barista Lead",\n      "targetProduct": "bitterballen_cheese",\n      "fitReason": "Alasan spesifik kecocokan dengan Savo Eats",\n      "stagedDraft": {\n        "subject": "Peluang kerja sama menu camilan untuk [Nama Kafe]",\n        "body": "Draf email 35-50 kata SPOK santun"\n      }\n    }\n  ]\n}`;
 
-        const res = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-          {
-            method: "POST",
-            signal: AbortSignal.timeout(5000),
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
+      const text = await callHadesLLM(systemPrompt, userPrompt, {
+        jsonMode: true,
+        temperature: 0.3,
+      });
 
-        if (res.ok) {
-          const data = await res.json();
-          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) {
-            const parsed = JSON.parse(text);
-            if (parsed.candidates && Array.isArray(parsed.candidates) && parsed.candidates.length >= 3) {
-              // Strictly ensure all returned candidates belong to the requested area
-              const validCandidates = parsed.candidates
-                .filter((c: ScoutCandidate) => c.name && c.address)
-                .map((c: ScoutCandidate) => ({ ...c, area: selectedArea }));
-              
-              if (validCandidates.length >= 3) {
-                return NextResponse.json({
-                  area: selectedArea,
-                  candidates: validCandidates.slice(0, 5),
-                });
-              }
-            }
+      if (text) {
+        const parsed = JSON.parse(text);
+        if (parsed.candidates && Array.isArray(parsed.candidates) && parsed.candidates.length >= 3) {
+          const validCandidates = parsed.candidates
+            .filter((c: ScoutCandidate) => c.name && c.address)
+            .map((c: ScoutCandidate) => ({ ...c, area: selectedArea }));
+
+          if (validCandidates.length >= 3) {
+            return NextResponse.json({
+              area: selectedArea,
+              candidates: validCandidates.slice(0, 5),
+            });
           }
         }
-      } catch {
-        // Fallback to verified directory immediately
       }
+    } catch {
+      // Fallback to verified directory immediately
     }
 
     // 4. Return 100% Guaranteed Real Bandung Cafes for the requested area
