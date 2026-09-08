@@ -33,6 +33,7 @@ export async function POST(req: Request) {
       try {
         const fcRes = await fetch("https://api.firecrawl.dev/v1/search", {
           method: "POST",
+          signal: AbortSignal.timeout(5000),
           headers: {
             Authorization: `Bearer ${firecrawlKey}`,
             "Content-Type": "application/json",
@@ -44,7 +45,13 @@ export async function POST(req: Request) {
         });
         if (fcRes.ok) {
           const fcData = await fcRes.json();
-          liveWebResults = fcData?.data?.web || [];
+          const rawData = fcData?.data;
+          liveWebResults = Array.isArray(rawData)
+            ? rawData
+            : Array.isArray(rawData?.web)
+            ? rawData.web
+            : [];
+          console.log(`[Hades Scout] Firecrawl found ${liveWebResults.length} live results for ${selectedArea}`);
         } else {
           console.warn("[Hades Scout] Firecrawl response status:", fcRes.status);
         }
@@ -129,6 +136,7 @@ Kembalikan respon dalam format JSON:
           `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
           {
             method: "POST",
+            signal: AbortSignal.timeout(6000),
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),
           }
