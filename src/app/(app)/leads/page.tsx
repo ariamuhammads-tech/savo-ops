@@ -67,8 +67,8 @@ export default function LeadsPage() {
       status: "staged",
       notes: newLead.notes || "Ditambahkan oleh Aria",
       stagedDraft: {
-        subject: `Penawaran Mitra Suplai SAVO Bandung untuk ${newLead.name}`,
-        body: `Halo Tim ${newLead.name}, salam dari SAVO Bandung.\n\nKami ingin memperkenalkan Bitterballen Daging Sapi Australia dan Baso Goreng siap saji untuk melengkapi menu cemilan di ${newLead.name}.\n\nKami siap mengirimkan paket Curated Free Tasting Sample bebas biaya.\n\nSalam,\nAria - SAVO Bandung\nthesavorium@gmail.com`,
+        subject: `Perkenalan Savo Eats & Tester Bitterballen untuk ${newLead.name}`,
+        body: `Halo Tim ${newLead.name}, salam kenal dari Aria di Savo Eats.\n\nSuka banget sama vibe dan konsistensi kafe kalian. Kami di Savo Eats memproduksi Bitterballen daging sapi Australia dan Baso Goreng siap goreng khusus untuk kafe di Bandung.\n\nBiar tim kitchen & barista bisa coba langsung, bolehkah kami kirimkan 1 Curated Tasting Box gratis minggu ini?\n\nSalam santai,\nAria — Savo Eats\nthesavorium@gmail.com`,
       },
       updatedAt: new Date().toISOString(),
     };

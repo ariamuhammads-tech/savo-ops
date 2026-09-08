@@ -20,13 +20,16 @@ export function AgentConsole() {
     {
       id: "msg-1",
       sender: "agent",
-      text: "Halo Aria. Saya Hades, agen marketing B2B SAVO untuk area Bandung. Misi saya adalah mengurasi kafe, coffee shop, dan taphouse potensial di Bandung serta menyiapkan draf email penawaran dari thesavorium@gmail.com.\n\nHarga B2B terkunci:\n• Baso Goreng: Rp 35.000 – Rp 40.000 / 10 pcs\n• Bitterballen Original: Rp 25.000 / pack\n• Bitterballen Cheese: Rp 35.000 / pack\n• Curated Free Tasting Sample: 3 Ori + 3 Cheese + 2 Baso Goreng\n\nApa instruksi kurasi atau draf yang ingin kita jalankan?",
+      text: "Halo Aria. Saya Hades, agen marketing B2B Savo Eats untuk area Bandung. Misi saya adalah mengurasi kafe, coffee shop, dan taphouse potensial di Bandung serta menyiapkan draf email penawaran dari thesavorium@gmail.com.\n\nHarga B2B terkunci:\n• Baso Goreng: Rp 35.000 – Rp 40.000 / 10 pcs\n• Bitterballen Original: Rp 25.000 / pack\n• Bitterballen Cheese: Rp 35.000 / pack\n• Curated Free Tasting Sample: 3 Ori + 3 Cheese + 2 Baso Goreng\n\nApa instruksi kurasi kafe atau draf penawaran yang ingin kita eksplorasi?",
       timestamp: "Baru saja",
     },
   ]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const executeCommand = (commandText: string) => {
+  const executeCommand = async (commandText: string) => {
+    if (!commandText.trim()) return;
+
     const userMsg: ChatMessage = {
       id: "msg-" + Date.now(),
       sender: "user",
@@ -34,67 +37,45 @@ export function AgentConsole() {
       timestamp: "Baru saja",
     };
 
-    let replyText = "";
-    const lower = commandText.toLowerCase();
-
-    if (lower.includes("riau") || lower.includes("dago") || lower.includes("rekomendasi")) {
-      replyText =
-        "Rekomendasi Kafe Prioritas di Koridor Riau & Dago (Sesuai Kriteria Tiket Menu):\n\n" +
-        "1. **Wheels Coffee Roasters** (Jl. LLRE Martadinata No.65)\n" +
-        "   • Target: Bitterballen Cheese (Rp 35.000/pack). Margin kafe 55% pada harga jual Rp 38.000/porsi.\n" +
-        "   • Status: Draf email sudah siap di antrean Staged.\n\n" +
-        "2. **Sejiwa Coffee** (Jl. Progo No.15)\n" +
-        "   • Target: Bitterballen Original (Rp 25.000/pack). Porsi 5 pcs = HPP Rp 12.500, jual Rp 32.000.\n" +
-        "   • Status: Draf email siap di antrean Staged.\n\n" +
-        "3. **Blue Doors** (Jl. Alkateri / Golf Barat)\n" +
-        "   • Target: Curated Tasting Box (Ori & Cheese). Pelanggan artisan coffee.\n\n" +
-        "Anda dapat langsung meninjau draf email dan mengklik [Setujui & Kirim] di panel atas.";
-    } else if (lower.includes("margin") || lower.includes("hitung") || lower.includes("harga")) {
-      replyText =
-        "Perhitungan Unit Economics & Margin Kafe (Berdasarkan Harga Baku SAVO):\n\n" +
-        "1. **Bitterballen Original (Signature Beef):**\n" +
-        `   • Harga B2B: Rp ${SAVO_PRICING.bitterballen_ori.b2b_price.toLocaleString("id-ID")} / pack (10 pcs)\n` +
-        `   • Porsi Kafe: 5 pcs (HPP bahan = Rp ${SAVO_PRICING.bitterballen_ori.hpp_per_portion.toLocaleString("id-ID")})\n` +
-        `   • Rekomendasi Jual Kafe: Rp ${SAVO_PRICING.bitterballen_ori.recommended_sell_price.toLocaleString("id-ID")}\n` +
-        `   • Laba Bersih Kafe: Rp ${(SAVO_PRICING.bitterballen_ori.recommended_sell_price - SAVO_PRICING.bitterballen_ori.hpp_per_portion).toLocaleString("id-ID")} (${SAVO_PRICING.bitterballen_ori.margin_percent})\n\n` +
-        "2. **Bitterballen Cheese (Australian Beef + Keju):**\n" +
-        `   • Harga B2B: Rp ${SAVO_PRICING.bitterballen_cheese.b2b_price.toLocaleString("id-ID")} / pack (10 pcs)\n` +
-        `   • Porsi Kafe: 5 pcs (HPP bahan = Rp ${SAVO_PRICING.bitterballen_cheese.hpp_per_portion.toLocaleString("id-ID")})\n` +
-        `   • Rekomendasi Jual Kafe: Rp ${SAVO_PRICING.bitterballen_cheese.recommended_sell_price.toLocaleString("id-ID")}\n` +
-        `   • Laba Bersih Kafe: Rp ${(SAVO_PRICING.bitterballen_cheese.recommended_sell_price - SAVO_PRICING.bitterballen_cheese.hpp_per_portion).toLocaleString("id-ID")} (${SAVO_PRICING.bitterballen_cheese.margin_percent})\n\n` +
-        "3. **Baso Goreng SAVO (Ready-to-Fry):**\n" +
-        `   • Harga B2B: ${SAVO_PRICING.baso_goreng.b2b_price_range}\n` +
-        `   • Porsi Kafe: 3 pcs potong serong (HPP = Rp ${SAVO_PRICING.baso_goreng.hpp_per_portion.toLocaleString("id-ID")})\n` +
-        `   • Rekomendasi Jual: Rp ${SAVO_PRICING.baso_goreng.recommended_sell_price.toLocaleString("id-ID")}\n` +
-        `   • Laba Bersih Kafe: Rp ${(SAVO_PRICING.baso_goreng.recommended_sell_price - SAVO_PRICING.baso_goreng.hpp_per_portion).toLocaleString("id-ID")} (${SAVO_PRICING.baso_goreng.margin_percent})\n\n` +
-        "Kesimpulan komersial: Semua produk SAVO memberikan margin 53% - 62% bagi kafe mitra.";
-    } else if (lower.includes("sample") || lower.includes("tester")) {
-      replyText =
-        "Format Paket Sample Bebas Biaya (Curated Free Tasting Box):\n\n" +
-        `Komposisi: ${SAVO_PRICING.sample_pack.contents}\n\n` +
-        "Alasan Strategis: Porsi kurasi ini sengaja tidak dibuat sebanyak kemasan penuh agar efisien bagi SAVO, namun memberikan sampel representatif yang cukup dicicipi oleh owner, head kitchen, dan barista lead.\n\n" +
-        "Penawaran ini disematkan pada setiap draf email penawaran B2B.";
-    } else {
-      replyText =
-        `Instruksi dicatat: "${commandText}".\n\n` +
-        "Saya terus memantau antrean draf email B2B dari thesavorium@gmail.com. Silakan tinjau draf di antrean Staged dan klik tombol kirim kapan pun Anda siap.";
-    }
-
-    const agentMsg: ChatMessage = {
-      id: "msg-" + (Date.now() + 1),
-      sender: "agent",
-      text: replyText,
-      timestamp: "Baru saja",
-    };
-
-    setMessages((prev) => [...prev, userMsg, agentMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/hades/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: commandText }),
+      });
+
+      const data = await res.json();
+      const replyText = data.reply || "Maaf, terjadi kendala saat memproses instruksi.";
+
+      const agentMsg: ChatMessage = {
+        id: "msg-" + (Date.now() + 1),
+        sender: "agent",
+        text: replyText,
+        timestamp: "Baru saja",
+      };
+
+      setMessages((prev) => [...prev, agentMsg]);
+    } catch {
+      const errorMsg: ChatMessage = {
+        id: "msg-" + (Date.now() + 1),
+        sender: "agent",
+        text: "Koneksi ke otak AI Hades terputus. Silakan coba lagi.",
+        timestamp: "Baru saja",
+      };
+      setMessages((prev) => [...prev, errorMsg]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
-    executeCommand(input.trim());
+    if (!input.trim() || isLoading) return;
+    executeCommand(input);
   };
 
   return (

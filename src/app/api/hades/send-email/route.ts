@@ -4,7 +4,7 @@ import { sendB2BEmail } from "@/lib/mailer";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { to, recipientName, venueName, subject, text } = body;
+    const { to, recipientName, venueName, subject, text, attachments } = body;
 
     if (!to || !subject || !text) {
       return NextResponse.json(
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
       venueName: venueName || "Kafe Mitra",
       subject,
       body: text,
+      attachments,
     });
 
     if (!result.success) {

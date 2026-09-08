@@ -7,9 +7,21 @@ import {
   Check,
   Copy,
   CheckCircle2,
+  Paperclip,
+  ImageIcon,
+  Plus,
+  X,
 } from "lucide-react";
 import { INITIAL_LEADS, Lead, PRODUCT_LABELS } from "@/lib/leads-data";
 import { toast } from "sonner";
+
+interface AttachmentItem {
+  id: string;
+  filename: string;
+  content: string; // base64 without prefix
+  contentType: string;
+  sizeKb: number;
+}
 
 export default function OutboxPage() {
   const searchParams = useSearchParams();
@@ -19,6 +31,7 @@ export default function OutboxPage() {
   const [selectedLeadId, setSelectedLeadId] = useState(initialLeadId);
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
+  const [attachments, setAttachments] = useState<AttachmentItem[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -31,6 +44,7 @@ export default function OutboxPage() {
     if (target) {
       setSubject(target.stagedDraft.subject);
       setBody(target.stagedDraft.body);
+      setAttachments([]);
     }
   };
 
@@ -41,6 +55,42 @@ export default function OutboxPage() {
       setBody(currentLead.stagedDraft.body);
     }
   });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    Array.from(files).forEach((file) => {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error(`File ${file.name} melebihi 2MB. Gunakan foto ringan agar tidak masuk spam.`);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        const base64Content = result.split(",")[1];
+        setAttachments((prev) => [
+          ...prev,
+          {
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+            filename: file.name,
+            content: base64Content,
+            contentType: file.type || "image/jpeg",
+            sizeKb: Math.round(file.size / 1024),
+          },
+        ]);
+        toast.success(`Foto ${file.name} dilampirkan!`);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    e.target.value = "";
+  };
+
+  const removeAttachment = (id: string) => {
+    setAttachments((prev) => prev.filter((a) => a.id !== id));
+  };
 
   const handleSend = async () => {
     setIsSending(true);
@@ -55,6 +105,11 @@ export default function OutboxPage() {
           venueName: currentLead.name,
           subject,
           text: body,
+          attachments: attachments.map((a) => ({
+            filename: a.filename,
+            content: a.content,
+            contentType: a.contentType,
+          })),
         }),
       });
 
@@ -175,7 +230,7 @@ export default function OutboxPage() {
               <div className="flex">
                 <span className="w-16 text-muted-foreground shrink-0">From:</span>
                 <span className="font-medium text-foreground">
-                  SAVO Bandung &lt;thesavorium@gmail.com&gt;
+                  Savo Eats &lt;thesavorium@gmail.com&gt;
                 </span>
               </div>
               <div className="flex">
@@ -199,11 +254,59 @@ export default function OutboxPage() {
             <div>
               <label className="block text-xs font-semibold mb-1">Isi Pesan Email</label>
               <textarea
-                rows={12}
+                rows={11}
                 value={body}
                 onChange={(e) => setBody(e.target.value)}
                 className="w-full rounded-md border border-border bg-card p-3 text-xs leading-relaxed text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary font-sans"
               />
+            </div>
+
+            {/* Attachments Section */}
+            <div className="space-y-2 pt-2 border-t border-border/60">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                  <Paperclip className="size-3.5 text-muted-foreground" />
+                  Lampirkan Foto Produk / Menu (Opsional)
+                </span>
+                <label className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline cursor-pointer">
+                  <Plus className="size-3.5" />
+                  + Pilih Foto
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    multiple
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              </div>
+
+              {attachments.length === 0 ? (
+                <p className="text-[11px] text-muted-foreground">
+                  Belum ada foto yang dilampirkan. Klik <strong>+ Pilih Foto</strong> jika ingin menyertakan foto Bitterballen atau Baso Goreng (disarankan maks. 1MB agar tidak masuk tab Spam).
+                </p>
+              ) : (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {attachments.map((att) => (
+                    <div
+                      key={att.id}
+                      className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-border bg-secondary/50 text-xs text-foreground font-mono"
+                    >
+                      <ImageIcon className="size-3.5 text-primary" />
+                      <span className="max-w-[150px] truncate">{att.filename}</span>
+                      <span className="text-[10px] text-muted-foreground">({att.sizeKb} KB)</span>
+                      <button
+                        type="button"
+                        onClick={() => removeAttachment(att.id)}
+                        className="text-muted-foreground hover:text-destructive transition-colors ml-1 cursor-pointer"
+                        title="Hapus foto ini"
+                      >
+                        <X className="size-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}

@@ -1,11 +1,19 @@
 import nodemailer from "nodemailer";
 
+export interface EmailAttachment {
+  filename: string;
+  content: string; // base64 string
+  contentType?: string;
+  encoding?: string;
+}
+
 export interface SendEmailPayload {
   to: string;
   recipientName: string;
   venueName: string;
   subject: string;
   body: string;
+  attachments?: EmailAttachment[];
 }
 
 export interface SendEmailResult {
@@ -21,7 +29,7 @@ export async function sendB2BEmail(payload: SendEmailPayload): Promise<SendEmail
   const smtpPass = rawPass.replace(/\s+/g, "");
   const smtpHost = process.env.SMTP_HOST || "smtp.gmail.com";
   const smtpPort = Number(process.env.SMTP_PORT) || 465;
-  const fromAddress = process.env.SMTP_FROM || `"SAVO Bandung" <${smtpUser}>`;
+  const fromAddress = process.env.SMTP_FROM || `"Savo Eats" <${smtpUser}>`;
 
   // If password is not configured yet, record safely as simulated send
   if (!smtpPass) {
@@ -52,6 +60,12 @@ export async function sendB2BEmail(payload: SendEmailPayload): Promise<SendEmail
       replyTo: smtpUser,
       subject: payload.subject,
       text: payload.body,
+      attachments: payload.attachments?.map((att) => ({
+        filename: att.filename,
+        content: att.content,
+        encoding: (att.encoding || "base64") as "base64",
+        contentType: att.contentType,
+      })),
     });
 
     return {

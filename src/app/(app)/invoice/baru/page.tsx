@@ -182,7 +182,7 @@ export default function BuatInvoiceBaruPage() {
       `Pembayaran Transfer Bank BCA:\n` +
       `No Rek: 283-091-8899\n` +
       `A/N: Aria Muhammad\n\n` +
-      `Terima kasih atas kemitraannya dengan SAVO Bandung!`;
+      `Terima kasih atas kemitraannya dengan Savo Eats!`;
 
     const phoneClean = (customerPhone || "").replace(/\D/g, "").replace(/^0/, "62");
     window.open(`https://wa.me/${phoneClean}?text=${encodeURIComponent(summary)}`, "_blank");

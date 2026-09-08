@@ -140,28 +140,20 @@ export const INITIAL_LEADS: Lead[] = [
     status: "staged",
     notes: "Traffic tinggi, profil pelanggan pas untuk Bitterballen Cheese & Original pendamping manual brew.",
     stagedDraft: {
-      subject: "Sample Tester Bitterballen Beef untuk Menu Snack Wheels Coffee",
-      body: `Halo Tim F&B Wheels Coffee Roasters, salam kenal dari Aria - SAVO Bandung.
+      subject: "Tester Bitterballen & Baso Goreng untuk Tim Wheels Coffee",
+      body: `Halo Tim Wheels Coffee, salam kenal dari Aria di Savo Eats.
 
-Saya perhatikan karakter pengunjung di Wheels Coffee sangat apresiatif terhadap menu artisan berkualitas. Kami dari SAVO (produsen homemade frozen food di Bandung) ingin menawarkan suplai cemilan gurih pendamping kopi tanpa membebani operasional kitchen:
+Suka banget sama vibe dan konsistensi kopi kalian di Bandung. Kami di Savo Eats kebetulan memproduksi Bitterballen (100% daging sapi Australia) dan Baso Goreng siap goreng khusus untuk suplai kafe lokal.
 
-1. Bitterballen Cheese (Daging Sapi Australia 100% + lelehan keju gurih) — Rp 35.000 / pack.
-2. Bitterballen Original (Rempah pala khas Belanda) — Rp 25.000 / pack.
-3. Baso Goreng SAVO (Renyah mekar di luar, kopong kenyal di dalam) — Rp 35.000 / 10 pcs.
+Tanpa perlu persiapan repot di kitchen, staf tinggal deep-fry 4 menit langsung dari kondisi beku.
 
-Keunggulan untuk kitchen Wheels:
-• Staf bar/kitchen tinggal deep-fry 3.5 menit langsung dari beku (zero preparation time).
-• HPP porsi kafe hanya ~Rp 12.500 - Rp 17.500 dengan margin laba 55% - 60%.
-• Sistem beku tanpa limbah (zero food waste).
+Biar tim barista dan kitchen bisa mencicipi langsung rasanya, kami ingin mengirimkan 1 Curated Tasting Box gratis (isi Bitterballen Cheese, Ori, dan Baso Goreng) ke Wheels Coffee minggu ini.
 
-Jika berkenan, kami ingin mengantarkan 1 Curated Tasting Box (berisi 3 pcs Bitterballen Cheese, 3 pcs Ori, dan 2 pcs Baso Goreng) bebas biaya ke Wheels Coffee agar tim kitchen/barista bisa mencicipi langsung kualitasnya.
+Kira-kira boleh kami kirimkan? Kalau berkenan, boleh info nama penerima atau hari yang paling pas ya.
 
-Kira-kira hari apa yang paling nyaman untuk kami antarkan tester ini?
-
-Salam hangat,
-Aria Muhammad
-SAVO Bandung
-thesavorium@gmail.com | 0812-2334-4551`,
+Salam santai,
+Aria — Savo Eats
+thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-08T06:00:00Z",
   },
@@ -179,24 +171,18 @@ thesavorium@gmail.com | 0812-2334-4551`,
     status: "staged",
     notes: "Spot kopi ikonik di Progo, butuh finger food klasik daging sapi untuk teman ngobrol santai.",
     stagedDraft: {
-      subject: "Penawaran Mitra Suplai Bitterballen Sapi untuk Sejiwa Progo",
-      body: `Halo rekan Sejiwa Coffee Progo, salam hangat dari SAVO Bandung.
+      subject: "Tester Bitterballen Sapi untuk Tim Sejiwa Progo",
+      body: `Halo rekan Sejiwa Progo, salam kenal dari Aria di Savo Eats.
 
-Sejiwa selalu jadi acuan standar kopi di Bandung. Menemani cangkir kopi berkualitas, kami ingin memperkenalkan Bitterballen Daging Sapi Australia 100% buatan homemade SAVO.
+Sejiwa selalu jadi barometer kopi di Bandung. Menemani seduhan kopi kalian, kami di Savo Eats memproduksi Bitterballen daging sapi Australia dan Baso Goreng siap goreng yang praktis untuk menu cemilan kafe.
 
-Formula kami dirancang khusus untuk kebutuhan kafe:
-• Bitterballen Original: Rp 25.000 / pack (10 pcs).
-• Bitterballen Cheese: Rp 35.000 / pack (10 pcs).
-• Cukup goreng 3.5 menit, renyah di luar dan creamy gurih di dalam.
-• Porsi isi 5 pcs memberikan margin kafe di atas 55% pada harga jual menu Rp 30.000 - Rp 38.000.
+Biar tim barista & kitchen Sejiwa bisa coba langsung kualitas dan rasanya, kami ingin mengirimkan 1 paket tasting gratis (bebas biaya) ke Progo.
 
-Kami ingin mengirimkan 1 porsi Curated Tasting Box (bebas biaya) ke Sejiwa Progo untuk dicicipi barista & kitchen lead hari ini atau besok.
+Boleh kami drop testernya besok atau lusa? Kalau berkenan, kabari kami ya.
 
-Boleh kami konfirmasi waktu yang tepat untuk pengantaran sample-nya?
-
-Salam,
-Aria Muhammad
-SAVO Bandung | thesavorium@gmail.com`,
+Salam hangat,
+Aria — Savo Eats
+thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-08T06:10:00Z",
   },
@@ -214,23 +200,17 @@ SAVO Bandung | thesavorium@gmail.com`,
     status: "staged",
     notes: "Bar snack paling dicari adalah baso goreng renyah dan bitterballen panas pendamping bir.",
     stagedDraft: {
-      subject: "Suplai Bar Snacks: Baso Goreng Kopong & Bitterballen SAVO",
-      body: `Halo Head Kitchen & Bar Manager Beer Point Paskal,
+      subject: "Sample Bar Snack: Baso Goreng & Bitterballen untuk Beer Point",
+      body: `Halo tim Beer Point Paskal, salam kenal dari Aria di Savo Eats.
 
-Di bar dan taproom, finger food gurih yang keluar cepat dari kitchen adalah kunci repeat order minuman.
+Buat nemenin bir dan suasana taphouse di Paskal, finger food gurih yang keluar cepet dari kitchen emang paling pas. Kami di Savo Eats memproduksi Baso Goreng kopong renyah dan Bitterballen keju beku siap goreng (tinggal deep-fry 4 menit tanpa repot adonan).
 
-SAVO memproduksi baso goreng dan bitterballen frozen standar bar & resto:
-• Baso Goreng SAVO: Rp 35.000 / 10 pcs jumbo (digoreng mekar, kopong renyah tahan lama, sangat cocok untuk bar snack platter).
-• Bitterballen Cheese: Rp 35.000 / pack (daging sapi Australia + lelehan keju).
-• Waktu masak: 3-4 menit (staf bar tinggal goreng, tidak perlu persiapan adonan).
-• Margin jual bar: 50% - 60% per porsi.
+Kami ingin kirim 1 tester box gratis ke Paskal biar tim dapur atau bar bisa coba goreng dan cicipi bareng.
 
-Kami ingin drop 1 sample box tester (gratis) ke Beer Point Paskal agar tim dapur bisa coba goreng dan cicipi bareng.
+Boleh kami antar sore ini sebelum operasional buka?
 
-Bisa kami kirimkan sore ini sebelum jam operasional bar buka?
-
-Terima kasih,
-Aria - SAVO Bandung
+Salam santai,
+Aria — Savo Eats
 thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-08T06:15:00Z",
@@ -250,16 +230,18 @@ thesavorium@gmail.com`,
     sentAt: "2026-09-07T14:30:00Z",
     notes: "Kafe brunch spesialis Western, email penawaran tester sudah terkirim, menunggu konfirmasi jadwal antar.",
     stagedDraft: {
-      subject: "Sample Tasting Bitterballen & Baso Goreng SAVO untuk Two Hands Full",
-      body: `Halo Management Two Hands Full, salam dari SAVO Bandung.
+      subject: "Sample Tasting Bitterballen Sapi untuk Two Hands Full",
+      body: `Halo rekan Two Hands Full, salam kenal dari Aria di Savo Eats.
 
-Kami ingin memperkenalkan produk homemade Bitterballen Daging Sapi Australia 100% dan Baso Goreng siap saji untuk melengkapi menu brunch & coffee di THF.
+Suka banget sama standar brunch dan kopi di THF. Kami di Savo Eats memproduksi Bitterballen daging sapi Australia dan Baso Goreng siap goreng yang praktis untuk melengkapi menu cemilan kafe.
 
-Produk kami beku berkualitas, siap disajikan dalam 3-4 menit dengan margin kafe 55%+. Kami menawarkan pengiriman sample tester bebas biaya ke Sukajadi.
+Kami ingin mengirimkan 1 Curated Tasting Box gratis ke Sukajadi agar tim kitchen bisa coba cicipi langsung.
 
-Salam,
-Aria Muhammad
-SAVO Bandung | thesavorium@gmail.com`,
+Boleh kami info jadwal drop sample-nya?
+
+Salam hangat,
+Aria — Savo Eats
+thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-07T14:30:00Z",
   },
