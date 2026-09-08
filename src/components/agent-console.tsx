@@ -80,42 +80,42 @@ export function AgentConsole() {
 
   return (
     <div className="space-y-4">
-      {/* Console Header Datum Strip */}
-      <div className="border-t border-b border-border py-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+      {/* Console Header */}
+      <div className="border-t border-b border-border py-2.5 flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-foreground">HADES ENGINE // TERMINAL</span>
-          <span>•</span>
-          <span>thesavorium@gmail.com</span>
+          <span className="font-medium text-foreground">Konsol Asisten Hades</span>
+          <span>·</span>
+          <span className="font-mono text-[11.5px]">thesavorium@gmail.com</span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 text-xs">
           <span className="size-1.5 rounded-full bg-emerald-500" />
-          <span>SYS READY</span>
+          <span>Siap</span>
         </div>
       </div>
 
-      {/* Messages Stream (Open Canvas, Manuscript Quotation - Zero Box) */}
-      <div className="max-h-80 overflow-y-auto py-3 space-y-5 text-xs pr-2">
+      {/* Messages Stream */}
+      <div className="max-h-80 overflow-y-auto py-3 space-y-4 text-sm pr-2">
         {messages.map((m) => (
           <div key={m.id}>
             {m.sender === "agent" ? (
-              <div className="space-y-1.5">
-                <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                  <span className="font-bold text-foreground">HADES</span>
-                  <span>//</span>
+              <div className="space-y-1">
+                <div className="text-xs text-muted-foreground flex items-center gap-2">
+                  <span className="font-medium text-foreground">Hades</span>
+                  <span>·</span>
                   <span>{m.timestamp}</span>
                 </div>
-                <div className="pl-4 border-l-2 border-foreground py-1 whitespace-pre-line text-xs font-mono leading-relaxed text-foreground/90">
+                <div className="pl-4 border-l-2 border-foreground/30 py-1 whitespace-pre-line text-sm leading-relaxed text-foreground/90 font-sans">
                   {m.text}
                 </div>
               </div>
             ) : (
-              <div className="space-y-1.5 text-right">
-                <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest flex items-center justify-end gap-2">
+              <div className="space-y-1 text-right">
+                <div className="text-xs text-muted-foreground flex items-center justify-end gap-2">
                   <span>{m.timestamp}</span>
-                  <span>//</span>
-                  <span className="font-bold text-foreground">ARIA</span>
+                  <span>·</span>
+                  <span className="font-medium text-foreground">Aria</span>
                 </div>
-                <div className="pr-4 border-r-2 border-muted-foreground py-1 whitespace-pre-line text-xs font-mono leading-relaxed text-foreground">
+                <div className="pr-4 border-r-2 border-muted-foreground/40 py-1 whitespace-pre-line text-sm leading-relaxed text-foreground font-sans">
                   {m.text}
                 </div>
               </div>
@@ -125,47 +125,47 @@ export function AgentConsole() {
       </div>
 
       {/* Quick Command Presets */}
-      <div className="py-2.5 border-t border-border flex flex-wrap items-center gap-3 font-mono text-[10.5px]">
-        <span className="text-muted-foreground uppercase">PRESETS:</span>
+      <div className="py-2.5 border-t border-border flex flex-wrap items-center gap-2 text-xs">
+        <span className="text-muted-foreground">Saran Cepat:</span>
         <button
           type="button"
           onClick={() => executeCommand("Rekomendasikan kafe di Riau & Dago untuk Bitterballen")}
-          className="text-foreground hover:underline cursor-pointer"
+          className="text-foreground hover:underline cursor-pointer border border-border px-2.5 py-1 hover:bg-secondary/40 transition-colors"
         >
-          [ Rekomendasi Riau & Dago ]
+          Kafe Riau &amp; Dago
         </button>
         <button
           type="button"
           onClick={() => executeCommand("Hitung unit economics dan margin kafe untuk semua produk SAVO")}
-          className="text-foreground hover:underline cursor-pointer"
+          className="text-foreground hover:underline cursor-pointer border border-border px-2.5 py-1 hover:bg-secondary/40 transition-colors"
         >
-          [ Simulasi Margin Kafe (50%+) ]
+          Simulasi Margin (50%+)
         </button>
         <button
           type="button"
           onClick={() => executeCommand("Jelaskan strategi porsi Free Tasting Sample")}
-          className="text-foreground hover:underline cursor-pointer"
+          className="text-foreground hover:underline cursor-pointer border border-border px-2.5 py-1 hover:bg-secondary/40 transition-colors"
         >
-          [ Detail Porsi Tester ]
+          Strategi Porsi Tester
         </button>
       </div>
 
-      {/* Command Input Bar (Architectural Command Line) */}
+      {/* Command Input Bar */}
       <form onSubmit={handleSubmit} className="border-t border-b border-border py-2 flex items-center gap-3">
-        <span className="font-mono text-foreground font-bold text-sm select-none">&gt;</span>
+        <span className="text-muted-foreground select-none text-sm">&rarr;</span>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ketik instruksi ke Hades (misal: 'Cari kafe di Setiabudhi', 'Hitung HPP porsi kafe')..."
-          className="flex-1 bg-transparent border-none text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden font-mono"
+          className="flex-1 bg-transparent border-none text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden font-sans"
         />
         <button
           type="submit"
           disabled={isLoading || !input.trim()}
-          className="bg-foreground text-background font-mono text-xs font-bold px-4 py-2 hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
+          className="bg-foreground text-background text-xs font-medium px-4 py-1.5 hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
         >
-          {isLoading ? "MEMPROSES..." : "EKSEKUSI ↵"}
+          {isLoading ? "Memproses..." : "Kirim"}
         </button>
       </form>
     </div>

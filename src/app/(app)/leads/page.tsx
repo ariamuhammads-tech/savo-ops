@@ -274,38 +274,29 @@ export default function LeadsPage() {
   return (
     <div className="content-container space-y-8">
       {/* Header */}
-      <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
+      <div className="border-b border-border/40 pb-6 flex flex-wrap items-baseline justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
-              DATABASE // BANDUNG B2B PROSPECTS
-            </span>
-            <span
-              className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
-                sentTodayCount >= 5
-                  ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
-                  : "bg-secondary text-foreground border-border"
-              }`}
-            >
-              🎯 Kuota Hari Ini: {sentTodayCount}/5 Terkirim
-            </span>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span>Prospek B2B Bandung</span>
+            <span>·</span>
+            <span>Kuota Hari Ini: {sentTodayCount}/5 Terkirim</span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground mt-1">
+          <h1 className="text-2xl md:text-3xl font-medium tracking-tight text-foreground mt-1">
             Database Prospek Kafe Bandung
           </h1>
-          <p className="text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
+          <p className="text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
             Daftar kafe terkurasi dengan kontak email resmi untuk penawaran suplai Bitterballen dan Baso Goreng.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => {
               setShowScoutModal(true);
               if (scoutCandidates.length === 0) handleRunScout(scoutArea);
             }}
-            className="bg-foreground text-background font-mono text-xs font-semibold px-4 py-2 hover:opacity-90 inline-flex items-center gap-1.5 transition-opacity cursor-pointer"
+            className="rounded-full bg-foreground text-background text-xs font-medium px-5 py-2 hover:opacity-90 inline-flex items-center gap-1.5 transition-opacity cursor-pointer"
           >
             <Sparkles className="size-3.5" />
             <span>Hades Scout 5 Kafe</span>
@@ -314,7 +305,7 @@ export default function LeadsPage() {
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="border border-border hover:bg-secondary font-mono text-xs text-foreground px-4 py-2 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="rounded-full border border-border text-foreground text-xs font-medium px-5 py-2 inline-flex items-center gap-1.5 hover:border-foreground transition-colors cursor-pointer"
           >
             <Plus className="size-3.5" />
             <span>Tambah Manual</span>
@@ -322,25 +313,24 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {/* Filter Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      {/* Filter Bar (Clean Minimalist Hairline Inputs) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-1">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+          <Search className="absolute left-0 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <input
             type="text"
             placeholder="Cari nama kafe atau email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors"
+            className="w-full border-b border-border/60 bg-transparent pl-6 pr-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-foreground transition-colors"
           />
         </div>
 
         <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <select
             value={selectedArea}
             onChange={(e) => setSelectedArea(e.target.value)}
-            className="w-full border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors font-mono"
+            className="w-full border-b border-border/60 bg-transparent py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors cursor-pointer"
           >
             {BANDUNG_AREAS.map((area) => (
               <option key={area} value={area}>
@@ -351,16 +341,15 @@ export default function LeadsPage() {
         </div>
 
         <div className="relative">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors font-mono"
+            className="w-full border-b border-border/60 bg-transparent py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors cursor-pointer"
           >
             <option value="all">Semua Status Email</option>
-            <option value="needs_followup">⚠️ Butuh Follow-Up (Hening ≥ 4 Hari)</option>
-            <option value="staged">Menunggu Persetujuan (Staged)</option>
-            <option value="sent">Email Terkirim (Menunggu Respon)</option>
+            <option value="needs_followup">Perlu Follow-Up (Hening ≥ 4 Hari)</option>
+            <option value="staged">Menunggu Persetujuan</option>
+            <option value="sent">Email Terkirim</option>
             <option value="replied_email">Balas via Email</option>
             <option value="replied_whatsapp">Balas via WA/IG</option>
             <option value="sample_arranged">Jadwal Tester Disepakati</option>
@@ -370,129 +359,119 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {/* Aura Flat Table (Zero Card Wrapping) */}
-      <div className="overflow-x-auto border-t border-b border-border">
+      {/* Aura Flat Table (Zero Card Wrapping, Pure Hairline Rows) */}
+      <div className="overflow-x-auto border-t border-b border-border/40">
         <table className="aura-table">
           <thead>
             <tr>
-              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30">Kafe & Lokasi</th>
-              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30">Email Kontak</th>
-              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30">Target Produk</th>
-              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30">Status Hades</th>
-              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30 text-right">Aksi</th>
+              <th className="py-3 px-4 text-xs font-medium text-muted-foreground">Kafe &amp; Lokasi</th>
+              <th className="py-3 px-4 text-xs font-medium text-muted-foreground">Email Kontak</th>
+              <th className="py-3 px-4 text-xs font-medium text-muted-foreground">Target Produk</th>
+              <th className="py-3 px-4 text-xs font-medium text-muted-foreground">Status Hades</th>
+              <th className="py-3 px-4 text-xs font-medium text-muted-foreground text-right">Aksi</th>
             </tr>
           </thead>
-            <tbody className="divide-y divide-border">
-              {filteredLeads.map((lead) => {
-                const statusInfo = STATUS_CONFIG[lead.status];
-                const aging = getLeadAgingNotice(lead);
+          <tbody className="divide-y divide-border/30">
+            {filteredLeads.map((lead) => {
+              const statusInfo = STATUS_CONFIG[lead.status];
+              const aging = getLeadAgingNotice(lead);
 
-                return (
-                  <tr key={lead.id} className="hover:bg-secondary/20 transition-colors">
-                    <td className="py-3 px-4 space-y-0.5">
-                      <p className="font-display font-bold text-foreground text-sm">
-                        {lead.name}
-                      </p>
-                      <p className="text-muted-foreground text-[11px] flex items-center gap-1">
-                        <MapPin className="size-3 text-primary shrink-0" />
-                        {lead.area} • {CATEGORY_LABELS[lead.category]}
-                      </p>
-                    </td>
+              return (
+                <tr key={lead.id} className="hover:bg-muted/10 transition-colors">
+                  <td className="py-4 px-4 space-y-0.5">
+                    <p className="font-medium text-foreground text-[14px]">
+                      {lead.name}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {lead.area} · {CATEGORY_LABELS[lead.category]}
+                    </p>
+                  </td>
 
-                    <td className="py-3 px-4 space-y-0.5">
-                      <p className="font-mono text-foreground font-medium">{lead.email}</p>
-                      <p className="text-muted-foreground text-[11px]">
-                        PIC: {lead.contactPerson} • {lead.whatsapp}
-                      </p>
-                    </td>
+                  <td className="py-4 px-4 space-y-0.5">
+                    <p className="text-foreground text-xs">{lead.email}</p>
+                    <p className="text-muted-foreground text-[11.5px]">
+                      {lead.contactPerson ? `${lead.contactPerson} · ` : ""}{lead.whatsapp}
+                    </p>
+                  </td>
 
-                    <td className="py-3 px-4">
-                      <span className="font-medium text-foreground">
-                        {PRODUCT_LABELS[lead.targetProduct]}
-                      </span>
-                    </td>
+                  <td className="py-4 px-4 text-xs text-foreground">
+                    {PRODUCT_LABELS[lead.targetProduct]}
+                  </td>
 
-                    <td className="py-3 px-4">
-                      <div className="space-y-1">
+                  <td className="py-4 px-4">
+                    <div className="space-y-1">
+                      <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
                         <span
-                          className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded border ${statusInfo?.badgeClass || ""}`}
-                        >
-                          {statusInfo?.label || lead.status}
-                        </span>
-                        {lead.status === "sent" && aging && (
-                          <div>
-                            <span className={`inline-block text-[10px] px-2 py-0.5 rounded border mt-0.5 ${aging.badgeClass}`}>
-                              {aging.label}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </td>
+                          className={`size-1.5 rounded-full ${
+                            lead.status === "partner"
+                              ? "bg-emerald-500"
+                              : lead.status === "staged"
+                              ? "bg-amber-500"
+                              : lead.status === "sent"
+                              ? "bg-blue-500"
+                              : lead.status.startsWith("replied")
+                              ? "bg-emerald-500"
+                              : "bg-muted-foreground"
+                          }`}
+                        />
+                        <span>{statusInfo?.label || lead.status}</span>
+                      </span>
+                      {lead.status === "sent" && aging && (
+                        <div className="text-[11px] text-amber-600 dark:text-amber-400">
+                          {aging.label}
+                        </div>
+                      )}
+                    </div>
+                  </td>
 
-                    <td className="py-3 px-4 text-right">
-                      <div className="flex items-center justify-end gap-1.5 flex-wrap">
-                        {lead.status === "sent" && (
-                          <div className="flex items-center gap-1 mr-1">
-                            <button
-                              type="button"
-                              title="Tandai balas via email"
-                              onClick={() => handleSetStatus(lead.id, "replied_email")}
-                              className="px-1.5 py-0.5 rounded border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
-                            >
-                              ✅ Email
-                            </button>
-                            <button
-                              type="button"
-                              title="Tandai balas via WhatsApp"
-                              onClick={() => handleSetStatus(lead.id, "replied_whatsapp")}
-                              className="px-1.5 py-0.5 rounded border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
-                            >
-                              💬 WA
-                            </button>
-                            {aging?.isActionRequired && (
-                              <button
-                                type="button"
-                                disabled={isGeneratingFollowUp === lead.id}
-                                onClick={() => handleTriggerFollowUp(lead)}
-                                className="px-2 py-0.5 rounded bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold shadow-xs animate-pulse cursor-pointer"
-                                title="Rancang draf follow-up singkat via Hades"
-                              >
-                                ⚡ Follow-up
-                              </button>
-                            )}
-                          </div>
-                        )}
-
-                        <Link
-                          href={`/outbox?leadId=${lead.id}`}
-                          className="inline-flex items-center gap-1 px-2 py-1 rounded border border-border bg-card hover:bg-secondary text-foreground text-[11px] font-medium transition-colors"
-                        >
-                          <Mail className="size-3" />
-                          Draf
-                        </Link>
-
-                        <Link
-                          href={`/invoice?customer=${encodeURIComponent(lead.name)}`}
-                          className="inline-flex items-center gap-1 px-2 py-1 rounded border border-border bg-card hover:bg-secondary text-muted-foreground text-[11px] font-medium transition-colors"
-                          title="Buat Invoice Pasokan"
-                        >
-                          <ReceiptText className="size-3 text-primary" />
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                  <td className="py-4 px-4 text-right">
+                    <div className="flex items-center justify-end gap-3 flex-wrap text-xs">
+                      {lead.status === "sent" && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleSetStatus(lead.id, "replied_email")}
+                            className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                          >
+                            Balas Email
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleSetStatus(lead.id, "replied_whatsapp")}
+                            className="text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                          >
+                            Balas WA
+                          </button>
+                        </>
+                      )}
+                      <Link
+                        href={`/outbox?leadId=${lead.id}`}
+                        className="text-foreground hover:underline font-medium"
+                      >
+                        Draf
+                      </Link>
+                      <Link
+                        href={`/invoice/baru?leadId=${lead.id}&recipient=${encodeURIComponent(lead.name)}&email=${encodeURIComponent(lead.email)}&address=${encodeURIComponent(lead.address || "")}&product=${lead.targetProduct}`}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        title="Buat Invoice B2B"
+                      >
+                        Invoice
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
       {/* Add Lead Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/30 backdrop-blur-xs">
-          <div className="w-full max-w-lg rounded-xl border border-border bg-card p-6 shadow-pop animate-in fade-in duration-150 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-xs">
+          <div className="w-full max-w-lg border border-border bg-background p-6 space-y-4">
             <div>
-              <h2 className="font-display text-lg font-bold">Tambah Prospek Kafe Bandung</h2>
+              <h2 className="font-display text-lg font-bold text-foreground">Tambah Prospek Kafe Bandung</h2>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Masukkan nama kafe dan email resmi untuk kurasi Agen Hades.
               </p>
@@ -500,36 +479,36 @@ export default function LeadsPage() {
 
             <form onSubmit={handleAddLead} className="space-y-3 text-xs">
               <div>
-                <label className="block font-semibold mb-1">Nama Tempat / Kafe *</label>
+                <label className="block font-semibold mb-1 text-muted-foreground">Nama Tempat / Kafe *</label>
                 <input
                   type="text"
                   required
                   placeholder="Contoh: Sydwic Cafe"
                   value={newLead.name}
                   onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
-                  className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs focus:outline-hidden focus:ring-1 focus:ring-primary"
+                  className="w-full border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold mb-1">Email Resmi *</label>
+                  <label className="block font-semibold mb-1 text-muted-foreground">Email Resmi *</label>
                   <input
                     type="email"
                     required
                     placeholder="partnership@kafe.com"
                     value={newLead.email}
                     onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
-                    className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    className="w-full border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold mb-1">Area Bandung</label>
+                  <label className="block font-semibold mb-1 text-muted-foreground">Area Bandung</label>
                   <select
                     value={newLead.area}
                     onChange={(e) => setNewLead({ ...newLead, area: e.target.value })}
-                    className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    className="w-full border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground"
                   >
                     {BANDUNG_AREAS.filter((a) => a !== "Semua Area").map((a) => (
                       <option key={a} value={a}>
@@ -542,18 +521,18 @@ export default function LeadsPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold mb-1">No WhatsApp (Opsional)</label>
+                  <label className="block font-semibold mb-1 text-muted-foreground">No WhatsApp (Opsional)</label>
                   <input
                     type="text"
                     placeholder="081234567890"
                     value={newLead.whatsapp}
                     onChange={(e) => setNewLead({ ...newLead, whatsapp: e.target.value })}
-                    className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    className="w-full border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold mb-1">Target Produk</label>
+                  <label className="block font-semibold mb-1 text-muted-foreground">Target Produk</label>
                   <select
                     value={newLead.targetProduct}
                     onChange={(e) =>
@@ -562,7 +541,7 @@ export default function LeadsPage() {
                         targetProduct: e.target.value as Lead["targetProduct"],
                       })
                     }
-                    className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    className="w-full border border-border bg-background px-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground"
                   >
                     <option value="bitterballen_ori">Bitterballen Original (Rp 25.000)</option>
                     <option value="bitterballen_cheese">Bitterballen Cheese (Rp 35.000)</option>
@@ -572,17 +551,17 @@ export default function LeadsPage() {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-border">
+              <div className="flex justify-end gap-2 pt-4 border-t border-border">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="rounded-md border border-border px-3.5 py-1.5 hover:bg-secondary font-medium"
+                  className="border border-border px-4 py-2 hover:bg-secondary font-mono text-xs text-foreground transition-colors cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="rounded-md bg-foreground text-background px-4 py-1.5 font-bold hover:opacity-90"
+                  className="bg-foreground text-background px-4 py-2 font-mono text-xs font-bold hover:opacity-90 transition-opacity cursor-pointer"
                 >
                   Simpan & Siapkan Draf
                 </button>
@@ -595,11 +574,11 @@ export default function LeadsPage() {
       {/* Hades Scout Modal */}
       {showScoutModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-xs p-4">
-          <div className="w-full max-w-2xl rounded-xl border border-border bg-card shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="w-full max-w-2xl border border-border bg-background p-6 space-y-5 max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-start justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground font-mono text-xs font-bold">
+                <div className="flex size-7 items-center justify-center bg-foreground text-background font-mono text-xs font-bold">
                   <Sparkles className="size-4" />
                 </div>
                 <div>
@@ -614,23 +593,23 @@ export default function LeadsPage() {
               <button
                 type="button"
                 onClick={() => setShowScoutModal(false)}
-                className="text-muted-foreground hover:text-foreground p-1 rounded-md cursor-pointer"
+                className="text-muted-foreground hover:text-foreground p-1 cursor-pointer"
               >
                 <X className="size-4" />
               </button>
             </div>
 
             {/* Area Selector & Run Button */}
-            <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-border">
+            <div className="flex flex-wrap items-center gap-3 p-3 border border-border bg-secondary/10">
               <div className="flex-1 min-w-[200px]">
-                <label className="block text-[11px] font-semibold text-muted-foreground mb-1">
-                  Pilih Area Skena Kopi Bandung:
+                <label className="block text-[11px] font-semibold text-muted-foreground mb-1 font-mono uppercase">
+                  Area Skena Kopi Bandung:
                 </label>
                 <select
                   value={scoutArea}
                   onChange={(e) => setScoutArea(e.target.value)}
                   disabled={isScouting}
-                  className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary font-sans"
+                  className="w-full border border-border bg-background px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:border-foreground font-sans"
                 >
                   {BANDUNG_AREAS.filter((a) => a !== "Semua Area").map((a) => (
                     <option key={a} value={a}>
@@ -645,7 +624,7 @@ export default function LeadsPage() {
                   type="button"
                   disabled={isScouting}
                   onClick={() => handleRunScout(scoutArea)}
-                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-md bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-mono font-bold bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
                 >
                   {isScouting ? (
                     <>
@@ -654,7 +633,7 @@ export default function LeadsPage() {
                     </>
                   ) : (
                     <>
-                      <Sparkles className="size-3.5 text-amber-300" />
+                      <Sparkles className="size-3.5" />
                       Kurasi 5 Kafe di Area Ini
                     </>
                   )}
@@ -682,10 +661,10 @@ export default function LeadsPage() {
                     return (
                       <div
                         key={idx}
-                        className={`rounded-lg border p-3.5 text-xs transition-colors ${
+                        className={`border p-3.5 text-xs transition-colors ${
                           isSelected
-                            ? "border-primary/40 bg-primary/[0.02]"
-                            : "border-border bg-secondary/20 opacity-75"
+                            ? "border-foreground bg-secondary/15"
+                            : "border-border bg-background opacity-75"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-2">
@@ -693,7 +672,7 @@ export default function LeadsPage() {
                             <button
                               type="button"
                               onClick={() => toggleSelectCandidate(idx)}
-                              className="mt-0.5 text-primary hover:opacity-80 cursor-pointer shrink-0"
+                              className="mt-0.5 text-foreground hover:opacity-80 cursor-pointer shrink-0"
                             >
                               {isSelected ? (
                                 <CheckSquare className="size-4" />
@@ -706,7 +685,7 @@ export default function LeadsPage() {
                                 <span className="font-display text-sm font-bold text-foreground">
                                   {c.name}
                                 </span>
-                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-foreground font-semibold">
+                                <span className="text-[10px] font-mono px-1.5 py-0.5 border border-border bg-secondary/30 text-foreground font-semibold">
                                   {CATEGORY_LABELS[c.category] || c.category}
                                 </span>
                               </div>
@@ -718,8 +697,8 @@ export default function LeadsPage() {
                                 {c.instagram && <span>📸 {c.instagram}</span>}
                                 {c.contactPerson && <span>👤 {c.contactPerson}</span>}
                               </div>
-                              <div className="mt-2 text-[11px] bg-secondary/50 p-2 rounded border border-border/50 text-foreground leading-relaxed">
-                                <span className="font-semibold text-primary">Kenapa Cocok: </span>
+                              <div className="mt-2 text-[11px] bg-secondary/20 p-2.5 border border-border/70 text-foreground leading-relaxed">
+                                <span className="font-semibold text-foreground">Kenapa Cocok: </span>
                                 {c.fitReason}
                               </div>
                             </div>
@@ -748,7 +727,7 @@ export default function LeadsPage() {
                             )}
                           </button>
                           {isDraftExpanded && (
-                            <div className="mt-2 p-2.5 rounded bg-background border border-border text-[11px] leading-relaxed space-y-1 font-sans">
+                            <div className="mt-2 p-3 bg-secondary/10 border border-border text-[11px] leading-relaxed space-y-1 font-sans">
                               <p className="font-semibold text-foreground">
                                 Subjek: {c.stagedDraft.subject}
                               </p>
@@ -772,7 +751,7 @@ export default function LeadsPage() {
                     <button
                       type="button"
                       onClick={() => setShowScoutModal(false)}
-                      className="px-3.5 py-1.5 text-xs rounded-md border border-border hover:bg-secondary font-medium cursor-pointer"
+                      className="px-3.5 py-1.5 text-xs border border-border hover:bg-secondary font-mono font-medium cursor-pointer"
                     >
                       Batal
                     </button>
@@ -780,7 +759,7 @@ export default function LeadsPage() {
                       type="button"
                       disabled={selectedIndices.length === 0}
                       onClick={handleImportScouted}
-                      className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-md bg-foreground text-background hover:opacity-90 disabled:opacity-50 cursor-pointer"
+                      className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-mono font-bold bg-foreground text-background hover:opacity-90 disabled:opacity-50 cursor-pointer"
                     >
                       <Plus className="size-3.5" />
                       Import {selectedIndices.length} Kafe ke Leads & Outbox

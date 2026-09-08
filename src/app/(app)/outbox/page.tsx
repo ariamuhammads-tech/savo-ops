@@ -276,36 +276,35 @@ export default function OutboxPage() {
       {/* Header */}
       <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
-              OUTBOX // STAGED EMAIL WORKSPACE
-            </span>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span>Draf &amp; Pengiriman Email B2B</span>
+            <span>·</span>
             <span
-              className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
+              className={
                 sentTodayCount >= 5
-                  ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
-                  : "bg-secondary text-foreground border-border"
-              }`}
+                  ? "text-amber-600 dark:text-amber-400 font-medium"
+                  : ""
+              }
             >
-              🎯 Kuota Hari Ini: {sentTodayCount}/5 Terkirim
+              Kuota Hari Ini: {sentTodayCount}/5 Terkirim
             </span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground mt-1">
-            Meja Persetujuan Draf Email Hades
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground mt-1">
+            Persetujuan Draf Penawaran
           </h1>
           <p className="text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
-            Periksa dan sesuaikan draf penawaran B2B sebelum dikirim otomatis melalui thesavorium@gmail.com.
+            Periksa dan sesuaikan draf penawaran B2B sebelum dikirim langsung melalui thesavorium@gmail.com.
           </p>
         </div>
       </div>
 
       {sentTodayCount >= 5 && (
-        <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+        <div className="border-y border-amber-500/40 bg-amber-500/10 py-3 px-4 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
           <span className="text-base">⚠️</span>
           <div>
-            <p className="font-bold">Batas Sehat Outreach (5 Email / Hari) Telah Tercapai</p>
-            <p className="text-[11px] opacity-90 mt-0.5">
-              Anda sudah mengirim {sentTodayCount} email hari ini. Disarankan fokus menindaklanjuti balasan kafe dan pengiriman sampel tester yang masuk sebelum mengirim penawaran baru besok.
+            <p className="font-semibold">Batas Pengiriman (5 Email / Hari) Tercapai</p>
+            <p className="text-xs opacity-90 mt-0.5">
+              Anda sudah mengirim {sentTodayCount} email hari ini. Disarankan fokus menindaklanjuti balasan kafe dan tester sampel sebelum menambah penawaran baru besok.
             </p>
           </div>
         </div>
@@ -315,10 +314,10 @@ export default function OutboxPage() {
         {/* Left Column: Venue Selector */}
         <div className="lg:col-span-4 space-y-3">
           <div className="flex items-center justify-between pb-1 border-b border-border">
-            <span className="text-[11px] font-mono uppercase tracking-[0.14em] text-muted-foreground font-semibold">
-              Pilih Target Kafe ({leads.length})
+            <span className="text-xs font-medium text-muted-foreground">
+              Target Kafe ({leads.length})
             </span>
-            <span className="text-[10px] font-mono text-muted-foreground">OUTBOX QUEUE</span>
+            <span className="text-xs text-muted-foreground">Antrean</span>
           </div>
           <div className="border-t border-b border-border divide-y divide-border">
             {leads.map((lead) => {
@@ -337,37 +336,37 @@ export default function OutboxPage() {
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <span className="text-xs font-bold text-foreground tracking-tight">
+                    <span className="text-xs font-semibold text-foreground tracking-tight">
                       {lead.name}
                     </span>
                     {isSent ? (
                       <div className="flex flex-col items-end gap-0.5 shrink-0">
-                        <span className="text-[10px] text-blue-600 font-mono font-bold">SENT</span>
+                        <span className="text-[11px] text-blue-600 font-medium">Terkirim</span>
                         {(() => {
                           const aging = getLeadAgingNotice(lead);
                           if (!aging) return null;
                           return (
-                            <span className={`text-[9px] px-1.5 py-0.2 rounded border ${aging.badgeClass}`}>
+                            <span className="text-[10px] text-muted-foreground font-mono">
                               {aging.statusCategory === "needs_followup" ? `⚠️ ${aging.ageDays}h` : `${aging.ageDays}h`}
                             </span>
                           );
                         })()}
                       </div>
                     ) : (
-                      <span className="text-[10px] text-amber-700 dark:text-amber-400 font-mono font-bold shrink-0">STAGED</span>
+                      <span className="text-[11px] text-amber-700 dark:text-amber-400 font-medium shrink-0">Draf</span>
                     )}
                   </div>
-                  <p className="text-[10.5px] text-muted-foreground mt-0.5 font-mono">{lead.area}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{lead.area}</p>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Right Column: Email Editor & Approval (AURA Open Workbench) */}
+        {/* Right Column: Email Editor & Approval */}
         <div className="lg:col-span-8">
           {!currentLead ? (
-            <div className="border-t border-b border-border py-20 text-center text-xs text-muted-foreground font-mono">
+            <div className="border-t border-b border-border py-20 text-center text-xs text-muted-foreground">
               Pilih target kafe di sebelah kiri untuk membuka draf email...
             </div>
           ) : (
@@ -375,66 +374,69 @@ export default function OutboxPage() {
               {/* Header info */}
               <div className="flex flex-wrap items-baseline justify-between gap-4 border-b border-border pb-4">
                 <div>
-                  <span className="text-[10.5px] font-bold text-primary font-mono uppercase tracking-wider">
-                    {PRODUCT_LABELS[currentLead.targetProduct]}
+                  <span className="text-xs font-medium text-muted-foreground">
+                    Target Menu: {PRODUCT_LABELS[currentLead.targetProduct]}
                   </span>
-                  <h3 className="font-display text-2xl font-extrabold tracking-tight text-foreground mt-0.5">
+                  <h3 className="text-2xl font-semibold tracking-tight text-foreground mt-0.5">
                     Draf untuk {currentLead.name}
                   </h3>
                 </div>
-                <div className="text-xs font-mono">
+                <div className="text-xs">
                   {currentLead.status === "sent" ? (
                     <div className="flex flex-wrap items-center gap-2">
                       {(() => {
                         const aging = getLeadAgingNotice(currentLead);
                         if (!aging) return <span className="text-blue-600 font-medium">Sudah Terkirim</span>;
                         return (
-                          <span className={`px-2 py-0.5 rounded border text-[11px] font-sans ${aging.badgeClass}`}>
+                          <span className={`px-2 py-0.5 border text-xs ${aging.badgeClass}`}>
                             {aging.label}
                           </span>
                         );
                       })()}
-                      <div className="flex items-center gap-1 font-sans">
+                      <div className="flex items-center gap-1">
                         <button
                           type="button"
                           onClick={() => handleSetStatus(currentLead.id, "replied_email")}
-                          className="px-2 py-0.5 border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
+                          className="px-2 py-0.5 border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[11px] font-medium text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
                         >
                           ✅ Balas Email
                         </button>
                         <button
                           type="button"
                           onClick={() => handleSetStatus(currentLead.id, "replied_whatsapp")}
-                          className="px-2 py-0.5 border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
+                          className="px-2 py-0.5 border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[11px] font-medium text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
                         >
                           💬 Balas WA
                         </button>
                         <button
                           type="button"
                           onClick={() => handleSetStatus(currentLead.id, "rejected")}
-                          className="px-2 py-0.5 border border-border bg-card hover:bg-secondary text-[10px] text-muted-foreground cursor-pointer"
+                          className="px-2 py-0.5 border border-border bg-card hover:bg-secondary text-[11px] text-muted-foreground cursor-pointer"
                         >
                           ❌ Tolak
                         </button>
                       </div>
                     </div>
                   ) : (
-                    <span className="text-amber-700 dark:text-amber-400 font-mono text-[11px] font-bold">● MENUNGGU PERSETUJUAN</span>
+                    <span className="text-amber-600 dark:text-amber-400 text-xs font-medium">● Menunggu Persetujuan</span>
                   )}
                 </div>
               </div>
 
-              {/* Monoline Technical Metadata Readout */}
-              <div className="py-2.5 border-b border-border flex flex-wrap items-center gap-x-8 gap-y-2 text-xs font-mono text-muted-foreground">
+              {/* Sender & Recipient Metadata */}
+              <div className="py-2.5 border-b border-border flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-muted-foreground">
                 <div>
-                  <span className="text-foreground font-bold">FROM:</span> thesavorium@gmail.com
+                  <span className="text-foreground font-medium">Pengirim:</span>{" "}
+                  <span className="font-mono text-[11.5px]">thesavorium@gmail.com</span>
                 </div>
                 <div>
-                  <span className="text-foreground font-bold">TO:</span> {currentLead.email}
+                  <span className="text-foreground font-medium">Tujuan:</span>{" "}
+                  <span className="font-mono text-[11.5px]">{currentLead.email}</span>
                 </div>
                 {currentLead.contactPerson && (
                   <div>
-                    <span className="text-foreground font-bold">PIC:</span> {currentLead.contactPerson}
+                    <span className="text-foreground font-medium">Kontak PIC:</span>{" "}
+                    <span>{currentLead.contactPerson}</span>
                   </div>
                 )}
               </div>
@@ -443,130 +445,132 @@ export default function OutboxPage() {
               <div className="border-b border-border pb-5 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs">
-                    <Sparkles className="size-3.5 text-primary" />
-                    <span className="font-bold text-foreground font-mono uppercase tracking-wider text-[11px]">
-                      Hades Copilot
+                    <Sparkles className="size-3.5 text-foreground" />
+                    <span className="font-semibold text-foreground">
+                      Bantuan Hades
                     </span>
-                    <span className="text-[10px] font-mono text-muted-foreground">
-                      // Refinement Engine
+                    <span className="text-xs text-muted-foreground">
+                      Pilih formula email atau sesuaikan draf
                     </span>
                   </div>
                   {isRefining && (
-                    <span className="flex items-center gap-1.5 text-[11px] font-mono text-primary animate-pulse">
-                      <Loader2 className="size-3 animate-spin" />
-                      Hades sedang memproses...
-                    </span>
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Loader2 className="size-3.5 animate-spin" />
+                      <span>Merumuskan draf...</span>
+                    </div>
                   )}
                 </div>
 
-                {/* Quick Preset Buttons */}
-                <div className="flex flex-wrap gap-2">
+                {/* Preset Formula Buttons */}
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     disabled={isRefining}
                     onClick={() => handleRefine("touch1")}
-                    className="btn-pill-action text-[11px] font-medium"
+                    className="rounded-full px-3.5 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
-                    <span>⚡ Touch 1 (Menu Tambahan)</span>
+                    <span>Touch 1: Menu Tambahan</span>
                   </button>
+
                   <button
                     type="button"
                     disabled={isRefining}
                     onClick={() => handleRefine("touch2")}
-                    className="btn-pill-action text-[11px] font-medium"
+                    className="rounded-full px-3.5 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
-                    <span>⚡ Touch 2 (Rincian B2B & Margin)</span>
+                    <span>Touch 2: Rincian &amp; Margin</span>
                   </button>
+
                   <button
                     type="button"
                     disabled={isRefining}
                     onClick={() => handleRefine("followup")}
-                    className="btn-pill-action text-[11px] font-medium text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-800"
+                    className="rounded-full px-3.5 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
-                    <span>⚡ Gentle Nudge (Follow-Up)</span>
+                    <span>Follow-up Santai</span>
                   </button>
+
                   <button
                     type="button"
                     disabled={isRefining}
                     onClick={() => handleRefine("shorten")}
-                    className="btn-pill-action text-[11px] font-medium"
+                    className="rounded-full px-3.5 py-1 text-xs border border-border/60 hover:border-foreground text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                   >
-                    <span>⚡ Persingkat Draf</span>
+                    <span>Persingkat Draf</span>
                   </button>
                 </div>
 
-                {/* Custom instruction prompt */}
-                <form
+                {/* Custom Instruction Input */}
+                <form 
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (hadesInstruction.trim()) handleRefine("custom");
-                  }}
-                  className="flex gap-2 pt-1"
+                  }} 
+                  className="flex items-center gap-3 pt-1"
                 >
                   <input
                     type="text"
                     value={hadesInstruction}
                     onChange={(e) => setHadesInstruction(e.target.value)}
                     placeholder="Instruksi khusus ke Hades (misal: 'Sebutkan kita bisa drop sampel sore ini ke Mas Dimas')..."
-                    disabled={isRefining}
-                    className="flex-1 border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-foreground font-sans transition-colors"
+                    className="flex-1 border-b border-border/60 bg-transparent py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-foreground font-sans transition-colors"
                   />
                   <button
                     type="submit"
                     disabled={isRefining || !hadesInstruction.trim()}
-                    className="bg-foreground text-background px-4 py-2 text-xs font-semibold hover:opacity-90 disabled:opacity-50 cursor-pointer inline-flex items-center gap-1.5 transition-opacity"
+                    className="text-xs font-medium text-foreground hover:underline inline-flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50"
                   >
-                    <Wand2 className="size-3" />
+                    <Wand2 className="size-3.5" />
                     <span>Terapkan</span>
                   </button>
                 </form>
               </div>
 
               {/* Subject Input */}
-              <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold uppercase tracking-wider font-mono text-muted-foreground">
-                  Subjek Email
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-muted-foreground">
+                  Subjek
                 </label>
                 <input
                   type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="w-full border border-border bg-background px-3 py-2 text-xs font-medium text-foreground focus:outline-hidden focus:border-foreground font-sans transition-colors"
+                  className="w-full border-b border-border/60 bg-transparent py-2 text-base font-medium text-foreground focus:outline-hidden focus:border-foreground font-sans transition-colors"
                 />
               </div>
 
               {/* Body Textarea */}
-              <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold uppercase tracking-wider font-mono text-muted-foreground">
-                  Isi Pesan Email
+              <div className="space-y-1">
+                <label className="block text-xs font-medium text-muted-foreground">
+                  Pesan
                 </label>
                 <textarea
                   rows={13}
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  className="w-full border border-border bg-background p-3.5 text-xs leading-relaxed text-foreground focus:outline-hidden focus:border-foreground font-sans transition-colors resize-y font-mono"
+                  className="w-full border-b border-border/40 bg-transparent py-3 text-[14.5px] leading-relaxed text-foreground/90 focus:outline-hidden focus:border-foreground font-sans transition-colors resize-y"
                 />
               </div>
 
               {/* Attachments Section */}
-              <div className="space-y-3 pt-3 border-t border-border">
+              <div className="space-y-3 pt-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs font-semibold text-foreground flex items-center gap-1.5 font-mono">
+                  <span className="text-xs font-medium text-foreground flex items-center gap-1.5">
                     <Paperclip className="size-3.5 text-muted-foreground" />
-                    LAMPIRAN FOTO PRODUK (OPSIONAL)
+                    Lampiran Foto Produk (Opsional)
                   </span>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <button
                       type="button"
                       onClick={() => setShowCatalogPicker(true)}
-                      className="btn-pill-action text-[11px] font-medium inline-flex items-center gap-1.5"
+                      className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors cursor-pointer"
                     >
-                      <Camera className="size-3 text-primary" />
+                      <Camera className="size-3.5" />
                       <span>Ambil dari Katalog Aset</span>
                     </button>
-                    <label className="inline-flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground cursor-pointer">
+                    <label className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer">
                       <Plus className="size-3.5" />
-                      Upload Lokal
+                      <span>Upload Lokal</span>
                       <input
                         type="file"
                         accept="image/png,image/jpeg,image/webp"
@@ -579,19 +583,19 @@ export default function OutboxPage() {
                 </div>
 
                 {attachments.length === 0 ? (
-                  <p className="text-[11px] text-muted-foreground font-mono">
-                    Belum ada foto yang dilampirkan. Klik <strong>Ambil dari Katalog Aset</strong> untuk melampirkan foto resmi produk.
+                  <p className="text-xs text-muted-foreground">
+                    Belum ada foto yang dilampirkan. Klik <strong className="text-foreground">Ambil dari Katalog Aset</strong> untuk melampirkan foto resmi produk.
                   </p>
                 ) : (
                   <div className="flex flex-wrap gap-2 pt-1">
                     {attachments.map((att) => (
                       <div
                         key={att.id}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 border border-border bg-secondary/30 text-xs text-foreground font-mono"
+                        className="inline-flex items-center gap-2 px-3 py-1.5 border border-border/60 bg-muted/20 text-xs text-foreground"
                       >
-                        <ImageIcon className="size-3.5 text-primary" />
+                        <ImageIcon className="size-3.5 text-foreground" />
                         <span className="max-w-[160px] truncate">{att.filename}</span>
-                        <span className="text-[10px] text-muted-foreground">({att.sizeKb} KB)</span>
+                        <span className="text-[11px] text-muted-foreground">({att.sizeKb} KB)</span>
                         <button
                           type="button"
                           onClick={() => removeAttachment(att.id)}
@@ -607,11 +611,11 @@ export default function OutboxPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-6 border-t border-border flex flex-wrap items-center justify-between gap-3">
+              <div className="pt-6 border-t border-border/40 flex flex-wrap items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="border border-border hover:bg-secondary px-4 py-2.5 text-xs font-mono inline-flex items-center gap-1.5 cursor-pointer text-foreground transition-colors"
+                  className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 cursor-pointer transition-colors"
                 >
                   {copied ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
                   <span>{copied ? "Draf Tersalin" : "Salin Teks"}</span>
@@ -621,7 +625,7 @@ export default function OutboxPage() {
                   type="button"
                   disabled={isSending || currentLead.status === "sent"}
                   onClick={handleSend}
-                  className="bg-foreground text-background px-6 py-2.5 text-xs font-semibold inline-flex items-center gap-2 cursor-pointer hover:opacity-90 disabled:opacity-50 transition-opacity"
+                  className="rounded-full bg-foreground text-background px-6 py-2.5 text-xs font-medium inline-flex items-center gap-2 cursor-pointer hover:opacity-90 disabled:opacity-50 transition-all"
                 >
                   {isSending ? (
                     <>
@@ -636,7 +640,7 @@ export default function OutboxPage() {
                   ) : (
                     <>
                       <Send className="size-3.5" />
-                      <span>Setujui & Kirim Email Sekarang</span>
+                      <span>Setujui &amp; Kirim Email</span>
                     </>
                   )}
                 </button>
@@ -649,10 +653,10 @@ export default function OutboxPage() {
       {/* Catalog Asset Picker Modal */}
       {showCatalogPicker && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-xs p-4">
-          <div className="w-full max-w-xl rounded-xl border border-border bg-card shadow-2xl p-5 space-y-4 max-h-[85vh] overflow-y-auto">
+          <div className="w-full max-w-xl border border-border bg-background p-6 space-y-5 max-h-[85vh] overflow-y-auto">
             <div className="flex items-start justify-between border-b border-border pb-3">
-              <div className="flex items-center gap-2">
-                <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground font-mono text-xs font-bold">
+              <div className="flex items-center gap-2.5">
+                <div className="flex size-7 items-center justify-center bg-foreground text-background font-mono text-xs font-bold">
                   <Camera className="size-4" />
                 </div>
                 <div>
@@ -667,7 +671,7 @@ export default function OutboxPage() {
               <button
                 type="button"
                 onClick={() => setShowCatalogPicker(false)}
-                className="text-muted-foreground hover:text-foreground p-1 rounded-md cursor-pointer"
+                className="text-muted-foreground hover:text-foreground p-1 cursor-pointer"
               >
                 <X className="size-4" />
               </button>
@@ -686,7 +690,7 @@ export default function OutboxPage() {
                 </div>
                 <Link
                   href="/katalog"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-foreground text-background text-xs font-bold hover:opacity-90 transition-opacity"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-foreground text-background text-xs font-mono font-bold hover:opacity-90 transition-opacity"
                 >
                   Buka Menu Katalog & Upload Foto Sekarang &rarr;
                 </Link>
@@ -699,17 +703,17 @@ export default function OutboxPage() {
                     .map((item) => (
                       <div
                         key={item.id}
-                        className="rounded-lg border border-border bg-secondary/20 p-3 space-y-2 flex flex-col justify-between hover:border-primary/50 transition-colors"
+                        className="border border-border p-3 space-y-2 flex flex-col justify-between hover:border-foreground transition-colors"
                       >
                         <div className="space-y-2">
-                          <div className="relative rounded-md overflow-hidden aspect-video bg-black/10 border border-border/80">
+                          <div className="relative overflow-hidden aspect-video bg-secondary/20 border border-border">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={item.imageUrl!}
                               alt={item.name}
                               className="w-full h-full object-cover"
                             />
-                            <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-white font-mono text-[9px]">
+                            <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/80 text-white font-mono text-[9px]">
                               {item.imageSizeKb || 0} KB
                             </span>
                           </div>
@@ -726,7 +730,7 @@ export default function OutboxPage() {
                         <button
                           type="button"
                           onClick={() => attachFromCatalog(item)}
-                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-foreground text-background text-xs font-bold hover:opacity-90 transition-opacity cursor-pointer mt-1"
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-foreground text-background text-xs font-mono font-bold hover:opacity-90 transition-opacity cursor-pointer mt-1"
                         >
                           <Plus className="size-3" />
                           Lampirkan Foto Ini

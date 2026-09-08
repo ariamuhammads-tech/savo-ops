@@ -131,31 +131,33 @@ export default function KatalogB2BPage() {
   return (
     <div className="content-container space-y-8">
       {/* Editorial Header */}
-      <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
-        <div className="space-y-1">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
-            PRICING & ASSET CATALOG // B2B WHOLESALE
-          </span>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-            Katalog Produk & Margin B2B Savo Eats
+      <div className="border-b border-border/40 pb-6 flex flex-wrap items-baseline justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3 text-xs text-muted-foreground">
+            <span>Katalog Produk &amp; Unit Economics</span>
+            <span>·</span>
+            <span>Suplai Grosir Kafe Bandung</span>
+          </div>
+          <h1 className="text-2xl md:text-3xl font-medium tracking-tight text-foreground mt-1">
+            Katalog Produk &amp; Margin B2B Savo Eats
           </h1>
-          <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
-            Kelola nama, harga grosir, HPP porsi kafe, serta foto aset produk resmi. Foto yang diunggah di sini siap otomatis dilampirkan di email Outbox tanpa perlu upload berulang kali.
+          <p className="text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
+            Kelola nama, harga grosir, HPP porsi kafe, serta foto aset produk resmi. Foto yang diunggah siap otomatis dilampirkan di email Outbox.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={handleResetDefaults}
-            className="apple-btn-secondary"
+            className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <RotateCcw className="size-3.5" />
             <span>Reset Default</span>
           </button>
           <Link
             href="/outbox"
-            className="apple-btn-primary"
+            className="rounded-full bg-foreground text-background px-5 py-2 text-xs font-medium inline-flex items-center gap-1.5 hover:opacity-90 transition-opacity"
           >
             <span>Buka Outbox Email</span>
             <ArrowRight className="size-3" />
@@ -163,40 +165,38 @@ export default function KatalogB2BPage() {
         </div>
       </div>
 
-      {/* Product Spec Table Grid */}
-      <div className="space-y-0 divide-y divide-border border-t border-b border-border">
+      {/* Product Spec Table Grid (Zero Card Wrapping, Pure Hairline Rows) */}
+      <div className="divide-y divide-border/40 border-t border-b border-border/40">
         {items.map((item) => {
           const isEditing = editingId === item.id && editForm !== null;
 
           return (
             <div
               key={item.id}
-              className={`py-8 space-y-6 transition-colors ${
-                isEditing ? "bg-secondary/20 px-4 rounded-md" : ""
+              className={`py-8 transition-colors ${
+                isEditing ? "bg-muted/10 px-4 border-l-2 border-foreground" : ""
               }`}
             >
               {isEditing ? (
                 /* EDIT MODE FORM */
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-border pb-3">
-                    <span className="text-xs font-bold font-mono text-primary uppercase">
-                      ✏️ Mengedit Detail: {item.name}
+                  <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                    <span className="text-xs font-medium text-foreground uppercase tracking-wider">
+                      Ubah Data · {item.name}
                     </span>
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-3">
                       <button
                         type="button"
                         onClick={handleCancelEdit}
-                        className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-md border border-border hover:bg-secondary font-medium"
+                        className="text-xs text-muted-foreground hover:text-foreground cursor-pointer"
                       >
-                        <X className="size-3" />
                         Batal
                       </button>
                       <button
                         type="button"
                         onClick={handleSaveEdit}
-                        className="inline-flex items-center gap-1 px-3.5 py-1 text-xs rounded-md bg-foreground text-background font-bold hover:opacity-90"
+                        className="rounded-full bg-foreground text-background px-4 py-1.5 text-xs font-medium hover:opacity-90 cursor-pointer"
                       >
-                        <Check className="size-3" />
                         Simpan Perubahan
                       </button>
                     </div>
@@ -204,7 +204,7 @@ export default function KatalogB2BPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <label className="block font-semibold mb-1 text-muted-foreground">
+                      <label className="block mb-1 text-muted-foreground">
                         Nama Produk
                       </label>
                       <input
@@ -213,12 +213,12 @@ export default function KatalogB2BPage() {
                         onChange={(e) =>
                           setEditForm({ ...editForm, name: e.target.value })
                         }
-                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 font-medium text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                        className="w-full border-b border-border/60 bg-transparent py-1.5 font-medium text-foreground focus:outline-hidden focus:border-foreground"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-1 text-muted-foreground">
+                      <label className="block mb-1 text-muted-foreground">
                         Tagline / Kategori
                       </label>
                       <input
@@ -227,12 +227,12 @@ export default function KatalogB2BPage() {
                         onChange={(e) =>
                           setEditForm({ ...editForm, categoryTag: e.target.value })
                         }
-                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                        className="w-full border-b border-border/60 bg-transparent py-1.5 text-foreground focus:outline-hidden focus:border-foreground"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-1 text-muted-foreground">
+                      <label className="block mb-1 text-muted-foreground">
                         Harga Grosir B2B (Rp)
                       </label>
                       <input
@@ -244,12 +244,12 @@ export default function KatalogB2BPage() {
                             b2bPrice: Number(e.target.value),
                           })
                         }
-                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 font-mono text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                        className="w-full border-b border-border/60 bg-transparent py-1.5 font-mono text-foreground focus:outline-hidden focus:border-foreground"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-1 text-muted-foreground">
+                      <label className="block mb-1 text-muted-foreground">
                         Keterangan Satuan Pack
                       </label>
                       <input
@@ -258,12 +258,12 @@ export default function KatalogB2BPage() {
                         onChange={(e) =>
                           setEditForm({ ...editForm, packUnit: e.target.value })
                         }
-                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                        className="w-full border-b border-border/60 bg-transparent py-1.5 text-foreground focus:outline-hidden focus:border-foreground"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-1 text-muted-foreground">
+                      <label className="block mb-1 text-muted-foreground">
                         Keterangan Porsi Kafe
                       </label>
                       <input
@@ -275,12 +275,12 @@ export default function KatalogB2BPage() {
                             portionDesc: e.target.value,
                           })
                         }
-                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                        className="w-full border-b border-border/60 bg-transparent py-1.5 text-foreground focus:outline-hidden focus:border-foreground"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-1 text-muted-foreground">
+                      <label className="block mb-1 text-muted-foreground">
                         HPP per Porsi Kafe (Rp)
                       </label>
                       <input
@@ -292,13 +292,13 @@ export default function KatalogB2BPage() {
                             hppPerPortion: Number(e.target.value),
                           })
                         }
-                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 font-mono text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                        className="w-full border-b border-border/60 bg-transparent py-1.5 font-mono text-foreground focus:outline-hidden focus:border-foreground"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-1 text-muted-foreground">
-                        Saran Harga Jual Menu Kafe (Rp)
+                      <label className="block mb-1 text-muted-foreground">
+                        Saran Harga Jual Kafe (Rp)
                       </label>
                       <input
                         type="number"
@@ -309,13 +309,13 @@ export default function KatalogB2BPage() {
                             recommendedSellPrice: Number(e.target.value),
                           })
                         }
-                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 font-mono text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                        className="w-full border-b border-border/60 bg-transparent py-1.5 font-mono text-foreground focus:outline-hidden focus:border-foreground"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-1 text-muted-foreground">
-                        Waktu Goreng / Deep-Fry
+                      <label className="block mb-1 text-muted-foreground">
+                        Waktu Goreng / Saji
                       </label>
                       <input
                         type="text"
@@ -323,179 +323,163 @@ export default function KatalogB2BPage() {
                         onChange={(e) =>
                           setEditForm({ ...editForm, cookTime: e.target.value })
                         }
-                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                        className="w-full border-b border-border/60 bg-transparent py-1.5 text-foreground focus:outline-hidden focus:border-foreground"
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold mb-1 text-muted-foreground">
-                      Deskripsi Karakter Produk
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={editForm.description}
-                      onChange={(e) =>
-                        setEditForm({ ...editForm, description: e.target.value })
-                      }
-                      className="w-full rounded-md border border-border bg-secondary/30 p-2.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
-                    />
+                    <div className="md:col-span-2">
+                      <label className="block mb-1 text-muted-foreground">
+                        Deskripsi Penawaran Produk
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={editForm.description}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            description: e.target.value,
+                          })
+                        }
+                        className="w-full border-b border-border/60 bg-transparent py-1.5 text-xs text-foreground focus:outline-hidden focus:border-foreground"
+                      />
+                    </div>
                   </div>
                 </div>
               ) : (
                 /* DISPLAY VIEW */
-                <div className="space-y-4">
-                  {/* Top Bar with Title and Action */}
-                  <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border pb-3">
+                <div className="space-y-6">
+                  {/* Top Bar with Title and Price */}
+                  <div className="flex flex-wrap items-baseline justify-between gap-4">
                     <div>
-                      <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-primary font-bold">
+                      <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium block">
                         {item.categoryTag}
                       </span>
-                      <h2 className="font-display text-xl font-bold text-foreground mt-0.5">
+                      <h2 className="text-2xl font-normal tracking-tight text-foreground mt-0.5">
                         {item.name}
                       </h2>
                     </div>
-                    <div className="flex items-center gap-3">
+
+                    <div className="flex items-baseline gap-4">
                       <div className="text-right">
-                        <span className="font-display text-xl font-bold text-primary">
+                        <span className="text-2xl font-light text-foreground">
                           {item.b2bPrice > 0
                             ? `Rp ${item.b2bPrice.toLocaleString("id-ID")}`
                             : "GRATIS"}
                         </span>
-                        <span className="text-xs text-muted-foreground block font-mono">
+                        <span className="text-xs text-muted-foreground block">
                           {item.packUnit}
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => handleStartEdit(item)}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-border bg-secondary/40 hover:bg-secondary text-foreground transition-colors cursor-pointer"
+                        className="text-xs text-muted-foreground hover:text-foreground hover:underline cursor-pointer"
                         title="Ubah nama, harga, dan porsi produk"
                       >
-                        <Edit3 className="size-3" />
                         Edit
                       </button>
                     </div>
                   </div>
 
-                  {/* Main Grid: Photo + Specs */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    {/* Left: Product Photo Asset Box */}
-                    <div className="border border-border/70 rounded-xl bg-secondary/20 p-3.5 flex flex-col justify-between space-y-3">
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-[11px] font-bold text-foreground flex items-center gap-1.5">
-                            <Camera className="size-3.5 text-primary" />
-                            Foto Produk Resmi
-                          </span>
-                          {item.imageUrl && (
-                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 font-bold">
-                              Siap di-Attach
-                            </span>
-                          )}
-                        </div>
-
-                        {item.imageUrl ? (
-                          <div className="relative group rounded-lg overflow-hidden border border-border/80 aspect-video bg-black/5 flex items-center justify-center">
-                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={item.imageUrl}
-                              alt={item.name}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                              <label className="p-2 rounded-md bg-card text-foreground text-xs font-semibold hover:bg-secondary cursor-pointer flex items-center gap-1">
-                                <Upload className="size-3.5" />
-                                Ganti
-                                <input
-                                  type="file"
-                                  accept="image/jpeg,image/png,image/webp"
-                                  className="hidden"
-                                  onChange={(e) => handleImageUpload(item.id, e)}
-                                />
-                              </label>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveImage(item.id)}
-                                className="p-2 rounded-md bg-destructive text-destructive-foreground hover:opacity-90"
-                              >
-                                <Trash2 className="size-3.5" />
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <label className="border-2 border-dashed border-border/80 hover:border-primary/60 rounded-lg p-5 flex flex-col items-center justify-center gap-2 text-center cursor-pointer transition-colors bg-card/50 hover:bg-secondary/40 aspect-video">
-                            <ImageIcon className="size-6 text-muted-foreground" />
-                            <div>
-                              <span className="text-xs font-semibold text-foreground block">
-                                Upload Foto Plating / Produk
-                              </span>
-                              <span className="text-[10px] text-muted-foreground font-mono">
-                                JPG, PNG, WebP (Maks 2MB)
-                              </span>
-                            </div>
-                            <input
-                              type="file"
-                              accept="image/jpeg,image/png,image/webp"
-                              className="hidden"
-                              onChange={(e) => handleImageUpload(item.id, e)}
-                            />
-                          </label>
-                        )}
-                      </div>
-
-                      <p className="text-[11px] text-muted-foreground leading-normal">
-                        {item.imageUrl
-                          ? `Foto "${item.imageName || "Asset"}" (${item.imageSizeKb || 0} KB) siap otomatis dipilih saat kirim email penawaran ke kafe.`
-                          : "Upload foto terbaik produk ini agar Anda tidak perlu mencari file foto lagi dari komputer setiap mengirim email."}
-                      </p>
-                    </div>
-
-                    {/* Right: Description & Economics Spec */}
-                    <div className="md:col-span-2 space-y-3 flex flex-col justify-between">
-                      <p className="text-xs text-muted-foreground leading-relaxed">
+                  {/* Main Grid: Description + Specs + Photo */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    {/* Left: Description & Economics Spec */}
+                    <div className="lg:col-span-8 space-y-6">
+                      <p className="text-sm text-muted-foreground leading-relaxed max-w-xl">
                         {item.description}
                       </p>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border border border-border rounded-lg bg-secondary/20 overflow-hidden text-xs">
-                        <div className="p-3">
-                          <span className="text-muted-foreground text-[10px] block font-semibold uppercase tracking-wider">
+                      {/* Economics Spec Strip (Pure Open Hairline Datums) */}
+                      <div className="pt-4 border-t border-border/40 grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs">
+                        <div>
+                          <span className="text-muted-foreground text-[11px] block uppercase tracking-wider">
                             {item.portionDesc}
                           </span>
-                          <span className="font-mono font-bold text-foreground text-xs mt-1 block">
+                          <span className="font-medium text-foreground text-sm mt-1 block">
                             HPP Rp {item.hppPerPortion.toLocaleString("id-ID")}
                           </span>
                         </div>
 
-                        <div className="p-3">
-                          <span className="text-muted-foreground text-[10px] block font-semibold uppercase tracking-wider">
+                        <div>
+                          <span className="text-muted-foreground text-[11px] block uppercase tracking-wider">
                             Saran Jual Kafe
                           </span>
-                          <span className="font-mono font-bold text-foreground text-xs mt-1 block">
+                          <span className="font-medium text-foreground text-sm mt-1 block">
                             {item.recommendedSellPrice > 0
                               ? `Rp ${item.recommendedSellPrice.toLocaleString("id-ID")}`
                               : "Sampel Gratis"}
                           </span>
                         </div>
 
-                        <div className="p-3 bg-emerald-500/5">
-                          <span className="text-emerald-700 dark:text-emerald-400 text-[10px] block font-semibold uppercase tracking-wider">
+                        <div>
+                          <span className="text-muted-foreground text-[11px] block uppercase tracking-wider">
                             Margin Laba Kafe
                           </span>
-                          <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300 text-xs mt-1 block">
+                          <span className="font-medium text-foreground text-sm mt-1 block">
                             {item.marginPercent}
                           </span>
                         </div>
 
-                        <div className="p-3">
-                          <span className="text-muted-foreground text-[10px] block font-semibold uppercase tracking-wider">
+                        <div>
+                          <span className="text-muted-foreground text-[11px] block uppercase tracking-wider">
                             Waktu Saji
                           </span>
-                          <span className="font-mono font-medium text-foreground text-xs mt-1 block">
+                          <span className="font-medium text-foreground text-sm mt-1 block">
                             {item.cookTime}
                           </span>
                         </div>
                       </div>
+                    </div>
+
+                    {/* Right: Product Photo Asset Slot */}
+                    <div className="lg:col-span-4">
+                      {item.imageUrl ? (
+                        <div className="relative group overflow-hidden border border-border/40 aspect-video bg-muted/20 flex items-center justify-center">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={item.imageUrl}
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                            <label className="px-3 py-1.5 bg-foreground text-background text-xs font-medium cursor-pointer flex items-center gap-1">
+                              <Upload className="size-3" />
+                              Ganti
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                className="hidden"
+                                onChange={(e) => handleImageUpload(item.id, e)}
+                              />
+                            </label>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveImage(item.id)}
+                              className="px-3 py-1.5 bg-destructive text-destructive-foreground text-xs font-medium cursor-pointer"
+                            >
+                              Hapus
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <label className="border border-dashed border-border/60 hover:border-foreground p-5 flex flex-col items-center justify-center gap-2 text-center cursor-pointer transition-colors bg-muted/10 hover:bg-muted/20 aspect-video">
+                          <ImageIcon className="size-5 text-muted-foreground" />
+                          <div>
+                            <span className="text-xs font-medium text-foreground block">
+                              Upload Foto Aset
+                            </span>
+                            <span className="text-[11px] text-muted-foreground">
+                              JPG, PNG, WebP &lt; 2MB
+                            </span>
+                          </div>
+                          <input
+                            type="file"
+                            accept="image/jpeg,image/png,image/webp"
+                            className="hidden"
+                            onChange={(e) => handleImageUpload(item.id, e)}
+                          />
+                        </label>
+                      )}
                     </div>
                   </div>
                 </div>

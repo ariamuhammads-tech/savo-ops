@@ -17,6 +17,7 @@ import {
   Sparkles,
   ArrowRight,
   Package,
+  Edit3,
 } from "lucide-react";
 import {
   Lead,
@@ -172,19 +173,17 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
 
   return (
     <div className="space-y-8">
-      {/* Notice Ticker: Hening >= 4 Hari (Pure Typographic Strip - Zero Box) */}
+      {/* Notice Ticker: Hening >= 4 Hari */}
       {needsFollowUpLeads.length > 0 && (
-        <div className="py-4 border-y border-amber-500/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="py-3 border-y border-amber-500/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
             <div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
-                  NOTICE HADES // {needsFollowUpLeads.length} KAFE HENING ≥ 4 HARI
-                </span>
-              </div>
+              <span className="text-xs font-semibold text-amber-800 dark:text-amber-300">
+                Pemberitahuan: {needsFollowUpLeads.length} Kafe Hening ≥ 4 Hari
+              </span>
               <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                Kafe telah dikirimi email penawaran sample tester 4–7 hari lalu tanpa respon. Anda dapat memicu draf gentle follow-up atau menandai balasan.
+                Kafe telah dikirimi email penawaran 4–7 hari lalu tanpa respon. Anda dapat memicu draf follow-up singkat atau menandai balasan.
               </p>
             </div>
           </div>
@@ -192,7 +191,7 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
           <div className="flex items-center gap-2 shrink-0">
             <Link
               href="#section-tracking-terkirim"
-              className="font-mono text-xs font-bold text-amber-700 dark:text-amber-400 hover:underline inline-flex items-center gap-1 shrink-0"
+              className="text-xs font-medium text-amber-700 dark:text-amber-400 hover:underline inline-flex items-center gap-1 shrink-0"
             >
               <span>Lihat Kafe Hening</span>
               <ArrowRight className="size-3" />
@@ -201,19 +200,19 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
         </div>
       )}
 
-      {/* Staged Items List (Open Hairline Index - Zero Box) */}
+      {/* Staged Items List */}
       {stagedLeads.length === 0 ? (
         <div className="py-16 text-center border-y border-border">
           <CheckCircle2 className="mx-auto size-6 text-emerald-600 mb-2" />
-          <p className="font-mono text-xs uppercase tracking-widest text-foreground font-bold">
-            SEMUA DRAF EMAIL TELAH DISETUJUI
+          <p className="text-sm font-semibold text-foreground">
+            Semua Draf Email Telah Disetujui
           </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Tidak ada antrean email tertunda saat ini. Gunakan Hades Scout atau Konsol Perintah untuk menambah target baru.
+          <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
+            Tidak ada antrean email tertunda saat ini. Gunakan menu Prospek untuk menambah target baru.
           </p>
         </div>
       ) : (
-        <div className="divide-y divide-border border-t border-b border-border">
+        <div className="divide-y divide-border/40 border-t border-b border-border/40">
           {stagedLeads.map((lead, idx) => {
             const isExpanded = expandedId === lead.id;
             const isSending = sendingId === lead.id;
@@ -221,86 +220,93 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
             return (
               <div
                 key={lead.id}
-                className="py-6 transition-colors"
+                className="py-7 transition-colors"
               >
                 {/* Row Header */}
                 <div className="space-y-3">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="flex flex-wrap items-baseline justify-between gap-3">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2 font-mono text-[10.5px] text-muted-foreground">
-                        <span className="font-bold text-foreground">
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className="font-mono text-foreground/70">
                           {String(idx + 1).padStart(2, "0")}
                         </span>
-                        <span>//</span>
-                        <span className="uppercase tracking-wider text-foreground font-semibold">
-                          {lead.area}
-                        </span>
-                        <span>•</span>
+                        <span>·</span>
+                        <span>{lead.area}</span>
+                        <span>·</span>
                         <span>{lead.email}</span>
                       </div>
-                      <h3 className="font-display text-2xl font-bold tracking-tight text-foreground">
+                      <h3 className="text-2xl font-normal tracking-tight text-foreground">
                         {lead.name}
                       </h3>
                     </div>
 
-                    <span className="font-mono text-[10.5px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-bold">
-                      ● STAGED REVIEW
+                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+                      <span className="size-1.5 rounded-full bg-amber-500" />
+                      Menunggu Persetujuan
                     </span>
                   </div>
 
                   {/* Target Product & Subjek */}
-                  <div className="pt-2 border-t border-border/50 text-xs flex flex-wrap items-baseline gap-x-6 gap-y-1 text-muted-foreground">
+                  <div className="pt-2 text-xs flex flex-wrap items-baseline gap-x-6 gap-y-1 text-muted-foreground">
                     <div>
-                      <span className="font-mono font-bold text-foreground uppercase text-[10.5px]">PRODUK:</span>{" "}
+                      <span className="font-medium text-foreground">Produk:</span>{" "}
                       <span>{PRODUCT_LABELS[lead.targetProduct]}</span>
                     </div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="font-mono font-bold text-foreground uppercase text-[10.5px]">SUBJEK:</span>
-                      <span className="text-foreground font-medium">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="font-medium text-foreground">Subjek:</span>
+                      <span className="text-foreground">
                         &ldquo;{lead.stagedDraft.subject}&rdquo;
                       </span>
                     </div>
                   </div>
 
                   {/* Collapsible Body Preview */}
-                  <div className="pt-2">
+                  <div className="pt-1">
                     <button
                       type="button"
                       onClick={() => setExpandedId(isExpanded ? null : lead.id)}
-                      className="font-mono text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 cursor-pointer transition-colors"
+                      className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 cursor-pointer transition-colors"
                     >
                       {isExpanded ? (
                         <>
                           <ChevronUp className="size-3.5" />
-                          <span>SEMBUNYIKAN MANUSKRIP EMAIL</span>
+                          <span>Tutup draf email</span>
                         </>
                       ) : (
                         <>
                           <ChevronDown className="size-3.5" />
-                          <span>BACA MANUSKRIP EMAIL LENGKAP →</span>
+                          <span>Baca draf email →</span>
                         </>
                       )}
                     </button>
 
                     {isExpanded && (
-                      <div className="mt-4 pl-6 border-l-2 border-foreground py-2 text-xs leading-relaxed whitespace-pre-line font-mono text-foreground/90 bg-muted/10">
+                      <div className="mt-4 pl-6 border-l border-foreground/20 py-2 text-[14.5px] leading-relaxed whitespace-pre-line text-foreground/90 font-sans max-w-2xl">
                         {lead.stagedDraft.body}
                       </div>
                     )}
                   </div>
 
                   {/* Action Buttons Bar */}
-                  <div className="pt-4 border-t border-border/60 flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
+                  <div className="pt-4 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Mail className="size-3.5" />
-                      <span>SMTP SENDER: <strong className="text-foreground">thesavorium@gmail.com</strong></span>
+                      <span>Pengirim: <span className="text-foreground font-medium">thesavorium@gmail.com</span></span>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
+                      <Link
+                        href={`/outbox?leadId=${lead.id}`}
+                        className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+                      >
+                        <Edit3 className="size-3.5" />
+                        <span>Edit di Outbox</span>
+                      </Link>
+
                       <button
                         type="button"
                         onClick={() => handleCopy(lead.stagedDraft.body, lead.id)}
-                        className="font-mono text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 cursor-pointer py-2 px-3 border border-border hover:bg-secondary/40 transition-colors"
+                        className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 cursor-pointer transition-colors"
                       >
                         {copiedId === lead.id ? (
                           <>
@@ -310,7 +316,7 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                         ) : (
                           <>
                             <Copy className="size-3.5" />
-                            <span>Salin Teks</span>
+                            <span>Salin</span>
                           </>
                         )}
                       </button>
@@ -319,7 +325,7 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                         type="button"
                         disabled={isSending}
                         onClick={() => handleApproveAndSend(lead)}
-                        className="bg-foreground text-background font-mono text-xs font-semibold px-5 py-2 inline-flex items-center gap-2 cursor-pointer hover:opacity-90 disabled:opacity-50 transition-opacity"
+                        className="rounded-full bg-foreground text-background text-xs font-medium px-5 py-2 inline-flex items-center gap-2 cursor-pointer hover:opacity-90 disabled:opacity-50 transition-all"
                       >
                         {isSending ? (
                           <>
@@ -329,7 +335,7 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                         ) : (
                           <>
                             <Send className="size-3.5" />
-                            <span>Setujui & Kirim Email →</span>
+                            <span>Setujui &amp; Kirim Email</span>
                           </>
                         )}
                       </button>

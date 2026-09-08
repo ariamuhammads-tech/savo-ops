@@ -15,17 +15,17 @@ export default function LoginPage() {
       </div>
       <div className="w-full max-w-sm space-y-6 savo-in">
         <div className="flex flex-col items-center text-center">
-          <SavoLogo className="h-10 w-auto text-primary" />
-          <p className="mt-3 text-xs font-mono tracking-widest text-muted-foreground uppercase">
-            Pusat Komando B2B // Hades
+          <SavoLogo className="h-9 w-auto text-foreground" />
+          <p className="mt-2.5 text-xs text-muted-foreground">
+            Savo Eats · Operasional &amp; Akuisisi B2B
           </p>
         </div>
 
-        <div className="border border-border rounded-lg bg-background p-6 space-y-4">
-          <div className="space-y-1">
-            <h2 className="text-xl font-bold tracking-tight text-foreground">Selamat Datang</h2>
+        <div className="border-t border-b border-border/40 py-6 space-y-5">
+          <div className="space-y-1 text-center">
+            <h2 className="text-xl font-medium tracking-tight text-foreground">Masuk ke Sistem</h2>
             <p className="text-xs text-muted-foreground">
-              Masuk untuk mengelola operasional dan akuisisi B2B SAVO.
+              Akses khusus staf internal Savo Eats.
             </p>
           </div>
           <LoginForm />

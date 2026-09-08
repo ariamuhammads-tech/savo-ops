@@ -34,197 +34,157 @@ export default function DashboardHadesPage() {
   const partnerCount = leads.filter((l) => l.status === "partner").length;
 
   return (
-    <div className="w-full">
-      {/* Aura Hero Studio Centerpiece */}
-      <section className="hero-expanse">
-        <div className="hero-meta-left">
-          SAVO EATS // B2B SUPPLY<br />
-          BANDUNG, WEST JAVA<br />
-          SPECIALTY SNACK WHOLESALE
-        </div>
-
-        <div className="hero-meta-right">
-          ACQUISITION ENGINE: HADES<br />
-          STATUS: ONLINE & CURATING<br />
-          OFFICIAL: THESAVORIUM@GMAIL.COM
-        </div>
-
-        {/* Floating SAVO Brandmark */}
-        <div className="my-2 flex justify-center items-center">
-          <SavoLogo className="h-16 md:h-20 w-auto text-primary transition-transform duration-300 hover:scale-105" />
-        </div>
-
-        <h1 className="hero-brand-name">SAVO EATS</h1>
-        <p className="hero-tagline">
-          Pusat Komando Akuisisi B2B Kafe Bandung • Bitterballen & Baso Goreng
-        </p>
-
-        {/* Dynamic Hades Status Pill */}
-        <div className="pixel-companion-bar">
-          <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="font-mono text-xs font-semibold text-foreground">HADES ACTIVE:</span>
-          <span className="font-mono text-xs text-muted-foreground">
-            Kurasi kafe Bandung & antrean draf email penawaran B2B siap ditinjau
-          </span>
-        </div>
-      </section>
-
-      {/* Aura Principle Divider Strip */}
-      <div className="principle-strip">
-        <div className="font-semibold text-foreground">
-          PRINSIP 01: READY-TO-FRY WHOLESALE SPEC • MARGIN KAFE 50% – 65%
-        </div>
+    <div className="content-container space-y-12">
+      {/* Studio Header: Clean, Dignified & Quiet */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-border/40 pb-6 gap-4">
         <div>
-          FORMULA PENAWARAN: LOW-FRICTION TAMBAHAN MENU • TARGET MAKS. 5 EMAIL / HARI
+          <p className="text-xs font-medium text-muted-foreground">Savo Eats · Operasional B2B Bandung</p>
+          <h1 className="text-2xl md:text-3xl font-medium tracking-tight text-foreground mt-1">
+            Pusat Komando Akuisisi
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1.5 max-w-xl leading-relaxed">
+            Kurasi kafe specialty Bandung, kelola draf penawaran Bitterballen &amp; Baso Goreng, dan pantau respon kemitraan.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
+            <span className="size-1.5 rounded-full bg-emerald-500" />
+            Hades Aktif
+          </span>
+          <span>·</span>
+          <span>thesavorium@gmail.com</span>
         </div>
       </div>
 
-      {/* Aura Expansive Content Arena */}
-      <div className="content-container space-y-12">
-        {/* Architectural Standards Ribbon (Zero Box, Continuous Datum Ticker) */}
-        <section>
-          <div className="flex items-baseline justify-between mb-3">
-            <h2 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              PIPELINE METRIK // LIVE DATA
-            </h2>
-            <span className="text-[10.5px] font-mono text-muted-foreground/60">
-              BANDUNG WHOLESALE SUPPLY
+      {/* Metrics Strip (Pure Typographic Open Space — Zero Boxes) */}
+      <section>
+        <div className="border-y border-border/40 py-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
+          <div>
+            <span className="text-[11px] text-muted-foreground uppercase tracking-widest block font-medium">
+              Prospek Kafe
+            </span>
+            <p className="text-4xl lg:text-5xl font-light tracking-tight text-foreground my-2">
+              {totalCount}
+            </p>
+            <span className="text-xs text-muted-foreground block">
+              Terkurasi Bandung
             </span>
           </div>
 
-          <div className="border-y border-border divide-y divide-border sm:divide-y-0 sm:divide-x divide-border grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-            <div className="py-6 px-4 lg:px-6">
-              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground block">
-                01 // PROSPEK
-              </span>
-              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-foreground my-2">
-                {totalCount}
-              </p>
-              <span className="text-[10.5px] text-muted-foreground font-mono block">
-                Terkurasi BDG
-              </span>
-            </div>
-
-            <div className="py-6 px-4 lg:px-6">
-              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400 block">
-                02 // ANTREAN
-              </span>
-              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-amber-700 dark:text-amber-400 my-2">
-                {stagedCount}
-              </p>
-              <span className="text-[10.5px] text-muted-foreground font-mono block">
-                Perlu Tinjauan
-              </span>
-            </div>
-
-            <div className="py-6 px-4 lg:px-6">
-              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground block">
-                03 // TERKIRIM
-              </span>
-              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-foreground my-2">
-                {sentCount}
-              </p>
-              <span className="text-[10.5px] text-muted-foreground font-mono block">
-                Menunggu Respon
-              </span>
-            </div>
-
-            <div className="py-6 px-4 lg:px-6">
-              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-amber-800 dark:text-amber-300 block">
-                04 // HENING ≥4H
-              </span>
-              <p className={`text-4xl lg:text-5xl font-extrabold tracking-tighter my-2 ${needsFollowUpCount > 0 ? "text-amber-600 dark:text-amber-400" : "text-foreground"}`}>
-                {needsFollowUpCount}
-              </p>
-              <span className="text-[10.5px] text-muted-foreground font-mono block">
-                {needsFollowUpCount > 0 ? "Perlu Nudge" : "Nihil"}
-              </span>
-            </div>
-
-            <div className="py-6 px-4 lg:px-6">
-              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-400 block">
-                05 // RESPON
-              </span>
-              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-emerald-700 dark:text-emerald-400 my-2">
-                {repliedCount}
-              </p>
-              <span className="text-[10.5px] text-muted-foreground font-mono block">
-                Email & WA
-              </span>
-            </div>
-
-            <div className="py-6 px-4 lg:px-6">
-              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground block">
-                06 // MITRA
-              </span>
-              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-foreground my-2">
-                {partnerCount}
-              </p>
-              <span className="text-[10.5px] text-muted-foreground font-mono block">
-                Repeat Order
-              </span>
-            </div>
-          </div>
-        </section>
-
-        {/* Aura Section Block 01: Staged Queue */}
-        <section className="aura-section-block">
-          <div className="section-index-eyebrow">
-            <span>01</span>
-            <span>//</span>
-            <span>MEJA PERSETUJUAN DRAF EMAIL HADES</span>
-          </div>
-          <h2 className="section-headline">
-            Antrean Draf Penawaran B2B Siap Kirim
-          </h2>
-          <p className="section-desc-lead">
-            Draf email penawaran B2B disusun otomatis oleh Hades menggunakan formula low-friction sesama pelaku usaha Bandung. Tinjau dan setujui sebelum dikirim melalui thesavorium@gmail.com.
-          </p>
-
-          <StagedQueue />
-        </section>
-
-        {/* Aura Section Block 02: Interactive Agent Console */}
-        <section className="aura-section-block">
-          <div className="section-index-eyebrow">
-            <span>02</span>
-            <span>//</span>
-            <span>INTERACTIVE AGENT TERMINAL</span>
-          </div>
-          <h2 className="section-headline">
-            Konsol Perintah Agen Hades
-          </h2>
-          <p className="section-desc-lead">
-            Kueri data kafe Bandung, simulasikan unit economics & margin laba kafe, dan minta kurasi prospek area secara interaktif.
-          </p>
-
-          <AgentConsole />
-        </section>
-
-        {/* Bottom Principle & Navigation Strip */}
-        <div className="pt-8 border-t border-border flex flex-wrap items-center justify-between gap-6 text-xs text-muted-foreground">
-          <div className="flex flex-wrap items-center gap-6">
-            <Link href="/leads" className="hover:text-foreground font-medium flex items-center gap-1.5 transition-colors">
-              <Building2 className="size-3.5" />
-              <span>Database Kafe Bandung</span>
-              <ArrowUpRight className="size-3 opacity-60" />
-            </Link>
-            <Link href="/katalog" className="hover:text-foreground font-medium flex items-center gap-1.5 transition-colors">
-              <Package className="size-3.5" />
-              <span>Katalog & Margin B2B</span>
-              <ArrowUpRight className="size-3 opacity-60" />
-            </Link>
-            <Link href="/invoice" className="hover:text-foreground font-medium flex items-center gap-1.5 transition-colors">
-              <ReceiptText className="size-3.5 text-primary" />
-              <span>Generator Invoice</span>
-              <ArrowUpRight className="size-3 opacity-60" />
-            </Link>
+          <div>
+            <span className="text-[11px] text-muted-foreground uppercase tracking-widest block font-medium">
+              Antrean Draf
+            </span>
+            <p className="text-4xl lg:text-5xl font-light tracking-tight text-foreground my-2">
+              {stagedCount}
+            </p>
+            <span className="text-xs text-muted-foreground block">
+              Menunggu persetujuan
+            </span>
           </div>
 
-          <span className="font-mono text-[11px] text-muted-foreground/80">
-            SAVO OPS // ACQUISITION BUREAU BANDUNG V2.0
-          </span>
+          <div>
+            <span className="text-[11px] text-muted-foreground uppercase tracking-widest block font-medium">
+              Terkirim
+            </span>
+            <p className="text-4xl lg:text-5xl font-light tracking-tight text-foreground my-2">
+              {sentCount}
+            </p>
+            <span className="text-xs text-muted-foreground block">
+              Menunggu respon
+            </span>
+          </div>
+
+          <div>
+            <span className="text-[11px] text-muted-foreground uppercase tracking-widest block font-medium">
+              Perlu Follow-up
+            </span>
+            <p className={`text-4xl lg:text-5xl font-light tracking-tight my-2 ${needsFollowUpCount > 0 ? "text-amber-600 dark:text-amber-400" : "text-foreground"}`}>
+              {needsFollowUpCount}
+            </p>
+            <span className="text-xs text-muted-foreground block">
+              {needsFollowUpCount > 0 ? "Hening ≥4 hari" : "Semua terjaga"}
+            </span>
+          </div>
+
+          <div>
+            <span className="text-[11px] text-muted-foreground uppercase tracking-widest block font-medium">
+              Respon Masuk
+            </span>
+            <p className="text-4xl lg:text-5xl font-light tracking-tight text-foreground my-2">
+              {repliedCount}
+            </p>
+            <span className="text-xs text-muted-foreground block">
+              Email &amp; WA
+            </span>
+          </div>
+
+          <div>
+            <span className="text-[11px] text-muted-foreground uppercase tracking-widest block font-medium">
+              Mitra Aktif
+            </span>
+            <p className="text-4xl lg:text-5xl font-light tracking-tight text-foreground my-2">
+              {partnerCount}
+            </p>
+            <span className="text-xs text-muted-foreground block">
+              Kerjasama suplai
+            </span>
+          </div>
         </div>
+      </section>
+
+      {/* Section 01: Staged Queue */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            Antrean Draf Penawaran Siap Kirim
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1 max-w-2xl leading-relaxed">
+            Draf email penawaran disusun otomatis oleh Hades menggunakan formula low-friction sesama pelaku usaha Bandung. Tinjau dan setujui sebelum dikirim melalui thesavorium@gmail.com.
+          </p>
+        </div>
+
+        <StagedQueue />
+      </section>
+
+      {/* Section 02: Interactive Agent Console */}
+      <section className="space-y-4 pt-6 border-t border-border">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight text-foreground">
+            Konsol Asisten Hades
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1 max-w-2xl leading-relaxed">
+            Kueri data kafe Bandung, simulasikan margin laba kafe, dan minta kurasi prospek area secara langsung.
+          </p>
+        </div>
+
+        <AgentConsole />
+      </section>
+
+      {/* Quick Navigation Footer */}
+      <div className="pt-8 border-t border-border flex flex-wrap items-center justify-between gap-6 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-6">
+          <Link href="/leads" className="hover:text-foreground font-medium flex items-center gap-1.5 transition-colors">
+            <Building2 className="size-3.5" />
+            <span>Database Kafe Bandung</span>
+            <ArrowUpRight className="size-3 opacity-60" />
+          </Link>
+          <Link href="/katalog" className="hover:text-foreground font-medium flex items-center gap-1.5 transition-colors">
+            <Package className="size-3.5" />
+            <span>Katalog &amp; Margin B2B</span>
+            <ArrowUpRight className="size-3 opacity-60" />
+          </Link>
+          <Link href="/invoice" className="hover:text-foreground font-medium flex items-center gap-1.5 transition-colors">
+            <ReceiptText className="size-3.5 text-foreground" />
+            <span>Generator Invoice</span>
+            <ArrowUpRight className="size-3 opacity-60" />
+          </Link>
+        </div>
+
+        <span className="text-xs text-muted-foreground">
+          Savo Eats · Sistem Akuisisi B2B
+        </span>
       </div>
     </div>
   );

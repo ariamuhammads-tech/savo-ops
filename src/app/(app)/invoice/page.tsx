@@ -61,12 +61,12 @@ export default async function InvoicePage() {
         <FlashToast />
       </Suspense>
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-border pb-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between border-b border-border/40 pb-6">
         <div>
-          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">
-            SISTEM FINANSIAL B2B // WHOLESALE INVOICING
+          <span className="text-xs text-muted-foreground">
+            Sistem Finansial B2B · Wholesale Invoicing
           </span>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground mt-1">
+          <h1 className="text-2xl md:text-3xl font-medium tracking-tight text-foreground mt-1">
             Invoice Penjualan
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
@@ -76,28 +76,28 @@ export default async function InvoicePage() {
         <div className="flex items-center gap-2">
           <Link
             href="/invoice/baru"
-            className="inline-flex items-center gap-2 bg-foreground text-background px-4 py-2 text-xs font-semibold hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 rounded-full bg-foreground text-background px-5 py-2 text-xs font-medium hover:opacity-90 transition-opacity"
           >
-            <Plus className="size-4" />
-            <span>+ Buat Invoice Baru (B2B Instant)</span>
+            <Plus className="size-3.5" />
+            <span>Buat Invoice Baru</span>
           </Link>
         </div>
       </div>
 
       {invoices.length === 0 ? (
-        <div className="flex flex-col items-center gap-4 py-20 px-6 text-center border-t border-b border-border">
-          <div className="flex size-12 items-center justify-center rounded-full bg-muted/50 text-foreground">
+        <div className="flex flex-col items-center gap-4 py-20 px-6 text-center border-t border-b border-border/40">
+          <div className="flex size-12 items-center justify-center rounded-full bg-muted/40 text-foreground">
             <FileSpreadsheet className="size-5 text-muted-foreground" />
           </div>
           <div className="space-y-1">
-            <p className="text-base font-bold text-foreground">Belum Ada Invoice Aktif</p>
+            <p className="text-base font-medium text-foreground">Belum Ada Invoice Aktif</p>
             <p className="max-w-md text-xs text-muted-foreground leading-relaxed">
               Buat invoice B2B instan untuk kafe, resto, atau lounge mitra SAVO di Bandung. Dilengkapi preset harga grosir Baso Goreng & Bitterballen serta unduh PDF langsung.
             </p>
           </div>
           <Link
             href="/invoice/baru"
-            className="mt-2 inline-flex items-center gap-2 bg-foreground text-background px-5 py-2.5 text-xs font-semibold hover:opacity-90 transition-opacity"
+            className="mt-2 inline-flex items-center gap-2 rounded-full bg-foreground text-background px-6 py-2.5 text-xs font-medium hover:opacity-90 transition-opacity"
           >
             <Plus className="size-3.5" />
             <span>Mulai Buat Invoice Pertama</span>

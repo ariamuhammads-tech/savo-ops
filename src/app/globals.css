@@ -9,40 +9,40 @@
    Benchmark: Aura Corporate / UPROCK.DESIGN
    ========================================================= */
 :root {
-  --radius: 0.45rem;
+  --radius: 0rem;
 
   /* Canvas & Surfaces */
   --background: #ffffff;
-  --foreground: #0a0a0b;
+  --foreground: #111215;
 
-  --surface: #f7f7f8;
-  --surface-subtle: #fafafa;
+  --surface: #f9f9fb;
+  --surface-subtle: #fcfcfd;
 
   --card: #ffffff;
-  --card-foreground: #0a0a0b;
+  --card-foreground: #111215;
 
   --popover: #ffffff;
-  --popover-foreground: #0a0a0b;
+  --popover-foreground: #111215;
 
   /* Inks */
-  --ink-primary: #0a0a0b;
+  --ink-primary: #111215;
   --ink-secondary: #4a4d57;
-  --ink-muted: #8e92a0;
+  --ink-muted: #6b6e7b;
 
-  --primary: #0a0a0b;
+  --primary: #111215;
   --primary-foreground: #ffffff;
 
   --brand-terracotta: #c0492b;
   --brand-terracotta-fg: #ffffff;
 
-  --secondary: #f4f4f5;
-  --secondary-foreground: #0a0a0b;
+  --secondary: #f4f5f7;
+  --secondary-foreground: #111215;
 
-  --muted: #f4f4f5;
-  --muted-foreground: #8e92a0;
+  --muted: #f4f5f7;
+  --muted-foreground: #6b6e7b;
 
-  --accent: #f4f4f5;
-  --accent-foreground: #0a0a0b;
+  --accent: #f4f5f7;
+  --accent-foreground: #111215;
 
   --destructive: #d32f2f;
   --destructive-foreground: #ffffff;
@@ -50,11 +50,11 @@
   --success: #15803d;
   --warning: #b45309;
 
-  --border: #e5e6eb;
-  --input: #e5e6eb;
-  --ring: #0a0a0b;
+  --border: #e6e8ec;
+  --input: #e6e8ec;
+  --ring: #111215;
 
-  --hairline: #e5e6eb;
+  --hairline: #e6e8ec;
   --hairline-dark: #1a1b1e;
 
   --font-display: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -67,36 +67,36 @@
 }
 
 .dark {
-  --background: #0a0a0b;
-  --foreground: #f8fafc;
+  --background: #090a0b;
+  --foreground: #ededed;
 
-  --surface: #141416;
-  --surface-subtle: #18181b;
+  --surface: #121316;
+  --surface-subtle: #16171a;
 
-  --card: #0a0a0b;
-  --card-foreground: #f8fafc;
+  --card: #090a0b;
+  --card-foreground: #ededed;
 
-  --popover: #141416;
-  --popover-foreground: #f8fafc;
+  --popover: #121316;
+  --popover-foreground: #ededed;
 
-  --ink-primary: #f8fafc;
-  --ink-secondary: #a1a1aa;
-  --ink-muted: #71717a;
+  --ink-primary: #ededed;
+  --ink-secondary: #9da0aa;
+  --ink-muted: #80838e;
 
-  --primary: #f8fafc;
-  --primary-foreground: #0a0a0b;
+  --primary: #ededed;
+  --primary-foreground: #090a0b;
 
   --brand-terracotta: #e0603c;
   --brand-terracotta-fg: #ffffff;
 
-  --secondary: #18181b;
-  --secondary-foreground: #f8fafc;
+  --secondary: #16171a;
+  --secondary-foreground: #ededed;
 
-  --muted: #18181b;
-  --muted-foreground: #71717a;
+  --muted: #16171a;
+  --muted-foreground: #80838e;
 
-  --accent: #18181b;
-  --accent-foreground: #f8fafc;
+  --accent: #16171a;
+  --accent-foreground: #ededed;
 
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
@@ -104,16 +104,16 @@
   --success: #22c55e;
   --warning: #f59e0b;
 
-  --border: #232326;
-  --input: #232326;
-  --ring: #f8fafc;
+  --border: #1e2024;
+  --input: #1e2024;
+  --ring: #ededed;
 
-  --hairline: #232326;
-  --hairline-dark: #2e2e33;
+  --hairline: #1e2024;
+  --hairline-dark: #272a30;
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-card-hover: 0 4px 14px rgba(0, 0, 0, 0.5);
+  --shadow-xs: none;
+  --shadow-card: none;
+  --shadow-card-hover: none;
 }
 
 @theme inline {
@@ -162,15 +162,17 @@
     font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    line-height: 1.6;
+    letter-spacing: -0.011em;
   }
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: -0.025em;
   }
   ::selection {
-    background: #0a0a0b;
-    color: #ffffff;
+    background: var(--foreground);
+    color: var(--background);
   }
 }
 
@@ -301,14 +303,15 @@
 
 /* ===== Aura Content Sections Architecture ===== */
 .content-container {
-  max-width: 1440px;
+  max-width: 1152px;
   margin: 0 auto;
-  padding: 32px 48px 90px;
+  padding: 40px 24px 96px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 1024px) {
   .content-container {
-    padding: 24px 20px 80px;
+    padding-left: 32px;
+    padding-right: 32px;
   }
 }
 
@@ -323,11 +326,10 @@
 }
 
 .section-index-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
   color: var(--muted-foreground);
-  text-transform: uppercase;
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -335,9 +337,9 @@
 }
 
 .section-headline {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.025em;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   line-height: 1.25;
   color: var(--foreground);
   margin-bottom: 6px;
@@ -351,36 +353,34 @@
   margin-bottom: 24px;
 }
 
-/* ===== Aura Precision Table ===== */
+/* ===== Aura Precision Table (Zero Box, Pure Hairline) ===== */
 .aura-table {
   width: 100%;
   border-collapse: collapse;
-  border-top: 1px solid var(--border);
 }
 
 .aura-table th {
   text-align: left;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
   color: var(--muted-foreground);
-  padding: 12px 18px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--border);
-  font-weight: 600;
-  background: var(--surface-subtle);
+  font-weight: 500;
+  background: transparent;
 }
 
 .aura-table td {
-  padding: 14px 18px;
+  padding: 14px 16px;
   border-bottom: 1px solid var(--border);
-  font-size: 13px;
+  font-size: 13.5px;
   vertical-align: middle;
   color: var(--foreground);
 }
 
 .aura-table tr:hover td {
-  background: var(--surface);
+  background: var(--surface-subtle);
 }
 
 /* ===== Aura Action Pills & Apple Buttons ===== */
