@@ -17,9 +17,18 @@ import {
   Loader2,
   Camera,
 } from "lucide-react";
-import { INITIAL_LEADS, Lead, PRODUCT_LABELS } from "@/lib/leads-data";
+import {
+  Lead,
+  LeadStatus,
+  STATUS_CONFIG,
+  PRODUCT_LABELS,
+  getStoredLeads,
+  updateStoredLeadStatus,
+  getLeadAgingNotice,
+} from "@/lib/leads-data";
 import { getStoredCatalog, CatalogItem } from "@/lib/catalog-data";
 import { toast } from "sonner";
+import { AlertTriangle, Clock, MessageSquare } from "lucide-react";
 
 interface AttachmentItem {
   id: string;
@@ -31,9 +40,9 @@ interface AttachmentItem {
 
 export default function OutboxPage() {
   const searchParams = useSearchParams();
-  const initialLeadId = searchParams.get("leadId") || INITIAL_LEADS[0].id;
+  const initialLeadId = searchParams.get("leadId") || "";
 
-  const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [selectedLeadId, setSelectedLeadId] = useState(initialLeadId);
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
@@ -44,6 +53,28 @@ export default function OutboxPage() {
   const [isRefining, setIsRefining] = useState(false);
   const [showCatalogPicker, setShowCatalogPicker] = useState(false);
   const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([]);
+
+  useEffect(() => {
+    const loaded = getStoredLeads();
+    setLeads(loaded);
+    if (!selectedLeadId && loaded.length > 0) {
+      setSelectedLeadId(loaded[0].id);
+      setSubject(loaded[0].stagedDraft.subject);
+      setBody(loaded[0].stagedDraft.body);
+    } else if (selectedLeadId) {
+      const target = loaded.find((l) => l.id === selectedLeadId);
+      if (target) {
+        setSubject(target.stagedDraft.subject);
+        setBody(target.stagedDraft.body);
+      }
+    }
+
+    const handleLeadsUpdate = () => {
+      setLeads(getStoredLeads());
+    };
+    window.addEventListener("savo_leads_updated", handleLeadsUpdate);
+    return () => window.removeEventListener("savo_leads_updated", handleLeadsUpdate);
+  }, [selectedLeadId]);
 
   useEffect(() => {
     setCatalogItems(getStoredCatalog());
@@ -90,15 +121,27 @@ export default function OutboxPage() {
     }
   };
 
-  // Initialize subject and body
-  useState(() => {
-    if (currentLead) {
-      setSubject(currentLead.stagedDraft.subject);
-      setBody(currentLead.stagedDraft.body);
-    }
-  });
+  const handleSetStatus = (leadId: string, newStatus: LeadStatus) => {
+    const updated = updateStoredLeadStatus(leadId, newStatus);
+    setLeads(updated);
+    const label =
+      newStatus === "replied_email"
+        ? "Ditandai: Membalas via Email"
+        : newStatus === "replied_whatsapp"
+        ? "Ditandai: Membalas via WhatsApp / IG"
+        : newStatus === "sample_arranged"
+        ? "Jadwal tasting disepakati!"
+        : newStatus === "rejected"
+        ? "Ditandai: Belum Tertarik (Arsip)"
+        : "Status diperbarui";
+    toast.success(label);
+  };
 
-  const handleRefine = async (action: "touch1" | "touch2" | "shorten" | "custom", customPrompt?: string) => {
+  const handleRefine = async (
+    action: "touch1" | "touch2" | "followup" | "shorten" | "custom",
+    customPrompt?: string
+  ) => {
+    if (!currentLead) return;
     setIsRefining(true);
     try {
       const res = await fetch("/api/hades/refine-draft", {
@@ -126,6 +169,8 @@ export default function OutboxPage() {
           ? "Touch 1 (Tasting Box Gratis)"
           : action === "touch2"
           ? "Touch 2 (Follow-Up & Margin)"
+          : action === "followup"
+          ? "Gentle Follow-Up (Nudge)"
           : action === "shorten"
           ? "Draf Dipersingkat"
           : "Instruksi Kustom";
@@ -200,18 +245,11 @@ export default function OutboxPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Gagal mengirim email.");
 
-      setLeads((prev) =>
-        prev.map((l) =>
-          l.id === currentLead.id
-            ? {
-                ...l,
-                status: "sent",
-                sentAt: data.sentAt || new Date().toISOString(),
-                stagedDraft: { subject, body },
-              }
-            : l
-        )
-      );
+      const updated = updateStoredLeadStatus(currentLead.id, "sent", {
+        sentAt: data.sentAt || new Date().toISOString(),
+        stagedDraft: { subject, body },
+      });
+      setLeads(updated);
 
       toast.success(
         data.simulated
@@ -295,12 +333,23 @@ export default function OutboxPage() {
                       : "hover:bg-secondary/40"
                   }`}
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-start justify-between gap-1">
                     <span className="font-display text-sm font-bold text-foreground">
                       {lead.name}
                     </span>
                     {isSent ? (
-                      <span className="text-[10px] text-blue-600 font-mono font-bold">SENT</span>
+                      <div className="flex flex-col items-end gap-0.5">
+                        <span className="text-[10px] text-blue-600 font-mono font-bold">SENT</span>
+                        {(() => {
+                          const aging = getLeadAgingNotice(lead);
+                          if (!aging) return null;
+                          return (
+                            <span className={`text-[9px] px-1.5 py-0.5 rounded border ${aging.badgeClass}`}>
+                              {aging.statusCategory === "needs_followup" ? `⚠️ ${aging.ageDays}h` : `${aging.ageDays}h`}
+                            </span>
+                          );
+                        })()}
+                      </div>
                     ) : (
                       <span className="text-[10px] text-amber-700 font-mono font-bold">STAGED</span>
                     )}
@@ -325,9 +374,42 @@ export default function OutboxPage() {
                   Draf untuk {currentLead.name}
                 </h3>
               </div>
-              <div className="text-xs text-muted-foreground font-mono">
+              <div className="text-xs font-mono">
                 {currentLead.status === "sent" ? (
-                  <span className="text-blue-600 font-medium">Sudah Terkirim</span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {(() => {
+                      const aging = getLeadAgingNotice(currentLead);
+                      if (!aging) return <span className="text-blue-600 font-medium">Sudah Terkirim</span>;
+                      return (
+                        <span className={`px-2 py-0.5 rounded border text-[11px] font-sans ${aging.badgeClass}`}>
+                          {aging.label}
+                        </span>
+                      );
+                    })()}
+                    <div className="flex items-center gap-1 font-sans">
+                      <button
+                        type="button"
+                        onClick={() => handleSetStatus(currentLead.id, "replied_email")}
+                        className="px-2 py-0.5 rounded border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
+                      >
+                        ✅ Balas Email
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSetStatus(currentLead.id, "replied_whatsapp")}
+                        className="px-2 py-0.5 rounded border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
+                      >
+                        💬 Balas WA
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSetStatus(currentLead.id, "rejected")}
+                        className="px-2 py-0.5 rounded border border-border bg-card hover:bg-secondary text-[10px] text-muted-foreground cursor-pointer"
+                      >
+                        ❌ Tolak
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <span className="text-amber-700 font-medium">Menunggu Persetujuan Anda</span>
                 )}
@@ -383,6 +465,14 @@ export default function OutboxPage() {
                   className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-secondary/80 hover:bg-secondary text-foreground text-[11px] font-medium border border-border transition-colors disabled:opacity-50 cursor-pointer"
                 >
                   ⚡ Touch 2 (Follow-Up & Margin)
+                </button>
+                <button
+                  type="button"
+                  disabled={isRefining}
+                  onClick={() => handleRefine("followup")}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 text-[11px] font-medium border border-amber-300 dark:border-amber-800 transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  ⚡ Gentle Nudge (Follow-Up Hening)
                 </button>
                 <button
                   type="button"

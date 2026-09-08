@@ -46,6 +46,7 @@ STANDAR FILTER ANTI-SLOP HUMAN (WAJIB PATUH MUTLAK):
 Aturan Mode:
 - Jika mode 'touch1': Buat draf pendek (40-60 kata), santai, apresiasi vibe kafe, tawarkan kirim 1 Curated Tasting Box gratis untuk dicicipi barista/kitchen. JANGAN jualan angka harga/margin di touch 1.
 - Jika mode 'touch2': Draf follow-up setelah tasting dicicipi. Sebutkan harga grosir Bitterballen & Baso Goreng serta margin kafe 55-65% dan kepraktisan zero-prep goreng 4 menit.
+- Jika mode 'followup' atau 'nudge': Draf gentle follow-up singkat (25-35 kata) untuk kafe yang belum membalas email pertama setelah 4 hari. Nada santai, zero guilt-trip, bersahabat, tanyakan apakah email sebelumnya sempat terbaca atau masuk tab promosi, tawarkan drop 1 box tester minggu ini.
 - Jika mode 'shorten': Pangkas draf saat ini agar lebih padat, ringkas (maks 40 kata), dan to-the-point tanpa mengurangi kehangatan.
 - Jika ada instruksi khusus dari Aria: Wajib ikuti instruksi tersebut secara presisi.
 
@@ -115,6 +116,21 @@ Kalau rasa dan teksturnya cocok untuk mendampingi menu kopi kalian, ini rincian 
 Semua sudah beku siap goreng 4 menit (zero prep), dengan estimasi margin kafe di 55% - 65%.
 
 Boleh kita jadwalkan supply batch pertama minggu ini?
+
+Cheers,
+Hades | Savo Eats
+thesavorium@gmail.com`,
+      });
+    }
+
+    if (action === "followup" || action === "nudge") {
+      return NextResponse.json({
+        subject: `Tester Tasting Box Savo Eats untuk ${leadName}`,
+        body: `Halo tim ${leadName},
+
+Cuma mau make sure email penawaran tester box kami kemarin sempat terbaca atau mungkin nyasar ke tab promosi.
+
+Kami masih simpan slot 1 Curated Tasting Box gratis (isi Bitterballen & Baso Goreng) buat dicicipi barista lead atau tim dapur kalian minggu ini. Boleh kami antar testernya besok atau lusa?
 
 Cheers,
 Hades | Savo Eats

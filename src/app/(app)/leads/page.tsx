@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   Search,
@@ -17,14 +17,22 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  AlertTriangle,
+  Clock,
+  MessageSquare,
+  Phone,
 } from "lucide-react";
 import {
-  INITIAL_LEADS,
   Lead,
+  LeadStatus,
   BANDUNG_AREAS,
   CATEGORY_LABELS,
   STATUS_CONFIG,
   PRODUCT_LABELS,
+  getStoredLeads,
+  saveStoredLeads,
+  updateStoredLeadStatus,
+  getLeadAgingNotice,
 } from "@/lib/leads-data";
 import { toast } from "sonner";
 
@@ -46,11 +54,20 @@ interface ScoutCandidate {
 }
 
 export default function LeadsPage() {
-  const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
+  const [leads, setLeads] = useState<Lead[]>([]);
   const [search, setSearch] = useState("");
   const [selectedArea, setSelectedArea] = useState("Semua Area");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isGeneratingFollowUp, setIsGeneratingFollowUp] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLeads(getStoredLeads());
+
+    const handleUpdate = () => setLeads(getStoredLeads());
+    window.addEventListener("savo_leads_updated", handleUpdate);
+    return () => window.removeEventListener("savo_leads_updated", handleUpdate);
+  }, []);
 
   // Hades Scout States
   const [showScoutModal, setShowScoutModal] = useState(false);
@@ -85,7 +102,14 @@ export default function LeadsPage() {
       lead.email.toLowerCase().includes(search.toLowerCase()) ||
       lead.address.toLowerCase().includes(search.toLowerCase());
     const matchArea = selectedArea === "Semua Area" || lead.area === selectedArea;
-    const matchStatus = selectedStatus === "all" || lead.status === selectedStatus;
+    
+    let matchStatus = true;
+    if (selectedStatus === "needs_followup") {
+      matchStatus = lead.status === "sent" && !!getLeadAgingNotice(lead)?.isActionRequired;
+    } else if (selectedStatus !== "all") {
+      matchStatus = lead.status === selectedStatus;
+    }
+
     return matchSearch && matchArea && matchStatus;
   });
 
@@ -144,7 +168,9 @@ export default function LeadsPage() {
       };
     });
 
-    setLeads((prev) => [...importedLeads, ...prev]);
+    const updated = [...importedLeads, ...leads];
+    saveStoredLeads(updated);
+    setLeads(updated);
     setShowScoutModal(false);
     toast.success(
       `${importedLeads.length} kafe baru ditambahkan! Draf penawaran sudah siap di Outbox.`,
@@ -181,8 +207,68 @@ export default function LeadsPage() {
       updatedAt: new Date().toISOString(),
     };
 
-    setLeads([created, ...leads]);
+    const updated = [created, ...leads];
+    saveStoredLeads(updated);
+    setLeads(updated);
     setShowAddModal(false);
+    toast.success(`Kafe ${created.name} berhasil ditambahkan!`);
+  };
+
+  const handleSetStatus = (leadId: string, newStatus: LeadStatus) => {
+    const updated = updateStoredLeadStatus(leadId, newStatus);
+    setLeads(updated);
+    const label =
+      newStatus === "replied_email"
+        ? "Ditandai: Membalas via Email"
+        : newStatus === "replied_whatsapp"
+        ? "Ditandai: Membalas via WhatsApp / IG"
+        : newStatus === "sample_arranged"
+        ? "Jadwal tester disepakati!"
+        : newStatus === "rejected"
+        ? "Ditandai: Belum Tertarik (Arsip)"
+        : "Status diperbarui";
+    toast.success(label);
+  };
+
+  const handleTriggerFollowUp = async (lead: Lead) => {
+    setIsGeneratingFollowUp(lead.id);
+    try {
+      toast.info(`Hades meracik follow-up untuk ${lead.name}...`);
+      const res = await fetch("/api/hades/refine-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leadName: lead.name,
+          leadArea: lead.area,
+          targetProduct: PRODUCT_LABELS[lead.targetProduct],
+          currentSubject: lead.stagedDraft.subject,
+          currentBody: lead.stagedDraft.body,
+          action: "followup",
+        }),
+      });
+
+      const data = await res.json();
+      const newSubject = data.subject || `Tester Tasting Box Savo Eats untuk tim ${lead.name}`;
+      const newBody =
+        data.body ||
+        `Halo tim ${lead.name},\n\nCuma mau make sure email tester box kami kemarin sempat terbaca atau mungkin nyasar ke tab promosi.\n\nKami masih simpan slot 1 Curated Tasting Box gratis (isi Bitterballen & Baso Goreng) buat dicicipi barista lead atau tim dapur kalian minggu ini. Boleh kami antar testernya besok atau lusa?\n\nCheers,\nHades | Savo Eats\nthesavorium@gmail.com`;
+
+      const updated = updateStoredLeadStatus(lead.id, "staged", {
+        stagedDraft: { subject: newSubject, body: newBody },
+        notes: `${lead.notes || ""} [Follow-up diajukan setelah hening]`.trim(),
+      });
+      setLeads(updated);
+      toast.success(`Draf follow-up untuk ${lead.name} siap ditinjau di Outbox!`, {
+        action: {
+          label: "Buka Outbox",
+          onClick: () => (window.location.href = `/outbox?leadId=${lead.id}`),
+        },
+      });
+    } catch {
+      toast.error("Gagal menyusun draf follow-up.");
+    } finally {
+      setIsGeneratingFollowUp(null);
+    }
   };
 
   return (
@@ -272,9 +358,14 @@ export default function LeadsPage() {
             className="w-full rounded-lg border border-border bg-card pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
           >
             <option value="all">Semua Status Email</option>
+            <option value="needs_followup">⚠️ Butuh Follow-Up (Hening ≥ 4 Hari)</option>
             <option value="staged">Menunggu Persetujuan (Staged)</option>
-            <option value="sent">Email Terkirim</option>
+            <option value="sent">Email Terkirim (Menunggu Respon)</option>
+            <option value="replied_email">Balas via Email</option>
+            <option value="replied_whatsapp">Balas via WA/IG</option>
+            <option value="sample_arranged">Jadwal Tester Disepakati</option>
             <option value="partner">Mitra Aktif</option>
+            <option value="rejected">Belum Tertarik / Arsip</option>
           </select>
         </div>
       </div>
@@ -295,6 +386,8 @@ export default function LeadsPage() {
             <tbody className="divide-y divide-border">
               {filteredLeads.map((lead) => {
                 const statusInfo = STATUS_CONFIG[lead.status];
+                const aging = getLeadAgingNotice(lead);
+
                 return (
                   <tr key={lead.id} className="hover:bg-secondary/20 transition-colors">
                     <td className="py-3 px-4 space-y-0.5">
@@ -310,7 +403,7 @@ export default function LeadsPage() {
                     <td className="py-3 px-4 space-y-0.5">
                       <p className="font-mono text-foreground font-medium">{lead.email}</p>
                       <p className="text-muted-foreground text-[11px]">
-                        PIC: {lead.contactPerson}
+                        PIC: {lead.contactPerson} • {lead.whatsapp}
                       </p>
                     </td>
 
@@ -321,30 +414,72 @@ export default function LeadsPage() {
                     </td>
 
                     <td className="py-3 px-4">
-                      <span
-                        className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded border ${statusInfo.badgeClass}`}
-                      >
-                        {statusInfo.label}
-                      </span>
+                      <div className="space-y-1">
+                        <span
+                          className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded border ${statusInfo?.badgeClass || ""}`}
+                        >
+                          {statusInfo?.label || lead.status}
+                        </span>
+                        {lead.status === "sent" && aging && (
+                          <div>
+                            <span className={`inline-block text-[10px] px-2 py-0.5 rounded border mt-0.5 ${aging.badgeClass}`}>
+                              {aging.label}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </td>
 
-                    <td className="py-3 px-4 text-right space-x-2">
-                      <Link
-                        href={`/outbox?leadId=${lead.id}`}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-border bg-card hover:bg-secondary text-foreground text-[11px] font-medium transition-colors"
-                      >
-                        <Mail className="size-3" />
-                        Draf Email
-                      </Link>
+                    <td className="py-3 px-4 text-right">
+                      <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                        {lead.status === "sent" && (
+                          <div className="flex items-center gap-1 mr-1">
+                            <button
+                              type="button"
+                              title="Tandai balas via email"
+                              onClick={() => handleSetStatus(lead.id, "replied_email")}
+                              className="px-1.5 py-0.5 rounded border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
+                            >
+                              ✅ Email
+                            </button>
+                            <button
+                              type="button"
+                              title="Tandai balas via WhatsApp"
+                              onClick={() => handleSetStatus(lead.id, "replied_whatsapp")}
+                              className="px-1.5 py-0.5 rounded border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
+                            >
+                              💬 WA
+                            </button>
+                            {aging?.isActionRequired && (
+                              <button
+                                type="button"
+                                disabled={isGeneratingFollowUp === lead.id}
+                                onClick={() => handleTriggerFollowUp(lead)}
+                                className="px-2 py-0.5 rounded bg-amber-600 hover:bg-amber-700 text-white text-[10px] font-bold shadow-xs animate-pulse cursor-pointer"
+                                title="Rancang draf follow-up singkat via Hades"
+                              >
+                                ⚡ Follow-up
+                              </button>
+                            )}
+                          </div>
+                        )}
 
-                      <Link
-                        href={`/invoice?customer=${encodeURIComponent(lead.name)}`}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded border border-border bg-card hover:bg-secondary text-muted-foreground text-[11px] font-medium transition-colors"
-                        title="Buat Invoice Pasokan"
-                      >
-                        <ReceiptText className="size-3 text-primary" />
-                        Invoice
-                      </Link>
+                        <Link
+                          href={`/outbox?leadId=${lead.id}`}
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded border border-border bg-card hover:bg-secondary text-foreground text-[11px] font-medium transition-colors"
+                        >
+                          <Mail className="size-3" />
+                          Draf
+                        </Link>
+
+                        <Link
+                          href={`/invoice?customer=${encodeURIComponent(lead.name)}`}
+                          className="inline-flex items-center gap-1 px-2 py-1 rounded border border-border bg-card hover:bg-secondary text-muted-foreground text-[11px] font-medium transition-colors"
+                          title="Buat Invoice Pasokan"
+                        >
+                          <ReceiptText className="size-3 text-primary" />
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 );

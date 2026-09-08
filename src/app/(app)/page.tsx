@@ -1,16 +1,36 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { StagedQueue } from "@/components/staged-queue";
 import { AgentConsole } from "@/components/agent-console";
-import { INITIAL_LEADS } from "@/lib/leads-data";
-import { ReceiptText, Building2, Package } from "lucide-react";
-
-export const dynamic = "force-dynamic";
+import { getStoredLeads, Lead, getLeadAgingNotice } from "@/lib/leads-data";
+import { ReceiptText, Building2, Package, AlertTriangle, MessageSquare } from "lucide-react";
 
 export default function DashboardHadesPage() {
-  const stagedCount = INITIAL_LEADS.filter((l) => l.status === "staged").length;
-  const sentCount = INITIAL_LEADS.filter((l) => l.status === "sent").length;
-  const partnerCount = INITIAL_LEADS.filter((l) => l.status === "partner").length;
-  const totalCount = INITIAL_LEADS.length;
+  const [leads, setLeads] = useState<Lead[]>([]);
+
+  useEffect(() => {
+    setLeads(getStoredLeads());
+
+    const handleUpdate = () => {
+      setLeads(getStoredLeads());
+    };
+
+    window.addEventListener("savo_leads_updated", handleUpdate);
+    return () => window.removeEventListener("savo_leads_updated", handleUpdate);
+  }, []);
+
+  const totalCount = leads.length;
+  const stagedCount = leads.filter((l) => l.status === "staged").length;
+  const sentCount = leads.filter((l) => l.status === "sent").length;
+  const needsFollowUpCount = leads.filter(
+    (l) => l.status === "sent" && getLeadAgingNotice(l)?.isActionRequired
+  ).length;
+  const repliedCount = leads.filter(
+    (l) => l.status === "replied_email" || l.status === "replied_whatsapp"
+  ).length;
+  const partnerCount = leads.filter((l) => l.status === "partner").length;
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -38,56 +58,82 @@ export default function DashboardHadesPage() {
         </p>
       </div>
 
-      {/* Swiss Monoline Metric Bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 border border-border rounded-xl bg-card divide-x divide-y md:divide-y-0 divide-border overflow-hidden">
+      {/* Swiss Monoline Metric Bar (6 Metrics) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 border border-border rounded-xl bg-card divide-x divide-y sm:divide-y-0 divide-border overflow-hidden">
         <div className="p-4 space-y-1">
-          <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            Prospek Terkurasi
+          <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            Prospek
           </span>
           <p className="font-display text-2xl font-bold tracking-tight text-foreground">
             {totalCount}
           </p>
-          <span className="text-[11px] text-muted-foreground block">Wilayah Bandung</span>
+          <span className="text-[10px] text-muted-foreground block">Terkurasi BDG</span>
         </div>
 
         <div className="p-4 space-y-1 bg-amber-500/5">
-          <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-amber-700 dark:text-amber-400">
-            Draf Staged (Antrean)
+          <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-amber-700 dark:text-amber-400">
+            Draf Antrean
           </span>
           <p className="font-display text-2xl font-bold tracking-tight text-amber-800 dark:text-amber-300">
             {stagedCount}
           </p>
-          <span className="text-[11px] text-amber-700/80 dark:text-amber-400/80 block">
-            Perlu persetujuan
+          <span className="text-[10px] text-amber-700/80 dark:text-amber-400/80 block">
+            Perlu dicek
           </span>
         </div>
 
         <div className="p-4 space-y-1">
-          <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            Email Terkirim
+          <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            Terkirim
           </span>
           <p className="font-display text-2xl font-bold tracking-tight text-foreground">
             {sentCount}
           </p>
-          <span className="text-[11px] text-muted-foreground block">thesavorium@gmail.com</span>
+          <span className="text-[10px] text-muted-foreground block">Menunggu respon</span>
+        </div>
+
+        <div className={`p-4 space-y-1 ${needsFollowUpCount > 0 ? "bg-amber-500/10 dark:bg-amber-950/40" : ""}`}>
+          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-amber-800 dark:text-amber-300 flex items-center gap-1">
+            <AlertTriangle className="size-3 text-amber-600" />
+            Hening ≥4H
+          </span>
+          <p className={`font-display text-2xl font-bold tracking-tight ${needsFollowUpCount > 0 ? "text-amber-600 dark:text-amber-400 animate-pulse" : "text-foreground"}`}>
+            {needsFollowUpCount}
+          </p>
+          <span className="text-[10px] text-amber-800/80 dark:text-amber-300/80 block font-medium">
+            {needsFollowUpCount > 0 ? "Butuh Nudge" : "Nihil"}
+          </span>
+        </div>
+
+        <div className="p-4 space-y-1 bg-emerald-500/5">
+          <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
+            <MessageSquare className="size-3 text-emerald-600" />
+            Respon
+          </span>
+          <p className="font-display text-2xl font-bold tracking-tight text-emerald-700 dark:text-emerald-300">
+            {repliedCount}
+          </p>
+          <span className="text-[10px] text-emerald-700/80 dark:text-emerald-400/80 block font-medium">
+            Email & WA
+          </span>
         </div>
 
         <div className="p-4 space-y-1">
-          <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-            Mitra Aktif (Deal)
+          <span className="text-[10px] font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            Mitra Aktif
           </span>
           <p className="font-display text-2xl font-bold tracking-tight text-foreground">
             {partnerCount}
           </p>
-          <span className="text-[11px] text-emerald-600 dark:text-emerald-400 block font-medium">
-            Repeat order rutin
+          <span className="text-[10px] text-emerald-600 dark:text-emerald-400 block font-medium">
+            Repeat order
           </span>
         </div>
       </div>
 
       {/* Primary Section: Staged Email Queue */}
       <section className="space-y-4">
-        <StagedQueue initialLeads={INITIAL_LEADS} />
+        <StagedQueue />
       </section>
 
       {/* Secondary Section: Interactive Console for Hades */}

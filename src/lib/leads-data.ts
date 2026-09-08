@@ -9,10 +9,12 @@ export type TargetProduct = "baso_goreng" | "bitterballen_ori" | "bitterballen_c
 
 export type LeadStatus =
   | "staged"            // Draf email siap ditinjau oleh Aria
-  | "sent"              // Email sudah terkirim via thesavorium@gmail.com
+  | "sent"              // Email sudah terkirim via thesavorium@gmail.com (menunggu respon)
+  | "replied_email"     // Dibalas via Email
+  | "replied_whatsapp"  // Dibalas via WhatsApp / IG
   | "sample_arranged"   // Free Tasting Sample dijadwalkan / dikirim
   | "partner"           // Deal mitra aktif
-  | "rejected";         // Belum tertarik
+  | "rejected";         // Belum tertarik / Arsip Dingin
 
 export interface StagedDraft {
   subject: string;
@@ -64,6 +66,14 @@ export const STATUS_CONFIG: Record<
     label: "Email Terkirim",
     badgeClass: "text-blue-700 dark:text-blue-300 border-blue-300/80 bg-blue-50 dark:bg-blue-950/40",
   },
+  replied_email: {
+    label: "Balas via Email",
+    badgeClass: "text-emerald-700 dark:text-emerald-300 border-emerald-300/80 bg-emerald-50 dark:bg-emerald-950/40 font-semibold",
+  },
+  replied_whatsapp: {
+    label: "Balas via WA/IG",
+    badgeClass: "text-emerald-700 dark:text-emerald-300 border-emerald-300/80 bg-emerald-50 dark:bg-emerald-950/40 font-semibold",
+  },
   sample_arranged: {
     label: "Jadwal Tester Disepakati",
     badgeClass: "text-purple-700 dark:text-purple-300 border-purple-300/80 bg-purple-50 dark:bg-purple-950/40",
@@ -73,7 +83,7 @@ export const STATUS_CONFIG: Record<
     badgeClass: "text-emerald-700 dark:text-emerald-300 border-emerald-300/80 bg-emerald-50 dark:bg-emerald-950/40",
   },
   rejected: {
-    label: "Belum Tertarik",
+    label: "Belum Tertarik / Arsip",
     badgeClass: "text-zinc-600 dark:text-zinc-400 border-zinc-300/80 bg-zinc-50 dark:bg-zinc-900/40",
   },
 };
@@ -124,6 +134,49 @@ export const SAVO_PRICING = {
     cost: "Gratis untuk Kafe Prospek Baru di Bandung",
   },
 };
+
+export interface LeadAgingNotice {
+  ageDays: number;
+  statusCategory: "waiting" | "needs_followup" | "cold";
+  label: string;
+  badgeClass: string;
+  isActionRequired: boolean;
+}
+
+export function getLeadAgingNotice(lead: Lead): LeadAgingNotice | null {
+  if (lead.status !== "sent" || !lead.sentAt) return null;
+  const sentDate = new Date(lead.sentAt).getTime();
+  if (isNaN(sentDate)) return null;
+  const now = Date.now();
+  const diffMs = Math.max(0, now - sentDate);
+  const ageDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (ageDays < 4) {
+    return {
+      ageDays,
+      statusCategory: "waiting",
+      label: ageDays === 0 ? "Terkirim Hari Ini" : `Menunggu (${ageDays} hari)`,
+      badgeClass: "text-blue-700 dark:text-blue-300 border-blue-300/80 bg-blue-50 dark:bg-blue-950/40",
+      isActionRequired: false,
+    };
+  } else if (ageDays <= 7) {
+    return {
+      ageDays,
+      statusCategory: "needs_followup",
+      label: `⚠️ Hening ${ageDays} Hari (Perlu Follow-up)`,
+      badgeClass: "text-amber-800 dark:text-amber-200 border-amber-400/90 bg-amber-100/90 dark:bg-amber-950/80 font-bold",
+      isActionRequired: true,
+    };
+  } else {
+    return {
+      ageDays,
+      statusCategory: "cold",
+      label: `❄️ Hening ${ageDays} Hari (Dingin / Arsip)`,
+      badgeClass: "text-zinc-600 dark:text-zinc-400 border-zinc-300 bg-zinc-100 dark:bg-zinc-800/60",
+      isActionRequired: false,
+    };
+  }
+}
 
 export const INITIAL_LEADS: Lead[] = [
   {
@@ -265,4 +318,89 @@ thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-04T16:00:00Z",
   },
+  {
+    id: "lead-06",
+    name: "Kiputih Satu Bake & Dine",
+    category: "cafe_bistro",
+    area: "Dago / Dipatiukur",
+    address: "Jl. Kiputih No. 1, Ciumbuleuit, Bandung",
+    email: "partnership@kiputihsatu.id",
+    whatsapp: "08123490812",
+    instagram: "@kiputihsatu",
+    contactPerson: "Head Chef & Purchasing Kiputih",
+    targetProduct: "bitterballen_ori",
+    status: "sent",
+    sentAt: "2026-09-04T09:00:00Z",
+    notes: "Email tester terkirim 4 hari lalu, belum ada konfirmasi penerimaan sample.",
+    stagedDraft: {
+      subject: "Sample Tasting Bitterballen Sapi untuk Tim Kiputih Satu",
+      body: `Halo Tim Kiputih Satu, salam kenal dari Aria di Savo Eats.
+
+Suka sekali dengan konsistensi bakery dan sajian di tempat kalian di Ciumbuleuit. Kami di Savo Eats memproduksi Bitterballen daging sapi Australia beku siap goreng (4 menit) yang sangat cocok untuk pairing minuman hangat kafe.
+
+Kami ingin mengirimkan 1 Curated Tasting Box gratis untuk dicicipi tim dapur Kiputih Satu.
+
+Kira-kira boleh kami antar testernya minggu ini?
+
+Salam hangat,
+Aria — Savo Eats
+thesavorium@gmail.com`,
+    },
+    updatedAt: "2026-09-04T09:00:00Z",
+  },
 ];
+
+const LEADS_STORAGE_KEY = "savo_leads_v2";
+
+export function getStoredLeads(): Lead[] {
+  if (typeof window === "undefined") return INITIAL_LEADS;
+  try {
+    const raw = localStorage.getItem(LEADS_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(INITIAL_LEADS));
+      return INITIAL_LEADS;
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_LEADS;
+  } catch {
+    return INITIAL_LEADS;
+  }
+}
+
+export function saveStoredLeads(leads: Lead[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
+    window.dispatchEvent(new Event("savo_leads_updated"));
+  } catch (err) {
+    console.error("[Leads Store] Gagal menyimpan leads:", err);
+  }
+}
+
+export function updateStoredLeadStatus(id: string, status: LeadStatus, extra?: Partial<Lead>): Lead[] {
+  const current = getStoredLeads();
+  const updated = current.map((item) => {
+    if (item.id === id) {
+      return {
+        ...item,
+        status,
+        ...extra,
+        updatedAt: new Date().toISOString(),
+      };
+    }
+    return item;
+  });
+  saveStoredLeads(updated);
+  return updated;
+}
+
+export function resetStoredLeads(): Lead[] {
+  if (typeof window === "undefined") return INITIAL_LEADS;
+  try {
+    localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(INITIAL_LEADS));
+    window.dispatchEvent(new Event("savo_leads_updated"));
+  } catch (err) {
+    console.error("[Leads Store] Gagal reset leads:", err);
+  }
+  return INITIAL_LEADS;
+}
