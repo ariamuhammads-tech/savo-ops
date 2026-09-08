@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { ReceiptText, ChevronRight } from "lucide-react";
+import { ChevronRight, Plus, FileSpreadsheet } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { formatIDR, formatDate, formatNumber } from "@/lib/format";
@@ -36,38 +36,72 @@ type Row = {
 };
 
 export default async function InvoicePage() {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("invoices")
-    .select(
-      "id, invoice_no, issue_date, total, status, customer:customers(name, phone_wa), order:orders(contact_name, contact_phone)",
-    )
-    .order("created_at", { ascending: false });
+  let invoices: Row[] = [];
+  try {
+    const supabase = await createClient();
+    const timeoutPromise = new Promise<{ data: null }>((resolve) =>
+      setTimeout(() => resolve({ data: null }), 1000),
+    );
+    const queryPromise = supabase
+      .from("invoices")
+      .select(
+        "id, invoice_no, issue_date, total, status, customer:customers(name, phone_wa), order:orders(contact_name, contact_phone)",
+      )
+      .order("created_at", { ascending: false });
 
-  const invoices = (data ?? []) as unknown as Row[];
+    const { data } = await Promise.race([queryPromise, timeoutPromise]);
+    invoices = (data ?? []) as unknown as Row[];
+  } catch {
+    invoices = [];
+  }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <Suspense fallback={null}>
         <FlashToast />
       </Suspense>
 
-      <div>
-        <h1 className="font-serif text-2xl font-bold tracking-tight">Invoice</h1>
-        <p className="text-sm text-muted-foreground">
-          {formatNumber(invoices.length)} invoice
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-border pb-4">
+        <div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            Sistem Finansial B2B & Wholesale
+          </span>
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
+            Invoice Penjualan
+          </h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {formatNumber(invoices.length)} invoice tercatat dalam sistem
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/invoice/baru"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.99]"
+          >
+            <Plus className="size-4" />
+            + Buat Invoice Baru (B2B Instant)
+          </Link>
+        </div>
       </div>
 
       {invoices.length === 0 ? (
-        <Card className="flex flex-col items-center gap-2 p-8 text-center">
-          <div className="flex size-12 items-center justify-center rounded-full bg-secondary">
-            <ReceiptText className="size-6 text-muted-foreground" />
+        <Card className="flex flex-col items-center gap-3 p-10 text-center border border-dashed border-border bg-card/50">
+          <div className="flex size-14 items-center justify-center rounded-full bg-secondary/80 text-foreground">
+            <FileSpreadsheet className="size-6 text-muted-foreground" />
           </div>
-          <p className="font-medium">Belum ada invoice</p>
-          <p className="max-w-xs text-sm text-muted-foreground">
-            Buat invoice dari halaman detail pesanan (tombol “Buat Invoice”).
-          </p>
+          <div className="space-y-1">
+            <p className="font-serif text-base font-bold">Belum Ada Invoice Aktif</p>
+            <p className="max-w-md text-xs text-muted-foreground leading-relaxed">
+              Buat invoice B2B instan untuk kafe, resto, atau lounge mitra SAVO di Bandung. Dilengkapi preset harga grosir Baso Goreng & Bitterballen serta unduh PDF langsung.
+            </p>
+          </div>
+          <Link
+            href="/invoice/baru"
+            className="mt-2 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            <Plus className="size-3.5" />
+            Mulai Buat Invoice B2B
+          </Link>
         </Card>
       ) : (
         <div className="space-y-2">
