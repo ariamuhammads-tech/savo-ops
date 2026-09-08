@@ -11,6 +11,9 @@ import {
   ImageIcon,
   Plus,
   X,
+  Sparkles,
+  Wand2,
+  Loader2,
 } from "lucide-react";
 import { INITIAL_LEADS, Lead, PRODUCT_LABELS } from "@/lib/leads-data";
 import { toast } from "sonner";
@@ -34,6 +37,8 @@ export default function OutboxPage() {
   const [attachments, setAttachments] = useState<AttachmentItem[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [hadesInstruction, setHadesInstruction] = useState("");
+  const [isRefining, setIsRefining] = useState(false);
 
   const currentLead = leads.find((l) => l.id === selectedLeadId) || leads[0];
 
@@ -55,6 +60,48 @@ export default function OutboxPage() {
       setBody(currentLead.stagedDraft.body);
     }
   });
+
+  const handleRefine = async (action: "touch1" | "touch2" | "shorten" | "custom", customPrompt?: string) => {
+    setIsRefining(true);
+    try {
+      const res = await fetch("/api/hades/refine-draft", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leadName: currentLead.name,
+          leadArea: currentLead.area,
+          targetProduct: PRODUCT_LABELS[currentLead.targetProduct],
+          currentSubject: subject,
+          currentBody: body,
+          action,
+          instruction: customPrompt || hadesInstruction,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal memperbarui draf.");
+
+      if (data.subject) setSubject(data.subject);
+      if (data.body) setBody(data.body);
+
+      const label =
+        action === "touch1"
+          ? "Touch 1 (Tasting Box Gratis)"
+          : action === "touch2"
+          ? "Touch 2 (Follow-Up & Margin)"
+          : action === "shorten"
+          ? "Draf Dipersingkat"
+          : "Instruksi Kustom";
+
+      toast.success(`Draf diperbarui oleh Hades (${label})!`);
+      if (action === "custom") setHadesInstruction("");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal meminta bantuan Hades.";
+      toast.error(msg);
+    } finally {
+      setIsRefining(false);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -237,6 +284,79 @@ export default function OutboxPage() {
                 <span className="w-16 text-muted-foreground shrink-0">To:</span>
                 <span className="font-medium text-foreground">{currentLead.email}</span>
               </div>
+            </div>
+
+            {/* Inline Hades AI Copilot */}
+            <div className="rounded-lg border border-primary/25 bg-primary/[0.03] p-3.5 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                  <Sparkles className="size-3.5 text-primary" />
+                  <span>Hades AI Copilot</span>
+                  <span className="text-[10px] font-mono font-normal text-muted-foreground">
+                    • Tulis & poles draf tanpa copas
+                  </span>
+                </div>
+                {isRefining && (
+                  <span className="flex items-center gap-1.5 text-[11px] font-mono text-primary animate-pulse">
+                    <Loader2 className="size-3 animate-spin" />
+                    Hades sedang memproses...
+                  </span>
+                )}
+              </div>
+
+              {/* Quick Preset Buttons */}
+              <div className="flex flex-wrap gap-1.5">
+                <button
+                  type="button"
+                  disabled={isRefining}
+                  onClick={() => handleRefine("touch1")}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-secondary/80 hover:bg-secondary text-foreground text-[11px] font-medium border border-border transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  ⚡ Touch 1 (Tasting Box Gratis)
+                </button>
+                <button
+                  type="button"
+                  disabled={isRefining}
+                  onClick={() => handleRefine("touch2")}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-secondary/80 hover:bg-secondary text-foreground text-[11px] font-medium border border-border transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  ⚡ Touch 2 (Follow-Up & Margin)
+                </button>
+                <button
+                  type="button"
+                  disabled={isRefining}
+                  onClick={() => handleRefine("shorten")}
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-secondary/80 hover:bg-secondary text-foreground text-[11px] font-medium border border-border transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  ⚡ Persingkat Draf
+                </button>
+              </div>
+
+              {/* Custom instruction prompt */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (hadesInstruction.trim()) handleRefine("custom");
+                }}
+                className="flex gap-1.5"
+              >
+                <input
+                  type="text"
+                  value={hadesInstruction}
+                  onChange={(e) => setHadesInstruction(e.target.value)}
+                  placeholder="Ketik instruksi khusus (misal: 'Sebutkan kita bisa drop jam 3 sore ke barista')..."
+                  disabled={isRefining}
+                  className="flex-1 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-primary font-sans"
+                />
+                <button
+                  type="submit"
+                  disabled={isRefining || !hadesInstruction.trim()}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-foreground text-background text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                >
+                  <Wand2 className="size-3" />
+                  Terapkan
+                </button>
+              </form>
             </div>
 
             {/* Subject Input */}
