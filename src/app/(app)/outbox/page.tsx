@@ -40,6 +40,12 @@ export default function OutboxPage() {
   const [hadesInstruction, setHadesInstruction] = useState("");
   const [isRefining, setIsRefining] = useState(false);
 
+  // Daily 5-email limit tracker
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const sentTodayCount = leads.filter(
+    (l) => l.status === "sent" && l.sentAt && l.sentAt.slice(0, 10) === todayStr
+  ).length;
+
   const currentLead = leads.find((l) => l.id === selectedLeadId) || leads[0];
 
   // Sync draft when lead changes
@@ -199,17 +205,42 @@ export default function OutboxPage() {
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="border-b border-border pb-6">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
-          OUTBOX // STAGED EMAIL WORKSPACE
-        </span>
-        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mt-1">
-          Meja Persetujuan Draf Email Hades
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          Periksa dan sesuaikan draf penawaran B2B sebelum dikirim otomatis melalui thesavorium@gmail.com.
-        </p>
+      <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
+              OUTBOX // STAGED EMAIL WORKSPACE
+            </span>
+            <span
+              className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${
+                sentTodayCount >= 5
+                  ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
+                  : "bg-primary/10 text-primary border-primary/20"
+              }`}
+            >
+              🎯 Kuota Hari Ini: {sentTodayCount}/5 Terkirim
+            </span>
+          </div>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mt-1">
+            Meja Persetujuan Draf Email Hades
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Periksa dan sesuaikan draf penawaran B2B sebelum dikirim otomatis melalui thesavorium@gmail.com.
+          </p>
+        </div>
       </div>
+
+      {sentTodayCount >= 5 && (
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3.5 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+          <span className="text-base">⚠️</span>
+          <div>
+            <p className="font-bold">Batas Sehat Outreach (5 Email / Hari) Telah Tercapai</p>
+            <p className="text-[11px] opacity-90 mt-0.5">
+              Anda sudah mengirim {sentTodayCount} email hari ini. Disarankan fokus menindaklanjuti balasan kafe dan pengiriman sampel tester yang masuk sebelum mengirim penawaran baru besok.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left Column: Venue Selector */}

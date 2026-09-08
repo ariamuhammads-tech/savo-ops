@@ -9,6 +9,14 @@ import {
   Plus,
   ReceiptText,
   Filter,
+  Sparkles,
+  Loader2,
+  CheckSquare,
+  Square,
+  ExternalLink,
+  X,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import {
   INITIAL_LEADS,
@@ -18,6 +26,24 @@ import {
   STATUS_CONFIG,
   PRODUCT_LABELS,
 } from "@/lib/leads-data";
+import { toast } from "sonner";
+
+interface ScoutCandidate {
+  name: string;
+  category: "coffee_shop" | "cafe_bistro" | "bar_taphouse" | "coworking" | "resto";
+  area: string;
+  address: string;
+  email: string;
+  instagram: string;
+  whatsapp: string;
+  contactPerson: string;
+  targetProduct: "duo_tasting" | "bitterballen_ori" | "bitterballen_cheese" | "baso_goreng";
+  fitReason: string;
+  stagedDraft: {
+    subject: string;
+    body: string;
+  };
+}
 
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>(INITIAL_LEADS);
@@ -25,6 +51,20 @@ export default function LeadsPage() {
   const [selectedArea, setSelectedArea] = useState("Semua Area");
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [showAddModal, setShowAddModal] = useState(false);
+
+  // Hades Scout States
+  const [showScoutModal, setShowScoutModal] = useState(false);
+  const [scoutArea, setScoutArea] = useState<string>("Dago / Dipatiukur");
+  const [isScouting, setIsScouting] = useState(false);
+  const [scoutCandidates, setScoutCandidates] = useState<ScoutCandidate[]>([]);
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([0, 1, 2, 3, 4]);
+  const [expandedDraftIndex, setExpandedDraftIndex] = useState<number | null>(null);
+
+  // Daily 5-email limit tracker
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const sentTodayCount = leads.filter(
+    (l) => l.status === "sent" && l.sentAt && l.sentAt.slice(0, 10) === todayStr
+  ).length;
 
   const [newLead, setNewLead] = useState({
     name: "",
@@ -48,6 +88,74 @@ export default function LeadsPage() {
     const matchStatus = selectedStatus === "all" || lead.status === selectedStatus;
     return matchSearch && matchArea && matchStatus;
   });
+
+  const handleRunScout = async (area: string) => {
+    setIsScouting(true);
+    setExpandedDraftIndex(null);
+    try {
+      const res = await fetch("/api/hades/scout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ area }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Gagal mengurasi kafe.");
+
+      if (data.candidates && Array.isArray(data.candidates)) {
+        setScoutCandidates(data.candidates);
+        setSelectedIndices(data.candidates.map((_: unknown, i: number) => i));
+        toast.success(`Hades berhasil mengurasi 5 kafe di ${area}!`);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Gagal meminta kurasi Hades.";
+      toast.error(msg);
+    } finally {
+      setIsScouting(false);
+    }
+  };
+
+  const toggleSelectCandidate = (idx: number) => {
+    setSelectedIndices((prev) =>
+      prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]
+    );
+  };
+
+  const handleImportScouted = () => {
+    if (selectedIndices.length === 0) return;
+
+    const importedLeads: Lead[] = selectedIndices.map((idx) => {
+      const c = scoutCandidates[idx];
+      return {
+        id: "lead-" + Date.now() + "-" + idx,
+        name: c.name,
+        category: c.category,
+        area: c.area,
+        address: c.address,
+        email: c.email,
+        whatsapp: c.whatsapp || "-",
+        instagram: c.instagram || "-",
+        contactPerson: c.contactPerson || "Barista Lead / Kitchen",
+        targetProduct: c.targetProduct,
+        status: "staged",
+        notes: `Dikurasi otomatis oleh Hades (${c.fitReason})`,
+        stagedDraft: c.stagedDraft,
+        updatedAt: new Date().toISOString(),
+      };
+    });
+
+    setLeads((prev) => [...importedLeads, ...prev]);
+    setShowScoutModal(false);
+    toast.success(
+      `${importedLeads.length} kafe baru ditambahkan! Draf penawaran sudah siap di Outbox.`,
+      {
+        action: {
+          label: "Buka Outbox",
+          onClick: () => (window.location.href = "/outbox"),
+        },
+      }
+    );
+  };
 
   const handleAddLead = (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,9 +190,20 @@ export default function LeadsPage() {
       {/* Header */}
       <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
         <div>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
-            DATABASE // BANDUNG B2B PROSPECTS
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
+              DATABASE // BANDUNG B2B PROSPECTS
+            </span>
+            <span
+              className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${
+                sentTodayCount >= 5
+                  ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
+                  : "bg-primary/10 text-primary border-primary/20"
+              }`}
+            >
+              🎯 Kuota Hari Ini: {sentTodayCount}/5 Terkirim
+            </span>
+          </div>
           <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mt-1">
             Database Prospek Kafe Bandung
           </h1>
@@ -93,14 +212,28 @@ export default function LeadsPage() {
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold rounded-lg bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer"
-        >
-          <Plus className="size-3.5" />
-          Tambah Kafe Prospek
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              setShowScoutModal(true);
+              if (scoutCandidates.length === 0) handleRunScout(scoutArea);
+            }}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer shadow-xs"
+          >
+            <Sparkles className="size-3.5" />
+            Hades Scout 5 Kafe
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowAddModal(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-colors cursor-pointer"
+          >
+            <Plus className="size-3.5" />
+            Tambah Manual
+          </button>
+        </div>
       </div>
 
       {/* Filter Bar */}
@@ -322,6 +455,207 @@ export default function LeadsPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Hades Scout Modal */}
+      {showScoutModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-xs p-4">
+          <div className="w-full max-w-2xl rounded-xl border border-border bg-card shadow-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-start justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground font-mono text-xs font-bold">
+                  <Sparkles className="size-4" />
+                </div>
+                <div>
+                  <h3 className="font-display text-base font-bold text-foreground">
+                    Hades AI Scout • Kurasi 5 Kafe Bandung
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Kurasi 5 kafe berpotensi tinggi per hari dengan draf email Touch 1 siap kirim.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowScoutModal(false)}
+                className="text-muted-foreground hover:text-foreground p-1 rounded-md cursor-pointer"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            {/* Area Selector & Run Button */}
+            <div className="flex flex-wrap items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-border">
+              <div className="flex-1 min-w-[200px]">
+                <label className="block text-[11px] font-semibold text-muted-foreground mb-1">
+                  Pilih Area Skena Kopi Bandung:
+                </label>
+                <select
+                  value={scoutArea}
+                  onChange={(e) => setScoutArea(e.target.value)}
+                  disabled={isScouting}
+                  className="w-full rounded-md border border-border bg-card px-3 py-1.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary font-sans"
+                >
+                  {BANDUNG_AREAS.filter((a) => a !== "Semua Area").map((a) => (
+                    <option key={a} value={a}>
+                      {a}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="self-end">
+                <button
+                  type="button"
+                  disabled={isScouting}
+                  onClick={() => handleRunScout(scoutArea)}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-md bg-foreground text-background hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                >
+                  {isScouting ? (
+                    <>
+                      <Loader2 className="size-3.5 animate-spin" />
+                      Hades Sedang Meriset...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="size-3.5 text-amber-300" />
+                      Kurasi 5 Kafe di Area Ini
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Scout Results */}
+            {scoutCandidates.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-foreground">
+                    Ditemukan {scoutCandidates.length} Kafe Potensial di {scoutArea}
+                  </span>
+                  <span className="text-muted-foreground font-mono text-[11px]">
+                    {selectedIndices.length} kafe dipilih untuk diimpor
+                  </span>
+                </div>
+
+                <div className="space-y-2.5 max-h-[48vh] overflow-y-auto pr-1">
+                  {scoutCandidates.map((c, idx) => {
+                    const isSelected = selectedIndices.includes(idx);
+                    const isDraftExpanded = expandedDraftIndex === idx;
+
+                    return (
+                      <div
+                        key={idx}
+                        className={`rounded-lg border p-3.5 text-xs transition-colors ${
+                          isSelected
+                            ? "border-primary/40 bg-primary/[0.02]"
+                            : "border-border bg-secondary/20 opacity-75"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-start gap-2.5 w-full">
+                            <button
+                              type="button"
+                              onClick={() => toggleSelectCandidate(idx)}
+                              className="mt-0.5 text-primary hover:opacity-80 cursor-pointer shrink-0"
+                            >
+                              {isSelected ? (
+                                <CheckSquare className="size-4" />
+                              ) : (
+                                <Square className="size-4 text-muted-foreground" />
+                              )}
+                            </button>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-display text-sm font-bold text-foreground">
+                                  {c.name}
+                                </span>
+                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-secondary text-foreground font-semibold">
+                                  {CATEGORY_LABELS[c.category] || c.category}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-muted-foreground mt-0.5">
+                                📍 {c.address}
+                              </p>
+                              <div className="flex flex-wrap gap-3 mt-1.5 text-[11px] text-muted-foreground font-mono">
+                                <span>📧 {c.email}</span>
+                                {c.instagram && <span>📸 {c.instagram}</span>}
+                                {c.contactPerson && <span>👤 {c.contactPerson}</span>}
+                              </div>
+                              <div className="mt-2 text-[11px] bg-secondary/50 p-2 rounded border border-border/50 text-foreground leading-relaxed">
+                                <span className="font-semibold text-primary">Kenapa Cocok: </span>
+                                {c.fitReason}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Preview Draft Accordion */}
+                        <div className="mt-2.5 pt-2 border-t border-border/60">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setExpandedDraftIndex(isDraftExpanded ? null : idx)
+                            }
+                            className="text-[11px] font-mono text-muted-foreground hover:text-foreground flex items-center gap-1 cursor-pointer"
+                          >
+                            {isDraftExpanded ? (
+                              <>
+                                <ChevronUp className="size-3" />
+                                Sembunyikan Draf Touch 1
+                              </>
+                            ) : (
+                              <>
+                                <ChevronDown className="size-3" />
+                                Lihat Draf Email Touch 1 ({c.stagedDraft.subject})
+                              </>
+                            )}
+                          </button>
+                          {isDraftExpanded && (
+                            <div className="mt-2 p-2.5 rounded bg-background border border-border text-[11px] leading-relaxed space-y-1 font-sans">
+                              <p className="font-semibold text-foreground">
+                                Subjek: {c.stagedDraft.subject}
+                              </p>
+                              <p className="text-muted-foreground whitespace-pre-line">
+                                {c.stagedDraft.body}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Import Action Bar */}
+                <div className="flex items-center justify-between pt-3 border-t border-border">
+                  <span className="text-xs text-muted-foreground">
+                    Otomatis masuk ke antrean Outbox untuk dikirim via thesavorium@gmail.com
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowScoutModal(false)}
+                      className="px-3.5 py-1.5 text-xs rounded-md border border-border hover:bg-secondary font-medium cursor-pointer"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="button"
+                      disabled={selectedIndices.length === 0}
+                      onClick={handleImportScouted}
+                      className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-md bg-foreground text-background hover:opacity-90 disabled:opacity-50 cursor-pointer"
+                    >
+                      <Plus className="size-3.5" />
+                      Import {selectedIndices.length} Kafe ke Leads & Outbox
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
