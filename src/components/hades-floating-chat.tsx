@@ -107,7 +107,7 @@ export function HadesFloatingChat() {
   return (
     <>
       {/* Floating Trigger Button (Bottom-Right, adjusted for mobile bottom navigation) */}
-      <div className="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-40 flex items-center gap-2">
+      <div className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+76px)] right-4 md:bottom-8 md:right-8 z-40 flex items-center gap-2">
         {!isOpen && (
           <button
             type="button"

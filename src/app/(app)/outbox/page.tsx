@@ -221,6 +221,7 @@ export default function OutboxPage() {
   };
 
   const handleSend = async () => {
+    if (!currentLead) return;
     setIsSending(true);
 
     try {
@@ -340,6 +341,20 @@ export default function OutboxPage() {
         </div>
       )}
 
+      {leads.length === 0 ? (
+        <div className="py-20 text-center space-y-4 border border-border/40 p-8">
+          <p className="text-sm font-medium text-foreground">Belum ada draf penawaran di antrean.</p>
+          <p className="text-xs text-muted-foreground max-w-md mx-auto">
+            Mulai dari <strong className="text-foreground">Tahap 1 (Target Kafe)</strong> untuk memilih kafe sasaran atau menggunakan Hades Scout, lalu klik &ldquo;Siapkan Penawaran&rdquo; untuk menyusun email di sini.
+          </p>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer"
+          >
+            <span>Buka Target Kafe (Tahap 1)</span>
+          </Link>
+        </div>
+      ) : (
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Venue Selector */}
         <div className="lg:col-span-4 space-y-3">
@@ -678,7 +693,8 @@ export default function OutboxPage() {
             </div>
           )}
         </div>
-    </div>
+      </div>
+      )}
 
       {/* Catalog Asset Picker Modal */}
       {showCatalogPicker && (

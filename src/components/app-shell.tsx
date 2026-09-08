@@ -34,6 +34,14 @@ const UTILITY_NAVIGATION: NavItem[] = [
   { href: "/katalog", label: "Katalog", icon: Package },
 ];
 
+const MOBILE_NAVIGATION = [
+  { href: "/", label: "Target", icon: Building2 },
+  { href: "/outbox", label: "Penawaran", icon: Mail },
+  { href: "/follow-up", label: "Follow-Up", icon: MessageSquare },
+  { href: "/invoice/baru", label: "Invoice", icon: FileSpreadsheet },
+  { href: "/katalog", label: "Katalog", icon: Package },
+];
+
 const ALL_NAVIGATION = [...PIPELINE_NAVIGATION, ...UTILITY_NAVIGATION];
 
 function isActive(pathname: string, href: string) {
@@ -214,30 +222,40 @@ export function AppShell({
         </div>
       )}
 
-      {/* Expansive Canvas Arena (No Sidebar Offsets) */}
-      <main className="flex-1 w-full pb-20 md:pb-12">
+      {/* Expansive Canvas Arena (Generous bottom clearance for mobile bar) */}
+      <main className="flex-1 w-full pb-28 md:pb-12">
         {children}
       </main>
 
-      {/* Mobile Bottom Tab Bar (Apple HIG 5-Tab Bar with Safe Area) */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-background/95 backdrop-blur-md pb-[env(safe-area-inset-bottom,0px)] md:hidden">
-        {ALL_NAVIGATION.map((item) => {
-          const active = isActive(pathname, item.href);
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex flex-col items-center justify-center py-2 min-h-[50px] text-[10px] font-medium transition-colors active:scale-95",
-                active ? "text-foreground font-bold" : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              <Icon className={cn("size-4 mb-0.5 transition-colors", active ? "text-primary" : "text-muted-foreground")} />
-              <span className="truncate max-w-[62px]">{item.label}</span>
-            </Link>
-          );
-        })}
+      {/* Mobile Bottom Tab Bar (Generous Apple HIG 64px Height with Safe Area) */}
+      <nav className="fixed inset-x-0 bottom-0 z-30 h-16 border-t border-[#d99204]/25 bg-background/95 backdrop-blur-md pb-[env(safe-area-inset-bottom,0px)] shadow-[0_-4px_20px_rgba(0,0,0,0.04)] md:hidden">
+        <div className="grid grid-cols-5 h-full">
+          {MOBILE_NAVIGATION.map((item) => {
+            const active = isActive(pathname, item.href);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "relative flex flex-col items-center justify-center h-full transition-colors active:scale-95",
+                  active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {active && (
+                  <span className="absolute top-0 inset-x-3 h-[2px] bg-[#d99204] rounded-full" />
+                )}
+                <Icon className={cn("size-5 transition-colors", active ? "text-[#d99204]" : "text-muted-foreground/70")} />
+                <span className={cn(
+                  "text-[11px] mt-1 tracking-tight truncate max-w-[64px]",
+                  active ? "font-semibold text-foreground" : "font-medium text-muted-foreground"
+                )}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </nav>
     </div>
   );
