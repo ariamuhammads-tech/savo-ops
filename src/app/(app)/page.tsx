@@ -11,6 +11,8 @@ import {
   Square,
   X,
   ArrowRight,
+  MessageCircle,
+  ExternalLink,
 } from "lucide-react";
 import {
   Lead,
@@ -99,13 +101,23 @@ export default function TargetKafePage() {
     return matchSearch && matchArea && matchStatus;
   });
 
-  const handleRunScout = async (area: string) => {
+  const handleRunScout = async (area: string, resetExclude = false) => {
     setIsScouting(true);
     try {
+      // Collect already known cafe names from existing leads & current scout candidates
+      const excludeNames = resetExclude
+        ? leads.map((l) => l.name)
+        : Array.from(
+            new Set([
+              ...leads.map((l) => l.name),
+              ...scoutCandidates.map((c) => c.name),
+            ])
+          );
+
       const res = await fetch("/api/hades/scout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ area }),
+        body: JSON.stringify({ area, excludeNames }),
       });
 
       const data = await res.json();
@@ -114,7 +126,7 @@ export default function TargetKafePage() {
       if (data.candidates && Array.isArray(data.candidates)) {
         setScoutCandidates(data.candidates);
         setSelectedIndices(data.candidates.map((_: unknown, i: number) => i));
-        toast.success(`Hades berhasil mengurasi 5 kafe di ${area}!`);
+        toast.success(`Hades mengurasi 5 kafe baru di ${area}!`);
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Gagal meminta kurasi Hades.";
@@ -341,11 +353,40 @@ export default function TargetKafePage() {
                       </p>
                     </td>
 
-                    <td className="py-4 px-4 space-y-0.5">
+                    <td className="py-4 px-4 space-y-1">
                       <p className="text-foreground text-xs">{lead.email}</p>
-                      <p className="text-muted-foreground text-[11.5px]">
-                        {lead.contactPerson ? `${lead.contactPerson} · ` : ""}{lead.whatsapp}
-                      </p>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11.5px] text-muted-foreground">
+                        {lead.contactPerson && (
+                          <span className="font-medium text-foreground">{lead.contactPerson} ·</span>
+                        )}
+                        {lead.whatsapp && (() => {
+                          const cleanPhone = lead.whatsapp.replace(/\D/g, "").replace(/^0/, "62");
+                          return (
+                            <a
+                              href={`https://wa.me/${cleanPhone}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-emerald-700 dark:text-emerald-400 hover:underline inline-flex items-center gap-0.5"
+                              title="Chat WhatsApp"
+                            >
+                              <MessageCircle className="size-3" />
+                              <span>{lead.whatsapp}</span>
+                            </a>
+                          );
+                        })()}
+                        {lead.instagram && (
+                          <a
+                            href={`https://instagram.com/${lead.instagram.replace("@", "")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-foreground hover:underline inline-flex items-center gap-0.5"
+                            title="Buka Profil Instagram"
+                          >
+                            <span>{lead.instagram}</span>
+                            <ExternalLink className="size-2.5" />
+                          </a>
+                        )}
+                      </div>
                     </td>
 
                     <td className="py-4 px-4 text-xs text-foreground">
@@ -451,15 +492,27 @@ export default function TargetKafePage() {
                 ))}
               </select>
 
-              <button
-                type="button"
-                disabled={isScouting}
-                onClick={() => handleRunScout(scoutArea)}
-                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 cursor-pointer"
-              >
-                <Sparkles className="size-3.5" />
-                <span>{isScouting ? "Sedang Mencari..." : "Scout Ulang"}</span>
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  disabled={isScouting}
+                  onClick={() => handleRunScout(scoutArea)}
+                  className="px-3 py-1 bg-secondary border border-border/60 text-foreground text-xs font-medium hover:bg-secondary/80 inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50 transition-colors"
+                >
+                  <Sparkles className="size-3.5" />
+                  <span>{isScouting ? "Sedang Mengurasi..." : "Scout Ulang (5 Kafe Baru)"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isScouting}
+                  onClick={() => handleRunScout(scoutArea, true)}
+                  className="text-[11px] text-muted-foreground hover:text-foreground underline cursor-pointer"
+                  title="Mulai kurasi ulang dari kelompok kafe pertama"
+                >
+                  Reset Putaran
+                </button>
+              </div>
             </div>
 
             {isScouting ? (
@@ -497,7 +550,26 @@ export default function TargetKafePage() {
                             {PRODUCT_LABELS[c.targetProduct]}
                           </span>
                         </div>
-                        <p className="text-muted-foreground">{c.email} · {c.whatsapp}</p>
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11.5px] text-muted-foreground">
+                          {c.instagram && (
+                            <a
+                              href={`https://instagram.com/${c.instagram.replace("@", "")}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-foreground hover:underline inline-flex items-center gap-0.5 font-medium"
+                            >
+                              <span>{c.instagram}</span>
+                              <ExternalLink className="size-2.5" />
+                            </a>
+                          )}
+                          {c.whatsapp && (
+                            <span>· WA: {c.whatsapp}</span>
+                          )}
+                          {c.address && (
+                            <span className="text-muted-foreground/80">· {c.address}</span>
+                          )}
+                        </div>
                         <p className="text-[11.5px] text-muted-foreground italic">&ldquo;{c.fitReason}&rdquo;</p>
                       </div>
                     </div>

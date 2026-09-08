@@ -16,6 +16,8 @@ import {
   Wand2,
   Loader2,
   Camera,
+  MessageCircle,
+  ExternalLink,
 } from "lucide-react";
 import {
   Lead,
@@ -271,6 +273,20 @@ export default function OutboxPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleWhatsApp = () => {
+    if (!currentLead) return;
+    const cleanPhone = currentLead.whatsapp
+      ? currentLead.whatsapp.replace(/\D/g, "").replace(/^0/, "62")
+      : "";
+    const encodedText = encodeURIComponent(body);
+    const url = cleanPhone
+      ? `https://wa.me/${cleanPhone}?text=${encodedText}`
+      : `https://wa.me/?text=${encodedText}`;
+
+    window.open(url, "_blank");
+    toast.success(`Membuka WhatsApp untuk ${currentLead.name}...`);
+  };
+
   const stagedCount = leads.filter((l) => l.status === "staged").length;
   const sentCount = leads.filter((l) => l.status === "sent").length;
   const partnerCount = leads.filter((l) => l.status === "partner").length;
@@ -478,9 +494,42 @@ export default function OutboxPage() {
                   <span className="text-foreground font-medium">Tujuan:</span>{" "}
                   <span className="font-mono text-[11.5px]">{currentLead.email}</span>
                 </div>
+                {currentLead.whatsapp && (() => {
+                  const cleanPhone = currentLead.whatsapp.replace(/\D/g, "").replace(/^0/, "62");
+                  return (
+                    <div>
+                      <span className="text-foreground font-medium">WhatsApp:</span>{" "}
+                      <a
+                        href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(body)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-700 dark:text-emerald-400 hover:underline inline-flex items-center gap-1 font-mono text-[11.5px]"
+                        title="Chat langsung via WhatsApp"
+                      >
+                        <MessageCircle className="size-3" />
+                        <span>{currentLead.whatsapp}</span>
+                      </a>
+                    </div>
+                  );
+                })()}
+                {currentLead.instagram && (
+                  <div>
+                    <span className="text-foreground font-medium">Instagram:</span>{" "}
+                    <a
+                      href={`https://instagram.com/${currentLead.instagram.replace("@", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-foreground hover:underline inline-flex items-center gap-0.5 text-[11.5px]"
+                      title="Buka profil Instagram"
+                    >
+                      <span>{currentLead.instagram}</span>
+                      <ExternalLink className="size-2.5" />
+                    </a>
+                  </div>
+                )}
                 {currentLead.contactPerson && (
                   <div>
-                    <span className="text-foreground font-medium">Kontak PIC:</span>{" "}
+                    <span className="text-foreground font-medium">PIC:</span>{" "}
                     <span>{currentLead.contactPerson}</span>
                   </div>
                 )}
@@ -657,14 +706,39 @@ export default function OutboxPage() {
 
               {/* Action Buttons */}
               <div className="pt-6 border-t border-border/40 flex flex-wrap items-center justify-between gap-3">
-                <button
-                  type="button"
-                  onClick={handleCopy}
-                  className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 cursor-pointer transition-colors"
-                >
-                  {copied ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
-                  <span>{copied ? "Draf Tersalin" : "Salin Teks"}</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+                  >
+                    {copied ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                    <span>{copied ? "Draf Tersalin" : "Salin Teks"}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleWhatsApp}
+                    className="px-3 py-1.5 border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-medium inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+                    title="Buka WhatsApp dengan draf pesan yang sudah terisi otomatis"
+                  >
+                    <MessageCircle className="size-3.5" />
+                    <span>Chat via WhatsApp (wa.me)</span>
+                  </button>
+
+                  {currentLead.instagram && (
+                    <a
+                      href={`https://instagram.com/${currentLead.instagram.replace("@", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+                      title="Buka profil Instagram kafe"
+                    >
+                      <span>Buka {currentLead.instagram}</span>
+                      <ExternalLink className="size-3" />
+                    </a>
+                  )}
+                </div>
 
                 <button
                   type="button"

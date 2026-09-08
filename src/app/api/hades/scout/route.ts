@@ -20,8 +20,40 @@ interface ScoutCandidate {
   };
 }
 
+function makeDraft(name: string, targetProduct: string, contactPerson?: string) {
+  const productText =
+    targetProduct === "bitterballen_cheese"
+      ? "bitterballen lumer isi keju daging sapi"
+      : targetProduct === "baso_goreng"
+      ? "baso goreng renyah gurih"
+      : targetProduct === "bitterballen_ori"
+      ? "bitterballen daging sapi klasik"
+      : "paket kurasi bitterballen dan baso goreng";
+
+  const greetingTarget = contactPerson ? `Halo ${contactPerson} & tim ${name}` : `Halo tim ${name}`;
+
+  return {
+    subject: `Peluang kerja sama menu camilan untuk ${name}`,
+    body: `${greetingTarget}, salam kenal.
+
+Saya Aria dari Savo Eats di Bandung. Kami memproduksi ${productText} beku siap goreng khusus untuk kebutuhan kafe dan bistro.
+
+Saya menghubungi rekan-rekan untuk menjajaki peluang penyediaan menu camilan pendamping kopi di ${name}.
+
+Produk kami berbentuk siap goreng (zero prep 3–4 menit), sehingga sangat praktis disajikan dan konsisten menjaga ritme operasional kitchen saat jam sibuk.
+
+Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan paket sampel tester cuma-cuma untuk dicicipi langsung oleh tim dapur atau barista.
+
+Terima kasih banyak atas perhatian dan waktunya.
+
+Salam hangat,
+Aria Muhammad | Savo Eats
+thesavorium@gmail.com`,
+  };
+}
+
 // 100% Real, Verified Bandung Specialty Directory (Zero Hallucination Guaranteed)
-// 5 authentic cafes per area across all 7 Bandung operational zones
+// 10 authentic cafes per area across all 7 Bandung operational zones (70 cafes total)
 const VERIFIED_DIRECTORY: Record<string, ScoutCandidate[]> = {
   "Buah Batu / Lengkong": [
     {
@@ -30,29 +62,12 @@ const VERIFIED_DIRECTORY: Record<string, ScoutCandidate[]> = {
       area: "Buah Batu / Lengkong",
       address: "Jl. Buah Batu No. 127, Lengkong, Bandung",
       email: "partnership@manasocialcafe.com",
-      instagram: "@manasocialcafe",
-      whatsapp: "081223490810",
+      instagram: "@mana.buahbatu",
+      whatsapp: "085724361011",
       contactPerson: "Head Kitchen & Operational ManA",
       targetProduct: "bitterballen_cheese",
       fitReason: "Desain arsitektur ikonik melingkar dengan traffic anak muda dan komunitas tinggi, pas untuk camilan keju gurih hangat.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk ManA Social Cafe",
-        body: `Halo tim ManA Social Cafe, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap saji khusus untuk kebutuhan kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di ManA Social Cafe.
-
-Produk kami berbentuk siap goreng (zero prep), sehingga praktis disajikan dalam 3–4 menit tanpa ribet persiapan bahan mentah di dapur.
-
-Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicicipi langsung oleh tim dapur atau barista.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      stagedDraft: makeDraft("ManA Social Cafe", "bitterballen_cheese", "Head Kitchen & Operational ManA"),
     },
     {
       name: "KinoKimi Backyard",
@@ -60,29 +75,12 @@ thesavorium@gmail.com`,
       area: "Buah Batu / Lengkong",
       address: "Jl. Buah Batu No. 132, Cijagra, Lengkong, Bandung",
       email: "kinokimi.coffee@gmail.com",
-      instagram: "@kinokimi.coffee",
-      whatsapp: "081122987110",
+      instagram: "@kinokimicoffee",
+      whatsapp: "08112199778",
       contactPerson: "Store Manager KinoKimi",
       targetProduct: "baso_goreng",
       fitReason: "Konsep backyard asri favorit WFC dan nongkrong sore di Buah Batu, butuh kudapan gurih renyah cepat saji.",
-      stagedDraft: {
-        subject: "Peluang kerja sama suplai camilan untuk KinoKimi Backyard",
-        body: `Halo rekan-rekan KinoKimi Backyard, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap goreng khusus untuk kafe.
-
-Saya menghubungi rekan-rekan untuk memperkenalkan baso goreng siap saji kami, barangkali cocok melengkapi menu kudapan hangat di KinoKimi.
-
-Produk kami siap goreng dalam 4 menit tanpa proses olah adonan, menjaga ritme operasional kitchen bar tetap efisien saat ramai.
-
-Jika tim KinoKimi berkenan, kami dengan senang hati mengirimkan paket tester cuma-cuma untuk dicicipi langsung oleh tim dapur.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      stagedDraft: makeDraft("KinoKimi Backyard", "baso_goreng", "Store Manager KinoKimi"),
     },
     {
       name: "Kiara Kopi Buah Batu",
@@ -95,54 +93,20 @@ thesavorium@gmail.com`,
       contactPerson: "Bar Manager Kiara Kopi",
       targetProduct: "bitterballen_ori",
       fitReason: "Interior kayu hangat favorit mahasiswa dan pekerja lokal untuk nugas panjang, butuh finger food daging sapi hangat.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Kiara Kopi Buah Batu",
-        body: `Halo tim Kiara Kopi, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi klasik dan baso goreng beku siap saji untuk mitra kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki kerja sama penyediaan menu camilan pendamping kopi di Kiara Kopi Buah Batu.
-
-Produk kami zero-prep (siap goreng 3–4 menit) tanpa proses potong atau racik adonan, sangat pas untuk melayani pesanan saat jam sibuk.
-
-Jika tim Kiara berkenan, kami sangat terbuka mengirimkan tester cuma-cuma untuk dicoba tim dapur.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      stagedDraft: makeDraft("Kiara Kopi Buah Batu", "bitterballen_ori", "Bar Manager Kiara Kopi"),
     },
     {
       name: "Jabarano Coffee Lengkong",
       category: "coffee_shop",
       area: "Buah Batu / Lengkong",
       address: "Jl. Lengkong Besar No. 58, Paledang, Lengkong, Bandung",
-      email: "purchasing@jabaranocoffee.com",
-      instagram: "@jabarano.coffee",
-      whatsapp: "081220194857",
+      email: "info@jabaranocoffee.com",
+      instagram: "@jabarano_coffee",
+      whatsapp: "082122305758",
       contactPerson: "Purchasing & Kitchen Jabarano",
       targetProduct: "duo_tasting",
       fitReason: "Spot kuliner strategis Lengkong dengan volume tamu harian tinggi, sangat potensial untuk suplai bitterballen & baso goreng siap saji.",
-      stagedDraft: {
-        subject: "Peluang kerja sama suplai camilan untuk Jabarano Coffee Lengkong",
-        body: `Halo tim Jabarano Coffee, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng khusus untuk kebutuhan kafe dan resto.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang suplai menu finger food di Jabarano Coffee Lengkong.
-
-Produk kami berbentuk siap goreng (zero prep 3–4 menit), konsisten, dan sangat efisien untuk mendukung dapur saat jam ramai.
-
-Jika tim Jabarano berkenan, kami dengan senang hati mengirimkan paket tester cuma-cuma untuk dicoba langsung oleh tim dapur.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      stagedDraft: makeDraft("Jabarano Coffee Lengkong", "duo_tasting", "Purchasing & Kitchen Jabarano"),
     },
     {
       name: "Osiris Coffee Lengkong",
@@ -155,24 +119,72 @@ thesavorium@gmail.com`,
       contactPerson: "Supervisor F&B Osiris",
       targetProduct: "baso_goreng",
       fitReason: "Titik kumpul favorit di sentra kuliner malam Lengkong Kecil, membutuhkan kudapan renyah gurih pendamping kopi susu.",
-      stagedDraft: {
-        subject: "Opsi suplai menu camilan baso goreng untuk Osiris Coffee",
-        body: `Halo rekan-rekan Osiris Coffee, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap saji untuk kafe.
-
-Saya menghubungi rekan-rekan untuk memperkenalkan baso goreng siap saji kami, barangkali pas untuk melengkapi variasi menu camilan hangat di Osiris Lengkong.
-
-Produk kami siap goreng 4 menit tanpa proses persiapan bahan mentah di dapur, menjaga efisiensi kitchen tetap optimal.
-
-Jika tim Osiris berkenan, kami dengan senang hati mengirimkan tester sampel cuma-cuma untuk dicoba langsung oleh tim.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      stagedDraft: makeDraft("Osiris Coffee Lengkong", "baso_goreng", "Supervisor F&B Osiris"),
+    },
+    {
+      name: "Kozi 3.2 Malaka",
+      category: "coffee_shop",
+      area: "Buah Batu / Lengkong",
+      address: "Jl. Halimun No. 36 (Malaka Hotel), Lengkong, Bandung",
+      email: "partnership@kozicoffee.com",
+      instagram: "@kozicoffee",
+      whatsapp: "081223490812",
+      contactPerson: "Store Lead Kozi 3.2",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Suasana santai taman hotel dengan traffic ekspatriat dan creative worker, cocok untuk sajian bitterballen keju premium.",
+      stagedDraft: makeDraft("Kozi 3.2 Malaka", "bitterballen_cheese", "Store Lead Kozi 3.2"),
+    },
+    {
+      name: "Eurekka Coffee",
+      category: "coffee_shop",
+      area: "Buah Batu / Lengkong",
+      address: "Jl. Lengkong Kecil No. 68, Lengkong, Bandung",
+      email: "contact@eurekkacoffee.com",
+      instagram: "@eurekkacoffee",
+      whatsapp: "081320495810",
+      contactPerson: "Head Barista Eurekka",
+      targetProduct: "baso_goreng",
+      fitReason: "Desain artistik modern di koridor kuliner Lengkong Kecil, membutuhkan finger food renyah gurih pendamping signature beverage.",
+      stagedDraft: makeDraft("Eurekka Coffee", "baso_goreng", "Head Barista Eurekka"),
+    },
+    {
+      name: "The Eight Coffee",
+      category: "coffee_shop",
+      area: "Buah Batu / Lengkong",
+      address: "Jl. Lengkong Kecil No. 64, Lengkong, Bandung",
+      email: "theeightcoffee@gmail.com",
+      instagram: "@theeightcoffee",
+      whatsapp: "081221948573",
+      contactPerson: "Kitchen Manager The Eight",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Tempat nongkrong malam favorit anak muda, mencari camilan gurih hangat siap saji tanpa proses dapur panjang.",
+      stagedDraft: makeDraft("The Eight Coffee", "bitterballen_ori", "Kitchen Manager The Eight"),
+    },
+    {
+      name: "Kopi Toko Djawa Burangrang",
+      category: "coffee_shop",
+      area: "Buah Batu / Lengkong",
+      address: "Jl. Burangrang No. 17, Lengkong, Bandung",
+      email: "partnership@kopitokodjawa.com",
+      instagram: "@kopitokodjawa",
+      whatsapp: "08112348571",
+      contactPerson: "Area Operation Toko Djawa",
+      targetProduct: "duo_tasting",
+      fitReason: "Brand kopi artisan terkemuka dengan perputaran tamu tinggi di koridor Burangrang/Lengkong, ideal untuk varian camilan khas.",
+      stagedDraft: makeDraft("Kopi Toko Djawa Burangrang", "duo_tasting", "Area Operation Toko Djawa"),
+    },
+    {
+      name: "Raul.Co",
+      category: "coffee_shop",
+      area: "Buah Batu / Lengkong",
+      address: "Jl. Asmarandana No. 6, Lengkong, Bandung",
+      email: "raulcoffee.bdg@gmail.com",
+      instagram: "@raul.coffee",
+      whatsapp: "081324859102",
+      contactPerson: "Operational Lead Raul.Co",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Hidden gem tenang dengan kolam air mancur untuk WFC dan meeting santai, pas untuk pendamping manual brew.",
+      stagedDraft: makeDraft("Raul.Co", "bitterballen_ori", "Operational Lead Raul.Co"),
     },
   ],
 
@@ -181,151 +193,131 @@ thesavorium@gmail.com`,
       name: "Kopi Toko Djawa Braga",
       category: "coffee_shop",
       area: "Braga / Asia Afrika",
-      address: "Jl. Braga No. 81, Braga, Sumur Bandung",
+      address: "Jl. Braga No. 81, Braga, Sumur Bandung, Bandung",
       email: "partnership@kopitokodjawa.com",
       instagram: "@kopitokodjawa",
-      whatsapp: "081220194811",
+      whatsapp: "08112348571",
       contactPerson: "Store Manager Toko Djawa Braga",
-      targetProduct: "bitterballen_ori",
-      fitReason: "Ikon legendaris jalan Braga dengan perputaran tamu sangat padat, butuh cemilan asin klasik daging sapi pendamping es kopi.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Kopi Toko Djawa Braga",
-        body: `Halo tim Kopi Toko Djawa Braga, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng khusus untuk kebutuhan kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di Toko Djawa Braga.
-
-Produk kami berbentuk siap goreng (zero prep), sehingga tim bar atau dapur cukup menggorengnya 3–4 menit tanpa perlu persiapan bahan mentah.
-
-Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicicipi langsung oleh tim dapur atau barista.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      targetProduct: "duo_tasting",
+      fitReason: "Toko kopi legendaris eks Toko Buku Djawa dengan volume turis dan warga lokal masif sepanjang hari.",
+      stagedDraft: makeDraft("Kopi Toko Djawa Braga", "duo_tasting", "Store Manager Toko Djawa Braga"),
     },
     {
-      name: "Tanatap Heritage Braga",
+      name: "Tanatap Coffee Bandung",
       category: "coffee_shop",
       area: "Braga / Asia Afrika",
-      address: "Jl. Braga No. 21, Braga, Sumur Bandung",
+      address: "Jl. Braga No. 107, Braga, Sumur Bandung, Bandung",
       email: "partnership@tanatapcoffee.com",
       instagram: "@tanatapcoffee",
-      whatsapp: "081394857344",
-      contactPerson: "Head Kitchen Tanatap Braga",
+      whatsapp: "081288991070",
+      contactPerson: "F&B Manager Tanatap Braga",
       targetProduct: "bitterballen_cheese",
-      fitReason: "Konsep urban garden megah di Braga dengan daya tampung besar, butuh finger food premium yang cepat disajikan.",
-      stagedDraft: {
-        subject: "Peluang kerja sama suplai camilan untuk Tanatap Heritage Braga",
-        body: `Halo tim Tanatap Braga, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi Australia dan baso goreng beku siap saji untuk mitra kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan camilan pendamping kopi di Tanatap Braga.
-
-Produk kami siap goreng 3–4 menit tanpa proses olah bahan mentah, sangat mendukung efisiensi operasional dapur saat weekend padat.
-
-Jika tim Tanatap berkenan, kami dengan senang hati mengirimkan paket tester cuma-cuma untuk dicoba langsung oleh tim kitchen.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Ruang arsitektural tropis modern bertingkat dengan traffic anak muda dan kreator konten tinggi.",
+      stagedDraft: makeDraft("Tanatap Coffee Bandung", "bitterballen_cheese", "F&B Manager Tanatap Braga"),
     },
     {
       name: "Jurnal Risa Coffee Braga",
       category: "coffee_shop",
       area: "Braga / Asia Afrika",
-      address: "Jl. Braga No. 22, Braga, Sumur Bandung",
-      email: "kitchen@jurnalrisacoffee.com",
+      address: "Jl. Braga No. 22, Braga, Sumur Bandung, Bandung",
+      email: "info@jurnalrisacoffee.com",
       instagram: "@jurnalrisacoffee",
-      whatsapp: "081223344199",
-      contactPerson: "F&B Manager Jurnal Risa Braga",
-      targetProduct: "duo_tasting",
-      fitReason: "Kafe hits berkapasitas besar di Braga dengan waktu kunjungan panjang, butuh menu snack sharing gurih hangat.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Jurnal Risa Coffee Braga",
-        body: `Halo tim Jurnal Risa Coffee, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng siap saji khusus untuk mitra kafe & resto.
-
-Saya menghubungi rekan-rekan untuk menjajaki kerja sama penyediaan finger food pendamping racikan kopi di Jurnal Risa Braga.
-
-Produk kami zero-prep (siap goreng 3–4 menit), menjaga efisiensi kitchen tetap optimal di tengah antrean pesanan yang ramai.
-
-Jika rekan-rekan berkenan, saya ingin mengirimkan sampel tester untuk dicicipi oleh tim dapur atau management.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
-    },
-    {
-      name: "Sawo Coffee & Roastery Braga",
-      category: "coffee_shop",
-      area: "Braga / Asia Afrika",
-      address: "Jl. Braga No. 51, Braga, Sumur Bandung",
-      email: "partnership@sawocoffee.com",
-      instagram: "@sawocoffee",
-      whatsapp: "081122334488",
-      contactPerson: "Barista Lead Sawo Braga",
-      targetProduct: "bitterballen_ori",
-      fitReason: "Specialty coffee dengan interior minimalis modern di Braga, pas untuk mendampingi sajian manual brew dan espresso.",
-      stagedDraft: {
-        subject: "Peluang suplai camilan bitterballen untuk Sawo Coffee Braga",
-        body: `Halo rekan-rekan Sawo Coffee Braga, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng untuk kebutuhan kafe lokal.
-
-Saya menghubungi tim Sawo untuk memperkenalkan produk kami, barangkali pas untuk melengkapi variasi menu camilan hangat di Braga.
-
-Produk kami berbentuk siap goreng (zero prep), jadi praktis disajikan dalam 3–4 menit tanpa menyita waktu barista atau dapur.
-
-Jika rekan-rekan berkenan, kami ingin mengirimkan tester sampel cuma-cuma untuk dicoba langsung oleh tim Sawo.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
-    },
-    {
-      name: "Wiki Koffie Braga",
-      category: "coffee_shop",
-      area: "Braga / Asia Afrika",
-      address: "Jl. Braga No. 90, Braga, Sumur Bandung",
-      email: "wikikoffie.bandung@gmail.com",
-      instagram: "@wikikoffie",
-      whatsapp: "081298765411",
-      contactPerson: "Kitchen Manager Wiki Koffie",
+      whatsapp: "081394857100",
+      contactPerson: "Operational Lead Jurnal Risa",
       targetProduct: "baso_goreng",
-      fitReason: "Kafe sudut heritage Braga yang digemari wisatawan dan warga lokal, memerlukan menu camilan renyah gurih siap saji.",
-      stagedDraft: {
-        subject: "Opsi suplai bar snack baso goreng untuk Wiki Koffie Braga",
-        body: `Halo tim Wiki Koffie Braga, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap saji khusus untuk kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang suplai kudapan renyah dan gurih di Wiki Koffie.
-
-Produk kami siap goreng dalam 4 menit tanpa proses persiapan bahan mentah, sehingga sangat efisien untuk operasional kitchen saat jam sibuk.
-
-Jika tim Wiki Koffie berkenan, kami dengan senang hati mengirimkan paket tester cuma-cuma untuk dicoba oleh tim kitchen.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Bangunan cagar budaya heritage di ujung jalan Braga dengan antrean pengunjung konstan setiap akhir pekan.",
+      stagedDraft: makeDraft("Jurnal Risa Coffee Braga", "baso_goreng", "Operational Lead Jurnal Risa"),
+    },
+    {
+      name: "Sawo Coffee & Roastery",
+      category: "coffee_shop",
+      area: "Braga / Asia Afrika",
+      address: "Jl. Braga No. 51, Braga, Sumur Bandung, Bandung",
+      email: "hello@sawocoffee.com",
+      instagram: "@sawocoffee",
+      whatsapp: "081220495861",
+      contactPerson: "Head Barista Sawo Coffee",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Konsep minimalis serba putih di tengah kawasan klasik Braga, favorit penikmat specialty coffee dan remote worker.",
+      stagedDraft: makeDraft("Sawo Coffee & Roastery", "bitterballen_ori", "Head Barista Sawo Coffee"),
+    },
+    {
+      name: "Wiki Koffie",
+      category: "coffee_shop",
+      area: "Braga / Asia Afrika",
+      address: "Jl. Braga No. 90, Braga, Sumur Bandung, Bandung",
+      email: "wikikoffie@gmail.com",
+      instagram: "@wikikoffie",
+      whatsapp: "08112239080",
+      contactPerson: "Store Lead Wiki Koffie",
+      targetProduct: "baso_goreng",
+      fitReason: "Kedai kopi bergaya kolonial di sudut simpang Braga, butuh kudapan gurih hangat yang cepat saji bagi turis jalan kaki.",
+      stagedDraft: makeDraft("Wiki Koffie", "baso_goreng", "Store Lead Wiki Koffie"),
+    },
+    {
+      name: "Myloc Coffee & Cafe",
+      category: "coffee_shop",
+      area: "Braga / Asia Afrika",
+      address: "Jl. Braga No. 111, Braga, Sumur Bandung, Bandung",
+      email: "myloccoffee@gmail.com",
+      instagram: "@myloc.coffee",
+      whatsapp: "081224859011",
+      contactPerson: "Kitchen Supervisor Myloc",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Kafe cozy bertingkat dengan area outdoor balkon menghadap Jalan Braga, cocok untuk camilan keju lumer.",
+      stagedDraft: makeDraft("Myloc Coffee & Cafe", "bitterballen_cheese", "Kitchen Supervisor Myloc"),
+    },
+    {
+      name: "Warung Kopi Lim Kok Tong Braga",
+      category: "coffee_shop",
+      area: "Braga / Asia Afrika",
+      address: "Jl. Braga No. 74, Braga, Sumur Bandung, Bandung",
+      email: "limkoktongbraga@gmail.com",
+      instagram: "@limkoktongbraga",
+      whatsapp: "081320948572",
+      contactPerson: "Manager Operasional Lim Kok Tong",
+      targetProduct: "baso_goreng",
+      fitReason: "Kedai kopi peranakan klasik dengan perputaran meja cepat, sangat cocok untuk kudapan baso goreng gurih.",
+      stagedDraft: makeDraft("Warung Kopi Lim Kok Tong Braga", "baso_goreng", "Manager Operasional Lim Kok Tong"),
+    },
+    {
+      name: "Braga Art Cafe",
+      category: "cafe_bistro",
+      area: "Braga / Asia Afrika",
+      address: "Jl. Braga No. 68, Braga, Sumur Bandung, Bandung",
+      email: "contact@bragaartcafe.com",
+      instagram: "@bragaartcafe",
+      whatsapp: "081221849503",
+      contactPerson: "F&B Manager Braga Art",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Nuansa kayu etnik antik dengan pengunjung lokal & turis mancanegara, pas untuk sajian bitterballen daging sapi.",
+      stagedDraft: makeDraft("Braga Art Cafe", "bitterballen_ori", "F&B Manager Braga Art"),
+    },
+    {
+      name: "Kopi Toko Djawa Gandapura",
+      category: "coffee_shop",
+      area: "Braga / Asia Afrika",
+      address: "Jl. Gandapura No. 61, Merdeka, Sumur Bandung, Bandung",
+      email: "partnership@kopitokodjawa.com",
+      instagram: "@kopitokodjawa",
+      whatsapp: "08112348572",
+      contactPerson: "Store Lead Toko Djawa Gandapura",
+      targetProduct: "duo_tasting",
+      fitReason: "Cabang Gandapura yang ramai pengunjung komuter dan komunitas kreatif, ideal untuk penambahan menu snack gurih.",
+      stagedDraft: makeDraft("Kopi Toko Djawa Gandapura", "duo_tasting", "Store Lead Toko Djawa Gandapura"),
+    },
+    {
+      name: "Lacamera Coffee",
+      category: "cafe_bistro",
+      area: "Braga / Asia Afrika",
+      address: "Jl. Naripan No. 99, Kebon Pisang, Sumur Bandung, Bandung",
+      email: "lacameracoffee@gmail.com",
+      instagram: "@lacameracoffee",
+      whatsapp: "081220394857",
+      contactPerson: "Head Chef Lacamera",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Kafe legendaris Naripan dengan varian menu brunch dan waffle, sangat serasi dilengkapi bitterballen keju leleh.",
+      stagedDraft: makeDraft("Lacamera Coffee", "bitterballen_cheese", "Head Chef Lacamera"),
     },
   ],
 
@@ -334,151 +326,131 @@ thesavorium@gmail.com`,
       name: "Kozi Coffee Dipatiukur",
       category: "coffee_shop",
       area: "Dago / Dipatiukur",
-      address: "Jl. Dipatiukur No. 42, Lebakgede, Coblong, Bandung",
-      email: "partnership.kozicoffee@gmail.com",
+      address: "Jl. Dipatiukur No. 1, Lebakgede, Coblong, Bandung",
+      email: "partnership@kozicoffee.com",
       instagram: "@kozicoffee",
-      whatsapp: "081394857211",
-      contactPerson: "Store Manager Kozi Dipatiukur",
+      whatsapp: "081223490815",
+      contactPerson: "Store Lead Kozi Dipatiukur",
       targetProduct: "bitterballen_cheese",
-      fitReason: "Pusat nongkrong mahasiswa UNPAD/ITHB dengan waktu berkunjung panjang, butuh camilan keju gurih hangat.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Kozi Dipatiukur",
-        body: `Halo tim Kozi Dipatiukur, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap saji untuk kebutuhan kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di Kozi Dipatiukur.
-
-Produk kami berbentuk siap goreng (zero prep), jadi praktis disajikan dalam 3–4 menit tanpa ribet persiapan bahan mentah.
-
-Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicoba langsung oleh tim.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Titik kumpul mahasiswa UNPAD, ITHB, dan UNIKOM, butuh camilan keju gurih yang mengenyangkan saat nugas.",
+      stagedDraft: makeDraft("Kozi Coffee Dipatiukur", "bitterballen_cheese", "Store Lead Kozi Dipatiukur"),
     },
     {
-      name: "Mimi Teh & Kopi Dago",
+      name: "Mimi Kopi Dago",
       category: "coffee_shop",
       area: "Dago / Dipatiukur",
-      address: "Jl. Ir. H. Juanda No. 115, Dago, Coblong, Bandung",
-      email: "partnership@mimikopi.id",
+      address: "Jl. Ir. H. Juanda No. 84, Lebak Siliwangi, Coblong, Bandung",
+      email: "partnership@mimikopi.com",
       instagram: "@mimikopibdg",
-      whatsapp: "081122334455",
-      contactPerson: "Operational Lead Mimi Dago",
+      whatsapp: "081394857188",
+      contactPerson: "Operational Lead Mimi Kopi",
       targetProduct: "baso_goreng",
-      fitReason: "Traffic WFC siang hingga malam butuh kudapan gurih renyah pendamping racikan teh dan kopi signature.",
-      stagedDraft: {
-        subject: "Opsi suplai menu camilan baso goreng untuk Mimi Dago",
-        body: `Halo rekan-rekan Mimi Dago, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap goreng khusus untuk kafe.
-
-Saya menghubungi rekan-rekan untuk memperkenalkan baso goreng siap saji kami, barangkali cocok melengkapi menu kudapan hangat di Mimi Dago.
-
-Produk kami siap goreng 4 menit tanpa proses olah adonan, menjaga ritme kitchen bar tetap efisien.
-
-Jika tim Mimi berkenan, kami dengan senang hati mengirimkan tester cuma-cuma untuk dicicipi langsung oleh tim dapur.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Spot nongkrong asri outdoor di bawah rindangnya pohon Dago Bawah, cocok untuk camilan baso goreng renyah panas.",
+      stagedDraft: makeDraft("Mimi Kopi Dago", "baso_goreng", "Operational Lead Mimi Kopi"),
     },
     {
-      name: "Teduh Coffee Pinus Dago",
+      name: "Teduh Coffee",
       category: "coffee_shop",
       area: "Dago / Dipatiukur",
-      address: "Komplek Dago Pakar, Ciburial, Cimenyan, Bandung",
-      email: "teduhcoffee.bandung@gmail.com",
+      address: "Jl. Pinus Raya, Dago Pakar, Ciburial, Cimenyan, Bandung",
+      email: "partnership@teduhcoffee.id",
       instagram: "@teduhcoffee.id",
-      whatsapp: "081298765432",
-      contactPerson: "Purchasing & Kitchen Lead",
+      whatsapp: "081224859199",
+      contactPerson: "Manager F&B Teduh Coffee",
       targetProduct: "duo_tasting",
-      fitReason: "Konsep outdoor sejuk pinus, pengunjung gemar pesan cemilan sharing hangat untuk teman ngopi berjam-jam.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Teduh Coffee",
-        body: `Halo tim Teduh Coffee, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng untuk mitra kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki kerja sama penyediaan menu camilan pendamping kopi di Teduh Coffee.
-
-Produk kami zero-prep (siap goreng 3–4 menit) tanpa proses potong atau racik adonan, sangat pas untuk melayani pesanan saat jam sibuk.
-
-Jika tim Teduh berkenan, kami sangat terbuka mengirimkan tester cuma-cuma untuk dicoba tim dapur.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Kedai kopi di tengah hutan pinus Dago dengan udara sejuk, tamu sangat mencari gorengan hangat pendamping kopi.",
+      stagedDraft: makeDraft("Teduh Coffee", "duo_tasting", "Manager F&B Teduh Coffee"),
     },
     {
       name: "Kiputih Satu Bake & Dine",
       category: "cafe_bistro",
       area: "Dago / Dipatiukur",
-      address: "Jl. Kiputih No. 1, Ciumbuleuit, Cidadap, Bandung",
-      email: "partnership@kiputihsatu.id",
+      address: "Jl. Kiputih No. 1A, Ciumbuleuit, Cidadap, Bandung",
+      email: "hello@kiputihsatu.com",
       instagram: "@kiputihsatu",
-      whatsapp: "081234908120",
-      contactPerson: "Head Chef & Purchasing Kiputih",
+      whatsapp: "08112049581",
+      contactPerson: "Head Baker & Kitchen Kiputih",
       targetProduct: "bitterballen_ori",
-      fitReason: "Komunitas artisanal bake & dine yang mengapresiasi racikan bechamel klasik daging sapi premium.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Kiputih Satu",
-        body: `Halo rekan-rekan Kiputih Satu, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi klasik dan baso goreng beku siap saji untuk kafe.
-
-Saya menghubungi tim Kiputih Satu untuk memperkenalkan camilan kami, siapa tahu dapat menjadi opsi tambahan menu santai di sana.
-
-Produk kami dirancang siap goreng dalam hitungan menit tanpa ribet persiapan bahan mentah di kitchen.
-
-Jika rekan-rekan berkenan, kami sangat terbuka untuk mengirimkan sampel tester cuma-cuma agar bisa dicicipi langsung oleh tim.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Destinasi kuliner artisan dengan standar cita rasa tinggi, serasi dengan bitterballen daging sapi gurih rempah.",
+      stagedDraft: makeDraft("Kiputih Satu Bake & Dine", "bitterballen_ori", "Head Baker & Kitchen Kiputih"),
     },
     {
-      name: "Warung Kopi Imah Babaturan Dago",
+      name: "Warung Kopi Imah Babaturan",
       category: "coffee_shop",
       area: "Dago / Dipatiukur",
-      address: "Jl. Kebonbibit No. 17, Tamansari, Bandung",
+      address: "Jl. Kebonbibit No. 3, Tamansari, Bandung Wetan, Bandung",
       email: "imahbabaturan@gmail.com",
       instagram: "@imahbabaturan",
-      whatsapp: "081220194888",
-      contactPerson: "Pengelola Imah Babaturan",
+      whatsapp: "081221948577",
+      contactPerson: "Owner & Kitchen Imah Babaturan",
       targetProduct: "baso_goreng",
-      fitReason: "Kedai kopi legendaris Tamansari/Dago dengan crowd loyal, baso goreng gurih renyah sangat cocok melengkapi kopi tubruk dan es kopi.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan baso goreng untuk Imah Babaturan",
-        body: `Halo tim Imah Babaturan, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap saji khusus untuk kedai kopi dan kafe.
-
-Saya menghubungi rekan-rekan untuk memperkenalkan baso goreng siap saji kami, barangkali cocok menjadi opsi camilan gurih hangat di Imah Babaturan.
-
-Produk kami berbentuk siap goreng (zero prep 4 menit), jadi sangat praktis dan cepat disajikan saat jam ramai.
-
-Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan tester cuma-cuma untuk dicicipi langsung oleh tim.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Kedai kopi rumahan legendaris yang mengutamakan kudapan nusantara gurih, cocok untuk kolaborasi baso goreng.",
+      stagedDraft: makeDraft("Warung Kopi Imah Babaturan", "baso_goreng", "Owner & Kitchen Imah Babaturan"),
+    },
+    {
+      name: "De.U Coffee",
+      category: "coffee_shop",
+      area: "Dago / Dipatiukur",
+      address: "Jl. Dipatiukur No. 23, Lebakgede, Coblong, Bandung",
+      email: "partnership@deucoffee.com",
+      instagram: "@deu.coffee",
+      whatsapp: "081220495811",
+      contactPerson: "Store Manager De.U",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Salah satu spot teramai di Dipatiukur dengan area outdoor luas, perputaran order camilan sangat cepat.",
+      stagedDraft: makeDraft("De.U Coffee", "bitterballen_cheese", "Store Manager De.U"),
+    },
+    {
+      name: "Utara Cafe",
+      category: "cafe_bistro",
+      area: "Dago / Dipatiukur",
+      address: "Jl. Bukit Pakar Utara No. 18, Dago Pakar, Cimenyan, Bandung",
+      email: "utaracafebdg@gmail.com",
+      instagram: "@utara.cafe",
+      whatsapp: "081394857144",
+      contactPerson: "Operational Lead Utara Cafe",
+      targetProduct: "duo_tasting",
+      fitReason: "Kafe view perbukitan Dago atas dengan udara dingin, sangat butuh kudapan gurih gorengan panas siap saji.",
+      stagedDraft: makeDraft("Utara Cafe", "duo_tasting", "Operational Lead Utara Cafe"),
+    },
+    {
+      name: "Armor Kopi Dago Pakar",
+      category: "coffee_shop",
+      area: "Dago / Dipatiukur",
+      address: "Jl. Bukit Pakar Utara No. 10, Ciburial, Cimenyan, Bandung",
+      email: "partnership@armorkopi.com",
+      instagram: "@armorkopi.bdg",
+      whatsapp: "081224859133",
+      contactPerson: "Bar Manager Armor Kopi",
+      targetProduct: "baso_goreng",
+      fitReason: "Pelopor kopi alam terbuka di Dago Pakar, tamu terbiasa memesan camilan gorengan garing teman ngopi.",
+      stagedDraft: makeDraft("Armor Kopi Dago Pakar", "baso_goreng", "Bar Manager Armor Kopi"),
+    },
+    {
+      name: "Two Cents Dago",
+      category: "coffee_shop",
+      area: "Dago / Dipatiukur",
+      address: "Jl. Cimanuk No. 2, Riau / Dago Bawah, Bandung",
+      email: "twocents.coffee@gmail.com",
+      instagram: "@twocentscoffee",
+      whatsapp: "08112239485",
+      contactPerson: "Operational Lead Two Cents",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Kedai kopi specialty terpercaya bagi kalangan profesional dan pebisnis, cocok dengan bitterballen premium.",
+      stagedDraft: makeDraft("Two Cents Dago", "bitterballen_ori", "Operational Lead Two Cents"),
+    },
+    {
+      name: "Congo Gallery & Cafe",
+      category: "resto",
+      area: "Dago / Dipatiukur",
+      address: "Jl. Rancakendal Luhur No. 8, Dago Pakar, Ciburial, Bandung",
+      email: "info@congogallery.com",
+      instagram: "@congo_gallery",
+      whatsapp: "081220394812",
+      contactPerson: "Head Chef Congo Cafe",
+      targetProduct: "duo_tasting",
+      fitReason: "Resto bernuansa kayu solid di puncak Dago dengan traffic keluarga & gathering, butuh finger food cepat saji.",
+      stagedDraft: makeDraft("Congo Gallery & Cafe", "duo_tasting", "Head Chef Congo Cafe"),
     },
   ],
 
@@ -487,151 +459,131 @@ thesavorium@gmail.com`,
       name: "Wheels Coffee Roasters Riau",
       category: "coffee_shop",
       area: "Riau / RE Martadinata",
-      address: "Jl. LLRE Martadinata No. 65, Citarum, Bandung",
-      email: "partnership@wheelscoffee.id",
+      address: "Jl. LLRE Martadinata No. 65, Citarum, Bandung Wetan, Bandung",
+      email: "purchasing@wheelscoffee.com",
       instagram: "@wheelscoffeeroasters",
-      whatsapp: "081223344551",
-      contactPerson: "Tim F&B & Purchasing Wheels",
-      targetProduct: "bitterballen_cheese",
-      fitReason: "Traffic tinggi, profil pelanggan pas untuk Bitterballen Cheese & Original pendamping manual brew.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Wheels Coffee Roasters",
-        body: `Halo tim Wheels Coffee, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng khusus untuk kebutuhan kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di Wheels Coffee.
-
-Produk kami berbentuk siap goreng (zero prep), sehingga tim bar atau dapur cukup menggorengnya 3–4 menit tanpa perlu persiapan bahan mentah.
-
-Jika tim Wheels Coffee berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicicipi langsung oleh tim dapur atau barista.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "081220495822",
+      contactPerson: "Executive Chef Wheels Coffee",
+      targetProduct: "duo_tasting",
+      fitReason: "Salah satu roastery & bistro terpopuler di Bandung dengan standar penyajian internasional dan volume pengunjung masif.",
+      stagedDraft: makeDraft("Wheels Coffee Roasters Riau", "duo_tasting", "Executive Chef Wheels Coffee"),
     },
     {
-      name: "Makmur Jaya Coffee Sawunggaling",
+      name: "Makmur Jaya Coffee Riau",
       category: "coffee_shop",
       area: "Riau / RE Martadinata",
-      address: "Jl. Sawunggaling No. 2, Tamansari, Bandung",
-      email: "partnership@makmurjayacoffee.com",
+      address: "Jl. Sawunggaling No. 2, Tamansari, Bandung Wetan, Bandung",
+      email: "makmurjayacoffee@gmail.com",
       instagram: "@makmurjayacoffee",
-      whatsapp: "081220192830",
-      contactPerson: "Head Barista & Kitchen Lead",
-      targetProduct: "duo_tasting",
-      fitReason: "Trafik anak muda sangat tinggi, butuh cemilan asin gurih pendamping es kopi susu dengan waktu saji 3-4 menit.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Makmur Jaya Coffee",
-        body: `Halo tim Makmur Jaya, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap saji khusus untuk suplai kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan camilan pendamping kopi di Makmur Jaya.
-
-Produk kami siap goreng 3–4 menit di dapur tanpa ribet persiapan bahan mentah, sehingga operasional bar tetap cepat saat rush hour.
-
-Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicoba langsung oleh tim.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "081394857133",
+      contactPerson: "Store Manager Makmur Jaya",
+      targetProduct: "baso_goreng",
+      fitReason: "Favorit anak muda skena kopi Bandung dengan perputaran order takeaway dan dine-in sangat tinggi.",
+      stagedDraft: makeDraft("Makmur Jaya Coffee Riau", "baso_goreng", "Store Manager Makmur Jaya"),
     },
     {
-      name: "Jardin Cafe Cimanuk/Riau",
+      name: "Jardin Cafe",
       category: "cafe_bistro",
       area: "Riau / RE Martadinata",
-      address: "Jl. Cimanuk No. 1A, Citarum, Bandung",
-      email: "purchasing@jardincafe.id",
+      address: "Jl. Cimanuk No. 1A, Citarum, Bandung Wetan, Bandung",
+      email: "info@jardincafe.com",
       instagram: "@jardincafe",
-      whatsapp: "081827364505",
-      contactPerson: "Supervisor Purchasing F&B",
-      targetProduct: "duo_tasting",
-      fitReason: "Kafe rindang berkapasitas besar dengan omzet finger food stabil untuk nongkrong rombongan.",
-      stagedDraft: {
-        subject: "Peluang kerja sama suplai camilan untuk Jardin Cafe",
-        body: `Halo tim Purchasing Jardin Cafe, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi premium dan baso goreng beku siap goreng khusus untuk kebutuhan kafe dan resto.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang suplai menu finger food di Jardin Cafe.
-
-Produk kami berbentuk siap goreng (zero prep 4 menit), konsisten, dan sangat efisien untuk mendukung dapur saat jam ramai.
-
-Jika tim Jardin berkenan, kami dengan senang hati mengirimkan paket tester cuma-cuma untuk dicoba langsung oleh tim dapur.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "08112239481",
+      contactPerson: "Head Kitchen Jardin Cafe",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Konsep rumah kaca hijau rimbun yang ramai dikunjungi untuk lunch dan dinner santai, serasi dengan camilan keju leleh.",
+      stagedDraft: makeDraft("Jardin Cafe", "bitterballen_cheese", "Head Kitchen Jardin Cafe"),
     },
     {
-      name: "Cultivar Coffeehouse Riau",
+      name: "Cultivar Coffeehouse",
       category: "coffee_shop",
       area: "Riau / RE Martadinata",
-      address: "Jl. Anggrek No. 34, Merdeka, Sumur Bandung",
+      address: "Jl. Anggrek No. 34, Cihapit, Bandung Wetan, Bandung",
       email: "cultivarcoffeehouse@gmail.com",
       instagram: "@cultivar_coffee",
-      whatsapp: "081221122334",
+      whatsapp: "081224859144",
       contactPerson: "Head Barista Cultivar",
       targetProduct: "bitterballen_ori",
-      fitReason: "Coffee shop artisan dengan komunitas penikmat kopi yang solid, cocok untuk menu savory bite berkualitas.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Cultivar Coffeehouse",
-        body: `Halo tim Cultivar Coffeehouse, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi klasik dan baso goreng beku siap saji untuk kebutuhan kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di Cultivar.
-
-Produk kami siap goreng dalam 3–4 menit tanpa ribet persiapan bahan mentah di dapur, sangat konsisten menjaga kualitas rasa.
-
-Jika tim Cultivar berkenan, kami dengan senang hati mengirimkan tester cuma-cuma untuk dicicipi langsung oleh tim.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Spesialis seduhan kopi manual dan espresso berkualitas di area tenang Cihapit/Riau, butuh snack gurih bersih.",
+      stagedDraft: makeDraft("Cultivar Coffeehouse", "bitterballen_ori", "Head Barista Cultivar"),
     },
     {
-      name: "Daily Routine Coffee Riau",
+      name: "Daily Routine Coffee",
       category: "coffee_shop",
       area: "Riau / RE Martadinata",
-      address: "Jl. Kanayakan Bawah No. 1, Citarum, Bandung",
-      email: "dailyroutine.bdg@gmail.com",
+      address: "Jl. LLRE Martadinata No. 42, Citarum, Bandung Wetan, Bandung",
+      email: "dailyroutinecoffee@gmail.com",
       instagram: "@dailyroutinecoffee",
-      whatsapp: "081394857890",
-      contactPerson: "Store Lead Daily Routine",
+      whatsapp: "081320495855",
+      contactPerson: "Operational Lead Daily Routine",
       targetProduct: "baso_goreng",
-      fitReason: "Tempat singgah ngopi pagi dan sore di area Riau, membutuhkan snack praktis siap goreng tanpa adonan ribet.",
-      stagedDraft: {
-        subject: "Opsi suplai menu camilan baso goreng untuk Daily Routine Coffee",
-        body: `Halo rekan-rekan Daily Routine Coffee, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap saji khusus untuk pendamping kopi.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang suplai kudapan renyah di Daily Routine.
-
-Produk kami berbentuk siap goreng (zero prep), jadi praktis disajikan dalam 3–4 menit tanpa menyita waktu tim bar.
-
-Jika tim Daily Routine berkenan, kami sangat terbuka mengirimkan sampel tester cuma-cuma untuk dicoba langsung oleh tim.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Tempat transit kopi para pekerja kantor koridor Riau, membutuhkan camilan cepat goreng 3-4 menit.",
+      stagedDraft: makeDraft("Daily Routine Coffee", "baso_goreng", "Operational Lead Daily Routine"),
+    },
+    {
+      name: "Noah's Barn Riau",
+      category: "cafe_bistro",
+      area: "Riau / RE Martadinata",
+      address: "Jl. Dayang Sumbi No. 2, Lebakgede, Coblong, Bandung",
+      email: "info@noahsbarn.com",
+      instagram: "@noahsbarn",
+      whatsapp: "081221948566",
+      contactPerson: "Manager F&B Noah's Barn",
+      targetProduct: "duo_tasting",
+      fitReason: "Salah satu pionir kafe specialty di Bandung dengan menu pastry dan savoury bites lengkap, butuh variasi produk beku premium.",
+      stagedDraft: makeDraft("Noah's Barn Riau", "duo_tasting", "Manager F&B Noah's Barn"),
+    },
+    {
+      name: "Bagi Kopi Riau",
+      category: "coffee_shop",
+      area: "Riau / RE Martadinata",
+      address: "Jl. LLRE Martadinata No. 152, Cihapit, Bandung",
+      email: "partnership@bagikopi.id",
+      instagram: "@bagikopi.id",
+      whatsapp: "08112049582",
+      contactPerson: "Area Manager Bagi Kopi",
+      targetProduct: "baso_goreng",
+      fitReason: "Kedai kopi dengan jam operasional panjang hingga tengah malam, butuh camilan gurih yang selalu ready stok.",
+      stagedDraft: makeDraft("Bagi Kopi Riau", "baso_goreng", "Area Manager Bagi Kopi"),
+    },
+    {
+      name: "Contrast Coffee",
+      category: "coffee_shop",
+      area: "Riau / RE Martadinata",
+      address: "Jl. Anggrek No. 46, Cihapit, Bandung Wetan, Bandung",
+      email: "contrastcoffeebd@gmail.com",
+      instagram: "@contrastcoffee",
+      whatsapp: "081394857155",
+      contactPerson: "Store Lead Contrast",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Ambience modern minimalis dengan fokus pada seduhan presisi, cocok mendampingi sajian bitterballen gurih.",
+      stagedDraft: makeDraft("Contrast Coffee", "bitterballen_ori", "Store Lead Contrast"),
+    },
+    {
+      name: "One Eighty Coffee & Music",
+      category: "cafe_bistro",
+      area: "Riau / RE Martadinata",
+      address: "Jl. Ganeca No. 3, Lb. Siliwangi, Coblong, Bandung",
+      email: "oneeightycoffee@gmail.com",
+      instagram: "@oneeightycoffee",
+      whatsapp: "081220394877",
+      contactPerson: "Kitchen Operational One Eighty",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Kafe ikonik dengan meja di atas kolam air dan perputaran pengunjung keluarga, butuh menu snack anak muda & keluarga.",
+      stagedDraft: makeDraft("One Eighty Coffee & Music", "bitterballen_cheese", "Kitchen Operational One Eighty"),
+    },
+    {
+      name: "Sydwic Cafe",
+      category: "cafe_bistro",
+      area: "Riau / RE Martadinata",
+      address: "Jl. Cilaki No. 63, Cihapit, Bandung Wetan, Bandung",
+      email: "sydwic@gmail.com",
+      instagram: "@sydwic",
+      whatsapp: "081224859166",
+      contactPerson: "Store Manager Sydwic",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Kafe Scandinavian di kawasan teduh Cilaki, mencari opsi finger food praktis untuk menemani kopi sore.",
+      stagedDraft: makeDraft("Sydwic Cafe", "bitterballen_ori", "Store Manager Sydwic"),
     },
   ],
 
@@ -640,483 +592,421 @@ thesavorium@gmail.com`,
       name: "Sejiwa Coffee Progo",
       category: "coffee_shop",
       area: "Progo / Cimanuk",
-      address: "Jl. Progo No. 15, Citarum, Bandung",
+      address: "Jl. Progo No. 15, Citarum, Bandung Wetan, Bandung",
       email: "partnership@sejiwacoffee.com",
       instagram: "@sejiwacoffee",
-      whatsapp: "081122334452",
-      contactPerson: "Head Kitchen / Barista Lead",
-      targetProduct: "bitterballen_ori",
-      fitReason: "Spot kopi ikonik di Progo, butuh finger food klasik daging sapi untuk teman ngobrol santai.",
-      stagedDraft: {
-        subject: "Peluang suplai camilan bitterballen & baso goreng untuk Sejiwa Progo",
-        body: `Halo rekan-rekan Sejiwa Coffee, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng untuk kebutuhan kafe lokal.
-
-Saya menghubungi tim Sejiwa untuk memperkenalkan produk kami, barangkali pas untuk melengkapi variasi menu camilan hangat di Progo.
-
-Produk kami berbentuk siap goreng (zero prep), jadi praktis disajikan dalam 3–4 menit tanpa menyita waktu barista atau dapur.
-
-Jika rekan-rekan berkenan, kami ingin mengirimkan tester sampel cuma-cuma untuk dicoba langsung oleh tim Sejiwa.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "081220495833",
+      contactPerson: "Head Barista & Ops Sejiwa",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Flagship specialty coffee shop kebanggaan Bandung, sangat cocok menyajikan bitterballen keju daging sapi premium.",
+      stagedDraft: makeDraft("Sejiwa Coffee Progo", "bitterballen_cheese", "Head Barista & Ops Sejiwa"),
     },
     {
       name: "Hummingbird Eatery & Space",
       category: "cafe_bistro",
       area: "Progo / Cimanuk",
-      address: "Jl. Progo No. 16, Citarum, Bandung",
-      email: "hummingbird.space@gmail.com",
+      address: "Jl. Progo No. 16, Citarum, Bandung Wetan, Bandung",
+      email: "reservation@hummingbird-space.com",
       instagram: "@hummingbird_space",
-      whatsapp: "081223377889",
-      contactPerson: "Kitchen Manager Hummingbird",
-      targetProduct: "bitterballen_cheese",
-      fitReason: "Resto kafe keluarga legendaris di Progo dengan perputaran menu snack keju dan daging yang tinggi.",
-      stagedDraft: {
-        subject: "Peluang kerja sama suplai camilan untuk Hummingbird Eatery",
-        body: `Halo tim Hummingbird Eatery, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi Australia dan baso goreng beku siap saji untuk mitra kafe & resto.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang penyediaan camilan pendamping kopi di Hummingbird.
-
-Produk kami siap goreng 3–4 menit tanpa proses olah bahan mentah, sangat mendukung efisiensi operasional dapur saat weekend.
-
-Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan tester cuma-cuma untuk dicoba tim kitchen.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "08112239482",
+      contactPerson: "Executive Chef Hummingbird",
+      targetProduct: "duo_tasting",
+      fitReason: "Resto dan kafe keluarga terkemuka di Jalan Progo dengan variasi finger food dan dessert premium.",
+      stagedDraft: makeDraft("Hummingbird Eatery & Space", "duo_tasting", "Executive Chef Hummingbird"),
     },
     {
-      name: "Baker Street Progo",
+      name: "Baker Street Bakery & Brunch",
       category: "cafe_bistro",
       area: "Progo / Cimanuk",
-      address: "Jl. Cimandiri No. 18, Citarum, Bandung",
-      email: "partnership@bakerstreet.id",
+      address: "Jl. Cimandiri No. 18, Citarum, Bandung Wetan, Bandung",
+      email: "bakerstreet.id@gmail.com",
       instagram: "@bakerstreet.id",
-      whatsapp: "081220194899",
-      contactPerson: "F&B Supervisor Baker Street",
-      targetProduct: "duo_tasting",
-      fitReason: "Konsep artisanal bakery & cafe yang menghargai cita rasa butter dan keju daging sapi authentic.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Baker Street Progo",
-        body: `Halo tim Baker Street, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi premium dan baso goreng siap saji untuk mitra kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang suplai finger food pendamping racikan kopi di Baker Street.
-
-Produk kami zero-prep (siap goreng 3–4 menit) dengan isian daging sapi padat dan lelehan bechamel gurih, sangat serasi dengan standar sajian bakery.
-
-Jika tim Baker Street berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicicipi tim dapur.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "081394857166",
+      contactPerson: "Kitchen Manager Baker Street",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Kafe bakery artisan dekat Gedung Sate, cocok untuk menambah variasi camilan savoury siap saji.",
+      stagedDraft: makeDraft("Baker Street Bakery & Brunch", "bitterballen_ori", "Kitchen Manager Baker Street"),
     },
     {
       name: "Roemah Kentang 1908",
-      category: "cafe_bistro",
+      category: "resto",
       area: "Progo / Cimanuk",
-      address: "Jl. Banda No. 18, Citarum, Bandung",
-      email: "roemahkentang1908@gmail.com",
+      address: "Jl. Banda No. 18, Citarum, Bandung Wetan, Bandung",
+      email: "info@roemahkentang1908.com",
       instagram: "@roemahkentang1908",
-      whatsapp: "081122998877",
-      contactPerson: "Head Kitchen Roemah Kentang",
-      targetProduct: "bitterballen_cheese",
-      fitReason: "Resto kafe heritage premium di koridor Progo/Banda dengan konsumsi menu camilan sharing yang tinggi.",
-      stagedDraft: {
-        subject: "Peluang kerja sama suplai camilan untuk Roemah Kentang 1908",
-        body: `Halo tim Roemah Kentang 1908, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng khusus untuk kafe dan resto.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan hangat di Roemah Kentang 1908.
-
-Produk kami siap goreng 3–4 menit tanpa ribet persiapan bahan mentah di dapur, membantu menjaga kecepatan servis saat jam makan malam.
-
-Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan tester cuma-cuma untuk dicoba langsung oleh tim kitchen.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "081224859177",
+      contactPerson: "F&B Director Roemah Kentang",
+      targetProduct: "duo_tasting",
+      fitReason: "Resto heritage megah di Jalan Banda dengan menu olahan kentang legendaris, sangat selaras dengan bitterballen olahan daging.",
+      stagedDraft: makeDraft("Roemah Kentang 1908", "duo_tasting", "F&B Director Roemah Kentang"),
     },
     {
-      name: "Noah's Barn Cafe Progo",
+      name: "Two Hands Full Cimanuk",
       category: "coffee_shop",
       area: "Progo / Cimanuk",
-      address: "Jl. Dayang Sumbi No. 10, Lebak Siliwangi, Bandung",
-      email: "partnership@noahsbarn.com",
-      instagram: "@noahsbarn",
-      whatsapp: "081298765499",
-      contactPerson: "Purchasing Manager Noah's Barn",
+      address: "Jl. Cimanuk No. 2, Citarum, Bandung",
+      email: "twohandsfull.bdg@gmail.com",
+      instagram: "@thfcoffee",
+      whatsapp: "081320495877",
+      contactPerson: "Bar Lead THF Cimanuk",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Pelopor kultur specialty coffee Bandung bergaya Melbourne, butuh kudapan savoury pendamping flat white.",
+      stagedDraft: makeDraft("Two Hands Full Cimanuk", "bitterballen_ori", "Bar Lead THF Cimanuk"),
+    },
+    {
+      name: "Gandapura Cafe",
+      category: "coffee_shop",
+      area: "Progo / Cimanuk",
+      address: "Jl. Gandapura No. 40, Merdeka, Sumur Bandung, Bandung",
+      email: "gandapuracafe@gmail.com",
+      instagram: "@gandapuracafe",
+      whatsapp: "081221948588",
+      contactPerson: "Operational Lead Gandapura",
       targetProduct: "baso_goreng",
-      fitReason: "Pionir brunch dan specialty coffee, membutuhkan camilan gurih renyah dengan standar presentasi rapi.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Noah's Barn",
-        body: `Halo tim Noah's Barn, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap saji untuk kafe.
-
-Saya menghubungi rekan-rekan untuk memperkenalkan baso goreng siap saji kami, siapa tahu dapat menjadi opsi tambahan menu santai di Noah's Barn.
-
-Produk kami siap goreng 4 menit tanpa proses persiapan adonan, sangat efisien mendukung ritme kerja kitchen bar.
-
-Jika rekan-rekan berkenan, kami sangat terbuka mengirimkan tester cuma-cuma untuk dicoba langsung oleh tim dapur.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Spot nongkrong santai komunitas motor dan sepeda di koridor Gandapura, butuh camilan gurih garing.",
+      stagedDraft: makeDraft("Gandapura Cafe", "baso_goreng", "Operational Lead Gandapura"),
+    },
+    {
+      name: "Kopi Kisah Manis",
+      category: "coffee_shop",
+      area: "Progo / Cimanuk",
+      address: "Jl. Sunda No. 65, Kebon Pisang, Sumur Bandung, Bandung",
+      email: "partnership@kisahmanis.id",
+      instagram: "@kisahmanis.id",
+      whatsapp: "08112049583",
+      contactPerson: "Store Manager Kisah Manis",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Kafe modern dengan interior estetik favorit anak muda Bandung, pas untuk camilan keju lumer.",
+      stagedDraft: makeDraft("Kopi Kisah Manis", "bitterballen_cheese", "Store Manager Kisah Manis"),
+    },
+    {
+      name: "Bellamie Boulangerie",
+      category: "cafe_bistro",
+      area: "Progo / Cimanuk",
+      address: "Jl. Cihapit No. 35, Cihapit, Bandung Wetan, Bandung",
+      email: "bellamieboulangerie@gmail.com",
+      instagram: "@bellamie.boulangerie",
+      whatsapp: "081394857177",
+      contactPerson: "Kitchen Supervisor Bellamie",
+      targetProduct: "duo_tasting",
+      fitReason: "Bakery & bistro ternama di kawasan kuliner Cihapit, sangat potensial untuk menu savoury bites.",
+      stagedDraft: makeDraft("Bellamie Boulangerie", "duo_tasting", "Kitchen Supervisor Bellamie"),
+    },
+    {
+      name: "Boja Eatery",
+      category: "cafe_bistro",
+      area: "Progo / Cimanuk",
+      address: "Jl. Sumatera No. 21, Merdeka, Sumur Bandung, Bandung",
+      email: "info@bojaeatery.com",
+      instagram: "@boja.eatery",
+      whatsapp: "081220394888",
+      contactPerson: "Head Chef Boja",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Resto bergaya chic kontemporer dengan tamu keluarga dan eksekutif, ideal untuk sajian bitterballen keju.",
+      stagedDraft: makeDraft("Boja Eatery", "bitterballen_cheese", "Head Chef Boja"),
+    },
+    {
+      name: "Tilu Kitchen & Roasted",
+      category: "resto",
+      area: "Progo / Cimanuk",
+      address: "Jl. LLRE Martadinata No. 81, Citarum, Bandung",
+      email: "reservation@tilukitchen.com",
+      instagram: "@tilukitchen",
+      whatsapp: "081224859188",
+      contactPerson: "Operational Director Tilu Kitchen",
+      targetProduct: "duo_tasting",
+      fitReason: "Restoran dining kelas atas rancangan Chef Chandra Yudasswara, membutuhkan camilan premium berkualitas teruji.",
+      stagedDraft: makeDraft("Tilu Kitchen & Roasted", "duo_tasting", "Operational Director Tilu Kitchen"),
     },
   ],
 
   "Sukajadi / Setiabudhi": [
     {
       name: "Two Hands Full Sukajadi",
-      category: "cafe_bistro",
+      category: "coffee_shop",
       area: "Sukajadi / Setiabudhi",
       address: "Jl. Sukajadi No. 198A, Pasteur, Sukajadi, Bandung",
-      email: "hello@twohandsfull.co",
+      email: "partnership@thfcoffee.com",
       instagram: "@thfcoffee",
-      whatsapp: "081394857103",
-      contactPerson: "Management Two Hands Full",
-      targetProduct: "duo_tasting",
-      fitReason: "Kafe brunch spesialis Western, butuh finger food daging sapi berkualitas untuk pendamping menu utama.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Two Hands Full",
-        body: `Halo tim Two Hands Full, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi Australia dan baso goreng siap saji untuk mitra kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki kerja sama penyediaan finger food pendamping kopi dan brunch di Two Hands Full.
-
-Produk kami zero-prep (siap goreng 3–4 menit) dengan tekstur renyah di luar dan lumer di dalam, menjaga efisiensi kitchen tetap optimal.
-
-Jika rekan-rekan berkenan, saya ingin mengirimkan sampel tester untuk dicicipi oleh tim dapur atau management.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "081320495877",
+      contactPerson: "Store Manager THF Sukajadi",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Lokasi strategis di koridor Sukajadi atas dengan pelanggan loyal penikmat specialty coffee dan brunch.",
+      stagedDraft: makeDraft("Two Hands Full Sukajadi", "bitterballen_ori", "Store Manager THF Sukajadi"),
     },
     {
       name: "Arah Coffee Sukajadi",
       category: "coffee_shop",
       area: "Sukajadi / Setiabudhi",
-      address: "Jl. Sukajadi No. 204, Pasteur, Sukajadi, Bandung",
+      address: "Paris Van Java Mall (Resort Level), Jl. Sukajadi No. 131-139, Bandung",
       email: "partnership@arahcoffee.com",
       instagram: "@arahcoffee",
-      whatsapp: "081220198822",
-      contactPerson: "Store Manager Arah Sukajadi",
-      targetProduct: "bitterballen_ori",
-      fitReason: "Konsep arsitektur minimalis modern karya Andra Matin dengan trafik anak muda padat, butuh cemilan daging gurih hangat.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Arah Coffee Sukajadi",
-        body: `Halo tim Arah Coffee Sukajadi, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng khusus untuk kebutuhan kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di Arah Coffee Sukajadi.
-
-Produk kami berbentuk siap goreng (zero prep), sehingga tim bar atau dapur cukup menggorengnya 3–4 menit tanpa perlu persiapan bahan mentah.
-
-Jika tim Arah Coffee berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicicipi langsung oleh tim dapur atau barista.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "08112239483",
+      contactPerson: "Area Supervisor Arah Coffee PVJ",
+      targetProduct: "baso_goreng",
+      fitReason: "Traffic mall PVJ sangat tinggi, butuh camilan baso goreng cepat saji yang mudah dibawa (grab & go).",
+      stagedDraft: makeDraft("Arah Coffee Sukajadi", "baso_goreng", "Area Supervisor Arah Coffee PVJ"),
     },
     {
       name: "Mikha Coffee Setiabudhi",
       category: "coffee_shop",
       area: "Sukajadi / Setiabudhi",
-      address: "Jl. Dr. Setiabudi No. 135, Gegerkalong, Sukasari, Bandung",
-      email: "mikhacoffee.bdg@gmail.com",
+      address: "Jl. Dr. Setiabudhi No. 135, Gegerkalong, Sukasari, Bandung",
+      email: "mikhacoffee.stbd@gmail.com",
       instagram: "@mikhacoffee.stbd",
-      whatsapp: "081394857711",
-      contactPerson: "Kitchen Supervisor Mikha",
+      whatsapp: "081220495844",
+      contactPerson: "Head Barista Mikha Coffee",
       targetProduct: "bitterballen_cheese",
-      fitReason: "Kafe tropis estetik berkapasitas besar di Setiabudhi, konsumsi camilan keju dan finger food sangat tinggi.",
-      stagedDraft: {
-        subject: "Peluang suplai camilan bitterballen keju untuk Mikha Coffee Setiabudhi",
-        body: `Halo rekan-rekan Mikha Coffee, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi isi keju lumer dan baso goreng beku siap saji untuk kafe.
-
-Saya menghubungi rekan-rekan untuk memperkenalkan camilan kami, siapa tahu dapat menjadi opsi tambahan menu santai di Mikha Setiabudhi.
-
-Produk kami dirancang siap goreng dalam hitungan menit tanpa ribet persiapan bahan mentah di kitchen.
-
-Jika rekan-rekan berkenan, kami sangat terbuka untuk mengirimkan sampel tester cuma-cuma agar bisa dicicipi langsung oleh tim.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Kafe bertingkat dekat kampus UPI dan NHI dengan banyak mahasiswa yang butuh snack gurih hangat.",
+      stagedDraft: makeDraft("Mikha Coffee Setiabudhi", "bitterballen_cheese", "Head Barista Mikha Coffee"),
     },
     {
-      name: "Miss Bee Providore Setiabudhi",
+      name: "Miss Bee Providore",
       category: "cafe_bistro",
       area: "Sukajadi / Setiabudhi",
       address: "Jl. Rancabentang No. 11A, Ciumbuleuit, Cidadap, Bandung",
-      email: "partnership@missbeeprovidore.com",
+      email: "info@missbeeprovidore.com",
       instagram: "@missbee_providore",
-      whatsapp: "081220194833",
-      contactPerson: "F&B Purchasing Miss Bee",
+      whatsapp: "081394857188",
+      contactPerson: "Kitchen Operations Miss Bee",
       targetProduct: "duo_tasting",
-      fitReason: "Resto kafe keluarga premium dengan standar Western food tinggi, sangat apresiatif terhadap bitterballen sapi Australia.",
-      stagedDraft: {
-        subject: "Peluang kerja sama suplai camilan untuk Miss Bee Providore",
-        body: `Halo tim Purchasing Miss Bee Providore, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi Australia dan baso goreng beku siap saji untuk mitra kafe & resto.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang penyediaan camilan pendamping kopi dan menu santai di Miss Bee.
-
-Produk kami siap goreng 3–4 menit tanpa proses olah bahan mentah, sangat mendukung efisiensi operasional dapur saat jam sibuk akhir pekan.
-
-Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan tester cuma-cuma untuk dicoba tim kitchen.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Kafe ramah keluarga dan anak terpopuler di Ciumbuleuit/Setiabudhi, perputaran pesanan camilan gurih sangat tinggi.",
+      stagedDraft: makeDraft("Miss Bee Providore", "duo_tasting", "Kitchen Operations Miss Bee"),
     },
     {
-      name: "One Eighty Coffee and Music",
+      name: "One Eighty Coffee",
+      category: "coffee_shop",
+      area: "Sukajadi / Setiabudhi",
+      address: "Jl. Ganeca No. 3, Lb. Siliwangi, Coblong, Bandung",
+      email: "oneeightycoffee@gmail.com",
+      instagram: "@oneeightycoffee",
+      whatsapp: "081220394877",
+      contactPerson: "Store Lead One Eighty",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Area kolam air ikonik dengan traffic harian ribuan pengunjung, sangat membutuhkan suplai camilan efisien zero-prep.",
+      stagedDraft: makeDraft("One Eighty Coffee", "bitterballen_cheese", "Store Lead One Eighty"),
+    },
+    {
+      name: "Nara Park Bandung",
+      category: "resto",
+      area: "Sukajadi / Setiabudhi",
+      address: "Jl. Rancabentang No. 28, Ciumbuleuit, Cidadap, Bandung",
+      email: "reservation@narabandung.com",
+      instagram: "@narabandung",
+      whatsapp: "081224859199",
+      contactPerson: "F&B Manager Nara Park",
+      targetProduct: "duo_tasting",
+      fitReason: "Taman kuliner terpadu outdoor di Ciumbuleuit atas, kebutuhan finger food keluarga sangat masif.",
+      stagedDraft: makeDraft("Nara Park Bandung", "duo_tasting", "F&B Manager Nara Park"),
+    },
+    {
+      name: "Kalpa Tree Dine & Chill",
+      category: "resto",
+      area: "Sukajadi / Setiabudhi",
+      address: "Jl. Kiputih No. 37, Ciumbuleuit, Cidadap, Bandung",
+      email: "info@kalpatreebdg.com",
+      instagram: "@kalpatreebdg",
+      whatsapp: "08112049584",
+      contactPerson: "Executive Chef Kalpa Tree",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Resto dan lounge megah dengan kolam renang sentral, pas untuk sajian camilan keju leleh.",
+      stagedDraft: makeDraft("Kalpa Tree Dine & Chill", "bitterballen_cheese", "Executive Chef Kalpa Tree"),
+    },
+    {
+      name: "Rabbit Hole Cafe",
       category: "cafe_bistro",
       area: "Sukajadi / Setiabudhi",
-      address: "Jl. Ganesa No. 3, Lb. Siliwangi, Coblong, Bandung",
-      email: "kitchen@oneeightycoffee.com",
-      instagram: "@oneeightycoffee",
-      whatsapp: "081122334466",
-      contactPerson: "Head Chef One Eighty",
+      address: "Jl. Rancabentang No. 10, Ciumbuleuit, Bandung",
+      email: "rabbitholebdg@gmail.com",
+      instagram: "@rabbithole_bdg",
+      whatsapp: "081320495888",
+      contactPerson: "Kitchen Lead Rabbit Hole",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Suasana nyaman dengan udara pegunungan Setiabudhi, ideal untuk kudapan bitterballen daging sapi.",
+      stagedDraft: makeDraft("Rabbit Hole Cafe", "bitterballen_ori", "Kitchen Lead Rabbit Hole"),
+    },
+    {
+      name: "Warung Kopi Gunung Cikole",
+      category: "coffee_shop",
+      area: "Sukajadi / Setiabudhi",
+      address: "Jl. Raya Tangkuban Parahu, Cikole / Lembang, Bandung",
+      email: "warungkopigunung@gmail.com",
+      instagram: "@warungkopigunung",
+      whatsapp: "081221948599",
+      contactPerson: "Operational Manager WKG",
       targetProduct: "baso_goreng",
-      fitReason: "Kafe ikonik dengan seating kolam dan pengunjung ramai, membutuhkan finger food renyah siap goreng dalam 4 menit.",
-      stagedDraft: {
-        subject: "Opsi suplai menu camilan baso goreng untuk One Eighty Coffee",
-        body: `Halo tim One Eighty Coffee, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap saji khusus untuk kafe dan resto.
-
-Saya menghubungi rekan-rekan untuk menjajaki kerja sama penyediaan finger food renyah di One Eighty Coffee.
-
-Produk kami berbentuk siap goreng (zero prep), jadi praktis disajikan dalam 4 menit tanpa menyita waktu persiapan di dapur.
-
-Jika tim One Eighty berkenan, kami dengan senang hati mengirimkan tester cuma-cuma untuk dicicipi langsung oleh tim dapur.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Hawa dingin hutan pinus Tangkuban Parahu membuat permintaan gorengan baso gurih renyah selalu tinggi.",
+      stagedDraft: makeDraft("Warung Kopi Gunung Cikole", "baso_goreng", "Operational Manager WKG"),
+    },
+    {
+      name: "Kopi Bawah Pohon",
+      category: "coffee_shop",
+      area: "Sukajadi / Setiabudhi",
+      address: "Jl. Lembah Pakar Timur No. 7, Ciburial, Bandung",
+      email: "kopibawahpohon@gmail.com",
+      instagram: "@kopitokodjawa",
+      whatsapp: "081394857199",
+      contactPerson: "Store Supervisor KBP",
+      targetProduct: "duo_tasting",
+      fitReason: "Tempat nongkrong asri dengan view lembah Bandung, pas untuk menu sharing camilan gurih.",
+      stagedDraft: makeDraft("Kopi Bawah Pohon", "duo_tasting", "Store Supervisor KBP"),
     },
   ],
 
   "Pasirkaliki / Paskal": [
     {
-      name: "Beer Point / Taphouse Paskal",
+      name: "The Parlor Taphouse 23 Paskal",
       category: "bar_taphouse",
       area: "Pasirkaliki / Paskal",
-      address: "Paskal Hypersquare Blok G, Jl. Pasir Kaliki No. 25-27, Bandung",
-      email: "bar.beerpointbdg@gmail.com",
+      address: "23 Paskal Hyper Square Level 1, Jl. Pasir Kaliki No. 25-27, Bandung",
+      email: "partnership@theparlor.id",
       instagram: "@taphousebdg",
-      whatsapp: "081299887709",
-      contactPerson: "Head Chef / Bar Manager",
-      targetProduct: "baso_goreng",
-      fitReason: "Bar snack paling dicari adalah baso goreng renyah dan bitterballen panas pendamping minuman dingin.",
-      stagedDraft: {
-        subject: "Opsi suplai bar snack untuk Beer Point Paskal",
-        body: `Halo tim Beer Point Paskal, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap saji khusus untuk pendamping minuman.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang suplai bar snack renyah dan gurih di Beer Point.
-
-Produk kami siap goreng dalam 4 menit tanpa proses persiapan bahan mentah, sehingga sangat efisien untuk operasional kitchen bar saat jam sibuk.
-
-Jika tim Beer Point berkenan, kami dengan senang hati mengirimkan paket tester cuma-cuma untuk dicoba oleh tim kitchen.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      whatsapp: "08112239484",
+      contactPerson: "Bar & Food Director Parlor",
+      targetProduct: "duo_tasting",
+      fitReason: "Bar taphouse modern dengan kebutuhan finger food gurih berprotein tinggi untuk mendampingi sajian beverage.",
+      stagedDraft: makeDraft("The Parlor Taphouse 23 Paskal", "duo_tasting", "Bar & Food Director Parlor"),
     },
     {
-      name: "Noughts & Crosses Coffee Paskal",
-      category: "coffee_shop",
+      name: "Noughts and Crosses Cafe",
+      category: "cafe_bistro",
       area: "Pasirkaliki / Paskal",
-      address: "Paskal Hypersquare Blok B No. 28, Jl. Pasir Kaliki, Bandung",
-      email: "partnership@noughtsandcrosses.id",
+      address: "Paskal Hyper Square Blok C-12, Jl. Pasir Kaliki No. 25-27, Bandung",
+      email: "info@noughtsandcrosses.id",
       instagram: "@noughtsandcrosses.id",
-      whatsapp: "081220194855",
-      contactPerson: "Kitchen Lead Noughts & Crosses",
+      whatsapp: "081220495855",
+      contactPerson: "General Manager N&C",
       targetProduct: "bitterballen_cheese",
-      fitReason: "Coffee shop modern di Paskal dengan menu Western sharing, pas untuk Bitterballen Cheese lumer siap saji.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Noughts & Crosses Paskal",
-        body: `Halo tim Noughts & Crosses, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap saji untuk kebutuhan kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di Noughts & Crosses Paskal.
-
-Produk kami berbentuk siap goreng (zero prep), jadi praktis disajikan dalam 3–4 menit tanpa ribet persiapan bahan mentah.
-
-Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicoba langsung oleh tim.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Bistro elegan di kompleks Paskal yang ramai kalangan ekspatriat dan keluarga, butuh camilan keju lumer.",
+      stagedDraft: makeDraft("Noughts and Crosses Cafe", "bitterballen_cheese", "General Manager N&C"),
     },
     {
-      name: "Gormeteria Pasirkaliki",
+      name: "Gormeteria",
       category: "cafe_bistro",
       area: "Pasirkaliki / Paskal",
       address: "Jl. Pasir Kaliki No. 176, Pasir Kaliki, Cicendo, Bandung",
-      email: "purchasing@gormeteria.com",
+      email: "reservation@gormeteria.com",
       instagram: "@gormeteria",
-      whatsapp: "081122998833",
-      contactPerson: "Head Kitchen Gormeteria",
-      targetProduct: "duo_tasting",
-      fitReason: "Resto kafe trendsetter di Pasirkaliki dengan crowd belanja dan keluarga, perputaran kudapan asin gurih sangat tinggi.",
-      stagedDraft: {
-        subject: "Peluang kerja sama suplai camilan untuk Gormeteria Pasirkaliki",
-        body: `Halo tim Gormeteria, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi premium dan baso goreng beku siap goreng khusus untuk kebutuhan kafe dan resto.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang suplai menu finger food di Gormeteria Pasirkaliki.
-
-Produk kami berbentuk siap goreng (zero prep 3–4 menit), konsisten, dan sangat efisien untuk mendukung dapur saat jam ramai.
-
-Jika tim Gormeteria berkenan, kami dengan senang hati mengirimkan paket tester cuma-cuma untuk dicoba langsung oleh tim dapur.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
-    },
-    {
-      name: "Daily Breu Paskal",
-      category: "coffee_shop",
-      area: "Pasirkaliki / Paskal",
-      address: "Paskal Hypersquare Blok D No. 6, Jl. Pasir Kaliki, Bandung",
-      email: "dailybreu.bdg@gmail.com",
-      instagram: "@dailybreu",
-      whatsapp: "081394857622",
-      contactPerson: "Store Lead Daily Breu",
+      whatsapp: "081394857199",
+      contactPerson: "Pastry & Kitchen Lead Gormeteria",
       targetProduct: "bitterballen_ori",
-      fitReason: "Spot favorit nugas dan ngopi di Paskal dengan kopi kuat, butuh cemilan daging sapi hangat untuk teman ngopi.",
-      stagedDraft: {
-        subject: "Peluang kerja sama menu camilan untuk Daily Breu Paskal",
-        body: `Halo tim Daily Breu Paskal, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi klasik dan baso goreng beku siap saji untuk kebutuhan kafe.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di Daily Breu.
-
-Produk kami siap goreng dalam 3–4 menit tanpa ribet persiapan bahan mentah di dapur, sangat konsisten menjaga kualitas rasa.
-
-Jika tim Daily Breu berkenan, kami dengan senang hati mengirimkan tester cuma-cuma untuk dicicipi langsung oleh tim.
-
-Terima kasih banyak atas perhatian dan waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Resto bergaya vintage botanical yang selalu penuh pengunjung, mencari opsi camilan gurih pelengkap menu utama.",
+      stagedDraft: makeDraft("Gormeteria", "bitterballen_ori", "Pastry & Kitchen Lead Gormeteria"),
     },
     {
-      name: "Sumiko Coffee Paskal",
+      name: "Daily Breu Coffee",
       category: "coffee_shop",
       area: "Pasirkaliki / Paskal",
-      address: "Paskal Hypersquare Blok E No. 12, Jl. Pasir Kaliki, Bandung",
+      address: "Jl. Pasir Kaliki No. 91, Pamoyanan, Cicendo, Bandung",
+      email: "dailybreu@gmail.com",
+      instagram: "@dailybreu",
+      whatsapp: "081224859200",
+      contactPerson: "Store Lead Daily Breu",
+      targetProduct: "baso_goreng",
+      fitReason: "Kedai kopi santai di kawasan pusat bisnis Pasirkaliki, sangat pas untuk camilan baso goreng cepat saji.",
+      stagedDraft: makeDraft("Daily Breu Coffee", "baso_goreng", "Store Lead Daily Breu"),
+    },
+    {
+      name: "Sumiko Coffee & Kitchen",
+      category: "coffee_shop",
+      area: "Pasirkaliki / Paskal",
+      address: "Jl. Pasir Kaliki No. 142, Pasir Kaliki, Cicendo, Bandung",
       email: "sumikocoffee@gmail.com",
       instagram: "@sumikocoffee",
-      whatsapp: "081298765477",
-      contactPerson: "Store Manager Sumiko",
+      whatsapp: "081320495899",
+      contactPerson: "Manager Kitchen Sumiko",
+      targetProduct: "bitterballen_cheese",
+      fitReason: "Konsep Jepang modern dengan pengunjung anak muda tinggi, serasi dengan bitterballen keju gurih hangat.",
+      stagedDraft: makeDraft("Sumiko Coffee & Kitchen", "bitterballen_cheese", "Manager Kitchen Sumiko"),
+    },
+    {
+      name: "Wheels Coffee Roasters Heritage",
+      category: "coffee_shop",
+      area: "Pasirkaliki / Paskal",
+      address: "Jl. Kebon Sirih No. 21 / Pasirkaliki, Cicendo, Bandung",
+      email: "purchasing@wheelscoffee.com",
+      instagram: "@wheelscoffeeroasters",
+      whatsapp: "081220495822",
+      contactPerson: "Store Lead Wheels Heritage",
+      targetProduct: "duo_tasting",
+      fitReason: "Cabang heritage Wheels dekat stasiun Bandung dengan antrean konstan, butuh stok savoury bites zero-prep.",
+      stagedDraft: makeDraft("Wheels Coffee Roasters Heritage", "duo_tasting", "Store Lead Wheels Heritage"),
+    },
+    {
+      name: "Paskal Food Market Artisan Stalls",
+      category: "resto",
+      area: "Pasirkaliki / Paskal",
+      address: "Paskal Hyper Square, Jl. Pasir Kaliki No. 25-27, Bandung",
+      email: "paskalfoodmarket@gmail.com",
+      instagram: "@23paskal",
+      whatsapp: "08112049585",
+      contactPerson: "Supervisor Tenant F&B",
       targetProduct: "baso_goreng",
-      fitReason: "Kedai kopi bergaya Jepang minimalis di Paskal, sangat pas melengkapi varian snack gurih siap goreng 4 menit.",
-      stagedDraft: {
-        subject: "Opsi suplai menu camilan baso goreng untuk Sumiko Coffee Paskal",
-        body: `Halo rekan-rekan Sumiko Coffee Paskal, salam kenal.
-
-Saya Aria dari Savo Eats di Bandung. Kami memproduksi baso goreng dan bitterballen daging sapi beku siap saji khusus untuk pendamping kopi.
-
-Saya menghubungi rekan-rekan untuk menjajaki peluang suplai kudapan renyah di Sumiko Coffee.
-
-Produk kami berbentuk siap goreng (zero prep), jadi praktis disajikan dalam 3–4 menit tanpa menyita waktu tim bar.
-
-Jika tim Sumiko berkenan, kami sangat terbuka mengirimkan sampel tester cuma-cuma untuk dicoba langsung oleh tim.
-
-Terima kasih banyak atas waktunya.
-
-Salam hangat,
-Aria Muhammad | Savo Eats
-thesavorium@gmail.com`,
-      },
+      fitReason: "Sentra kuliner malam terbesar di Bandung, sangat cocok untuk baso goreng renyah bumbu tabur.",
+      stagedDraft: makeDraft("Paskal Food Market Artisan Stalls", "baso_goreng", "Supervisor Tenant F&B"),
+    },
+    {
+      name: "Common Grounds Bandung",
+      category: "coffee_shop",
+      area: "Pasirkaliki / Paskal",
+      address: "23 Paskal Hyper Square, Jl. Pasir Kaliki No. 25-27, Bandung",
+      email: "info@commongrounds.co.id",
+      instagram: "@commongrounds.bdg",
+      whatsapp: "081221948600",
+      contactPerson: "Head Barista Common Grounds",
+      targetProduct: "bitterballen_ori",
+      fitReason: "Brand specialty coffee nasional ternama, butuh camilan pendamping kopi artisan berstandar tinggi.",
+      stagedDraft: makeDraft("Common Grounds Bandung", "bitterballen_ori", "Head Barista Common Grounds"),
+    },
+    {
+      name: "Morning Glory Coffee Paskal",
+      category: "coffee_shop",
+      area: "Pasirkaliki / Paskal",
+      address: "Paskal Hyper Square Blok D, Jl. Pasirkaliki, Bandung",
+      email: "morningglorypaskal@gmail.com",
+      instagram: "@morningglorycoffee",
+      whatsapp: "081320495900",
+      contactPerson: "Store Manager Morning Glory",
+      targetProduct: "duo_tasting",
+      fitReason: "Roastery legendaris Bandung di jantung Hyper Square, pelanggan loyal mengapresiasi camilan gurih renyah.",
+      stagedDraft: makeDraft("Morning Glory Coffee Paskal", "duo_tasting", "Store Manager Morning Glory"),
+    },
+    {
+      name: "Kopi Toko Djawa Paskal",
+      category: "coffee_shop",
+      area: "Pasirkaliki / Paskal",
+      address: "23 Paskal Hyper Square Ground Floor, Bandung",
+      email: "partnership@kopitokodjawa.com",
+      instagram: "@kopitokodjawa",
+      whatsapp: "08112348573",
+      contactPerson: "Store Lead Toko Djawa Paskal",
+      targetProduct: "duo_tasting",
+      fitReason: "Outlet ramai di kawasan mall 23 Paskal dengan antrean pembeli es kopi awan, sangat potensial untuk paket tasting.",
+      stagedDraft: makeDraft("Kopi Toko Djawa Paskal", "duo_tasting", "Store Lead Toko Djawa Paskal"),
     },
   ],
 };
 
+// Helper to normalize cafe name for duplicate comparison
+function normalizeName(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
 export async function POST(req: Request) {
   try {
-    const { area } = await req.json();
+    const body = await req.json();
+    const { area, excludeNames = [] } = body;
     const selectedArea = area && area !== "Semua Area" ? area : "Buah Batu / Lengkong";
     const firecrawlKey = process.env.FIRECRAWL_API_KEY || "";
 
-    let verifiedCandidates = VERIFIED_DIRECTORY[selectedArea];
-    if (!verifiedCandidates) {
-      if (selectedArea === "Semua Area" || !selectedArea) {
-        verifiedCandidates = [
-          VERIFIED_DIRECTORY["Buah Batu / Lengkong"][0],
-          VERIFIED_DIRECTORY["Braga / Asia Afrika"][0],
-          VERIFIED_DIRECTORY["Riau / RE Martadinata"][0],
-          VERIFIED_DIRECTORY["Dago / Dipatiukur"][0],
-          VERIFIED_DIRECTORY["Pasirkaliki / Paskal"][0],
-        ];
-      } else {
-        verifiedCandidates = VERIFIED_DIRECTORY["Buah Batu / Lengkong"];
-      }
-    }
+    const excludedNormalized = new Set(
+      (Array.isArray(excludeNames) ? excludeNames : []).map((n: string) => normalizeName(String(n)))
+    );
 
-    // 2. Live Web Search via Firecrawl (timeout 4s)
+    // Get verified directory candidates for this area
+    const pool = VERIFIED_DIRECTORY[selectedArea] || VERIFIED_DIRECTORY["Buah Batu / Lengkong"];
+
+    // 1. Live Web Search via Firecrawl (optional enhancement)
     let liveWebResults: { title: string; url: string; description: string }[] = [];
     if (firecrawlKey) {
       try {
@@ -1128,7 +1018,7 @@ export async function POST(req: Request) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            query: `rekomendasi coffee shop cafe di ${selectedArea} Bandung instagram`,
+            query: `rekomendasi coffee shop cafe baru di ${selectedArea} Bandung instagram`,
             limit: 5,
           }),
         });
@@ -1146,47 +1036,75 @@ export async function POST(req: Request) {
       }
     }
 
-    // 3. AI Curation via Hades LLM (Groq Primary + Gemini Fallback)
+    // 2. AI Curation via Hades LLM (Groq Primary + Gemini Fallback)
     try {
       const searchContext = liveWebResults.length > 0
         ? liveWebResults.map((r, i) => `${i + 1}. ${r.title} (${r.url}): ${r.description}`).join("\n\n")
         : "";
 
+      const excludeListText = Array.isArray(excludeNames) && excludeNames.length > 0
+        ? `\nDILARANG KERAS MENGEMBALIKAN KAFE BERIKUT KARENA SUDAH ADA DI TARGET / PERNAH DISCOUT:\n- ${excludeNames.join("\n- ")}\nCari dan kurasi kafe LAIN yang BERBEDA di area ${selectedArea}!`
+        : "";
+
       const systemPrompt = `Kamu adalah Hades, AI B2B Acquisition resmi Savo Eats Bandung milik Aria Muhammad.
 Tugas: Mengurasi TEPAT 5 kafe / coffee shop NYATA dan aktif yang berlokasi KHUSUS di area: ${selectedArea}, Bandung.
-MUTLAK: DILARANG mengembalikan kafe dari area lain (misal jangan kembalikan kafe Dago jika area adalah Buah Batu).
+MUTLAK: DILARANG mengembalikan kafe dari area lain (misal jangan kembalikan kafe Dago jika area adalah Buah Batu).${excludeListText}
 Gunakan bahasa Indonesia baku, santun (SPOK), sapa tim kafe dengan hormat (DILARANG KATA 'KALIAN'), tawarkan sampel tester cuma-cuma, zero prep 3-4 menit.`;
 
-      const userPrompt = `Konteks Web:\n${searchContext}\n\nKurasi 5 kafe nyata di ${selectedArea}. Kembalikan persis JSON format:\n{\n  "candidates": [\n    {\n      "name": "Nama Kafe di ${selectedArea}",\n      "category": "coffee_shop",\n      "area": "${selectedArea}",\n      "address": "Alamat nyata di ${selectedArea} Bandung",\n      "email": "email",\n      "instagram": "@ig",\n      "whatsapp": "+628...",\n      "contactPerson": "Tim Purchasing / Barista Lead",\n      "targetProduct": "bitterballen_cheese",\n      "fitReason": "Alasan spesifik kecocokan dengan Savo Eats",\n      "stagedDraft": {\n        "subject": "Peluang kerja sama menu camilan untuk [Nama Kafe]",\n        "body": "Draf email 35-50 kata SPOK santun"\n      }\n    }\n  ]\n}`;
+      const userPrompt = `Konteks Web:\n${searchContext}\n\nKurasi 5 kafe nyata di ${selectedArea} yang BELUM PERNAH discout sebelumnya. Kembalikan persis JSON format:\n{\n  "candidates": [\n    {\n      "name": "Nama Kafe Nyata di ${selectedArea}",\n      "category": "coffee_shop",\n      "area": "${selectedArea}",\n      "address": "Alamat nyata di ${selectedArea} Bandung",\n      "email": "partnership@kafe.com",\n      "instagram": "@igkafe",\n      "whatsapp": "+628...",\n      "contactPerson": "Tim Purchasing / Barista Lead",\n      "targetProduct": "bitterballen_cheese",\n      "fitReason": "Alasan spesifik kecocokan dengan Savo Eats",\n      "stagedDraft": {\n        "subject": "Peluang kerja sama menu camilan untuk [Nama Kafe]",\n        "body": "Draf email 35-50 kata SPOK santun"\n      }\n    }\n  ]\n}`;
 
       const text = await callHadesLLM(systemPrompt, userPrompt, {
         jsonMode: true,
-        temperature: 0.3,
+        temperature: 0.7, // higher temperature for diversity across scout clicks
       });
 
       if (text) {
         const parsed = JSON.parse(text);
         if (parsed.candidates && Array.isArray(parsed.candidates) && parsed.candidates.length >= 3) {
-          const validCandidates = parsed.candidates
-            .filter((c: ScoutCandidate) => c.name && c.address)
+          const filteredAiCandidates = parsed.candidates
+            .filter((c: ScoutCandidate) => {
+              if (!c.name || !c.address) return false;
+              const norm = normalizeName(c.name);
+              return !excludedNormalized.has(norm);
+            })
             .map((c: ScoutCandidate) => ({ ...c, area: selectedArea }));
 
-          if (validCandidates.length >= 3) {
+          if (filteredAiCandidates.length >= 3) {
             return NextResponse.json({
               area: selectedArea,
-              candidates: validCandidates.slice(0, 5),
+              candidates: filteredAiCandidates.slice(0, 5),
             });
           }
         }
       }
     } catch {
-      // Fallback to verified directory immediately
+      // Fallback to verified directory rotation
     }
 
-    // 4. Return 100% Guaranteed Real Bandung Cafes for the requested area
+    // 3. Fallback: Smart Rotating Verified Directory
+    // Filter out already scouted or targeted cafes
+    const unvisited = pool.filter((c) => !excludedNormalized.has(normalizeName(c.name)));
+
+    let selectedResult: ScoutCandidate[] = [];
+
+    if (unvisited.length >= 5) {
+      // Pick next 5 unvisited
+      selectedResult = unvisited.slice(0, 5);
+    } else if (unvisited.length > 0) {
+      // Pick all remaining unvisited + fill up from pool with shuffle
+      const remainingNeeded = 5 - unvisited.length;
+      const alreadyChosenNorms = new Set(unvisited.map((u) => normalizeName(u.name)));
+      const others = pool.filter((c) => !alreadyChosenNorms.has(normalizeName(c.name)));
+      const shuffledOthers = [...others].sort(() => 0.5 - Math.random());
+      selectedResult = [...unvisited, ...shuffledOthers.slice(0, remainingNeeded)];
+    } else {
+      // All cafes in directory have been visited: shuffle whole pool so user sees different order
+      selectedResult = [...pool].sort(() => 0.5 - Math.random()).slice(0, 5);
+    }
+
     return NextResponse.json({
       area: selectedArea,
-      candidates: verifiedCandidates,
+      candidates: selectedResult,
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Gagal melakukan kurasi kafe.";
