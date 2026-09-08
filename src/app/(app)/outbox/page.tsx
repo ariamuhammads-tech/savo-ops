@@ -20,7 +20,6 @@ import {
 import {
   Lead,
   LeadStatus,
-  STATUS_CONFIG,
   PRODUCT_LABELS,
   getStoredLeads,
   updateStoredLeadStatus,
@@ -29,7 +28,6 @@ import {
 import { getStoredCatalog, CatalogItem } from "@/lib/catalog-data";
 import { PipelineStepper } from "@/components/pipeline-stepper";
 import { toast } from "sonner";
-import { AlertTriangle, Clock, MessageSquare, ArrowRight } from "lucide-react";
 
 interface AttachmentItem {
   id: string;

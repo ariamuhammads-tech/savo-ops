@@ -3,8 +3,7 @@ import Link from "next/link";
 import { ChevronRight, Plus, FileSpreadsheet } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
-import { formatIDR, formatDate, formatNumber } from "@/lib/format";
-import { Card } from "@/components/ui/card";
+import { formatIDR, formatDate } from "@/lib/format";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { FlashToast } from "@/components/flash-toast";
 import { PipelineStepper } from "@/components/pipeline-stepper";

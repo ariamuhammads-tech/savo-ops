@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
   Mail,
   Building2,
   Package,
@@ -17,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { SavoLogo, SavoMark } from "@/components/savo-logo";
+import { SavoLogo } from "@/components/savo-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 type NavItem = { href: string; label: string; icon: LucideIcon; badge?: string };
@@ -40,41 +39,6 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-function NavLink({
-  item,
-  active,
-  onClick,
-}: {
-  item: NavItem;
-  active: boolean;
-  onClick?: () => void;
-}) {
-  const Icon = item.icon;
-  return (
-    <Link
-      href={item.href}
-      onClick={onClick}
-      aria-current={active ? "page" : undefined}
-      className={cn(
-        "group flex items-center justify-between px-3 py-2 text-sm font-sans transition-colors",
-        active
-          ? "text-foreground font-semibold border-l-2 border-foreground bg-muted/20"
-          : "text-muted-foreground hover:text-foreground font-normal"
-      )}
-    >
-      <div className="flex items-center gap-2.5">
-        <Icon className={cn("size-3.5 shrink-0", active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")} />
-        <span>{item.label}</span>
-      </div>
-      {item.badge && (
-        <span className="text-xs font-mono text-muted-foreground">
-          {item.badge}
-        </span>
-      )}
-    </Link>
-  );
-}
-
 function SignOutButton({ className }: { className?: string }) {
   return (
     <form action="/auth/signout" method="post" className={className}>
@@ -91,7 +55,7 @@ function SignOutButton({ className }: { className?: string }) {
 
 export function AppShell({
   children,
-  userEmail,
+  userEmail: _userEmail,
 }: {
   children: React.ReactNode;
   userEmail?: string | null;

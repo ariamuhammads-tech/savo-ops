@@ -11,7 +11,6 @@ import {
   Square,
   X,
   ArrowRight,
-  FileText,
 } from "lucide-react";
 import {
   Lead,
@@ -233,7 +232,7 @@ export default function TargetKafePage() {
             Target Kafe Bandung
           </h1>
           <p className="text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
-            Tentukan kafe sasaran penawaran. Klik tombol <strong className="text-foreground font-semibold">"Siapkan Penawaran"</strong> pada kafe yang siap untuk meninjau draf email di Tahap 2, atau cari target kafe baru via Hades Scout.
+            Tentukan kafe sasaran penawaran. Klik tombol <strong className="text-foreground font-semibold">&ldquo;Siapkan Penawaran&rdquo;</strong> pada kafe yang siap untuk meninjau draf email di Tahap 2, atau cari target kafe baru via Hades Scout.
           </p>
         </div>
 
@@ -498,7 +497,7 @@ export default function TargetKafePage() {
                           </span>
                         </div>
                         <p className="text-muted-foreground">{c.email} · {c.whatsapp}</p>
-                        <p className="text-[11.5px] text-muted-foreground italic">"{c.fitReason}"</p>
+                        <p className="text-[11.5px] text-muted-foreground italic">&ldquo;{c.fitReason}&rdquo;</p>
                       </div>
                     </div>
                   );

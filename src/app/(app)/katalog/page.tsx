@@ -3,15 +3,9 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  Edit3,
-  Check,
-  X,
   Upload,
-  Trash2,
   ImageIcon,
   RotateCcw,
-  Sparkles,
-  Camera,
   ArrowRight,
 } from "lucide-react";
 import {
