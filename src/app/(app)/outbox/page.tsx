@@ -27,8 +27,9 @@ import {
   getLeadAgingNotice,
 } from "@/lib/leads-data";
 import { getStoredCatalog, CatalogItem } from "@/lib/catalog-data";
+import { PipelineStepper } from "@/components/pipeline-stepper";
 import { toast } from "sonner";
-import { AlertTriangle, Clock, MessageSquare } from "lucide-react";
+import { AlertTriangle, Clock, MessageSquare, ArrowRight } from "lucide-react";
 
 interface AttachmentItem {
   id: string;
@@ -271,13 +272,28 @@ export default function OutboxPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const stagedCount = leads.filter((l) => l.status === "staged").length;
+  const sentCount = leads.filter((l) => l.status === "sent").length;
+  const partnerCount = leads.filter((l) => l.status === "partner").length;
+
   return (
-    <div className="content-container space-y-8">
+    <div className="content-container space-y-10">
+      {/* 4-Step Pipeline Stepper */}
+      <PipelineStepper
+        currentStep={2}
+        stats={{
+          targetCount: leads.length,
+          stagedCount,
+          sentCount,
+          dealCount: partnerCount,
+        }}
+      />
+
       {/* Header */}
-      <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
+      <div className="border-b border-border/40 pb-6 flex flex-wrap items-baseline justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span>Draf &amp; Pengiriman Email B2B</span>
+            <span>Tahap 2 dari 4 · Draf Penawaran B2B</span>
             <span>·</span>
             <span
               className={
@@ -289,12 +305,28 @@ export default function OutboxPage() {
               Kuota Hari Ini: {sentTodayCount}/5 Terkirim
             </span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground mt-1">
-            Persetujuan Draf Penawaran
+          <h1 className="text-2xl md:text-3xl font-medium tracking-tight text-foreground mt-1">
+            Draf Penawaran B2B
           </h1>
-          <p className="text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
-            Periksa dan sesuaikan draf penawaran B2B sebelum dikirim langsung melalui thesavorium@gmail.com.
+          <p className="text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
+            Tinjau draf email penawaran sesama pelaku usaha Bandung untuk kafe yang dipilih di Tahap 1. Setelah email terkirim, status kafe otomatis dipantau di Tahap 3 (Follow-Up).
           </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+          >
+            <span>← Kembali ke Target</span>
+          </Link>
+          <span className="text-muted-foreground/40">·</span>
+          <Link
+            href="/follow-up"
+            className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+          >
+            <span>Lanjut ke Follow-Up →</span>
+          </Link>
         </div>
       </div>
 

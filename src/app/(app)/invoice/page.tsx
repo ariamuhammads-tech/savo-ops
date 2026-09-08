@@ -7,6 +7,7 @@ import { formatIDR, formatDate, formatNumber } from "@/lib/format";
 import { Card } from "@/components/ui/card";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { FlashToast } from "@/components/flash-toast";
+import { PipelineStepper } from "@/components/pipeline-stepper";
 
 export const dynamic = "force-dynamic";
 
@@ -56,24 +57,38 @@ export default async function InvoicePage() {
   }
 
   return (
-    <div className="content-container space-y-8">
+    <div className="content-container space-y-10">
       <Suspense fallback={null}>
         <FlashToast />
       </Suspense>
 
+      {/* 4-Step Pipeline Stepper */}
+      <PipelineStepper
+        currentStep={4}
+        stats={{
+          dealCount: invoices.length,
+        }}
+      />
+
       <div className="flex flex-col gap-4 sm:flex-row sm:items-baseline sm:justify-between border-b border-border/40 pb-6">
         <div>
           <span className="text-xs text-muted-foreground">
-            Sistem Finansial B2B · Wholesale Invoicing
+            Tahap 4 dari 4 · Kesepakatan &amp; Invoicing Grosir B2B
           </span>
           <h1 className="text-2xl md:text-3xl font-medium tracking-tight text-foreground mt-1">
-            Invoice Penjualan
+            Deal &amp; Invoice B2B
           </h1>
-          <p className="text-xs text-muted-foreground mt-1">
-            {formatNumber(invoices.length)} invoice tercatat dalam sistem
+          <p className="text-sm text-muted-foreground mt-1.5 max-w-2xl leading-relaxed">
+            Terbitkan invoice penjualan grosir resmi untuk kafe mitra di Bandung. Dilengkapi preset harga Bitterballen &amp; Baso Goreng serta unduh PDF langsung.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/follow-up"
+            className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1 transition-colors"
+          >
+            <span>← Kembali ke Follow-Up</span>
+          </Link>
           <Link
             href="/invoice/baru"
             className="inline-flex items-center gap-2 rounded-full bg-foreground text-background px-5 py-2 text-xs font-medium hover:opacity-90 transition-opacity"

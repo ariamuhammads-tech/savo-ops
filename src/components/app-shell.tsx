@@ -9,6 +9,7 @@ import {
   Building2,
   Package,
   ReceiptText,
+  MessageSquare,
   LogOut,
   Menu as MenuIcon,
   X,
@@ -21,13 +22,18 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 type NavItem = { href: string; label: string; icon: LucideIcon; badge?: string };
 
-const NAVIGATION: NavItem[] = [
-  { href: "/", label: "HQ", icon: LayoutDashboard },
-  { href: "/outbox", label: "Outbox", icon: Mail },
-  { href: "/leads", label: "Prospek", icon: Building2 },
-  { href: "/katalog", label: "Katalog", icon: Package },
-  { href: "/invoice", label: "Invoice", icon: ReceiptText },
+const PIPELINE_NAVIGATION: NavItem[] = [
+  { href: "/", label: "1. Target Kafe", icon: Building2 },
+  { href: "/outbox", label: "2. Draf Penawaran", icon: Mail },
+  { href: "/follow-up", label: "3. Follow-Up", icon: MessageSquare },
+  { href: "/invoice", label: "4. Deal & Invoice", icon: ReceiptText },
 ];
+
+const UTILITY_NAVIGATION: NavItem[] = [
+  { href: "/katalog", label: "Katalog", icon: Package },
+];
+
+const ALL_NAVIGATION = [...PIPELINE_NAVIGATION, ...UTILITY_NAVIGATION];
 
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -99,17 +105,39 @@ export function AppShell({
       {/* Top Architectural Navigation Bar */}
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-md">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-6 lg:px-8">
-          {/* Brand */}
-          <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-              <SavoMark className="h-4.5 w-auto text-foreground" />
-              <span className="font-semibold text-[13.5px] tracking-tight text-foreground">Savo Eats</span>
+          {/* Brand: Master Original SAVO Vector Logo */}
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+              <SavoLogo className="h-5 w-auto text-foreground" />
             </Link>
           </div>
 
-          {/* Center: Clean Minimal Navigation Links */}
-          <nav className="hidden md:flex items-center h-full gap-7">
-            {NAVIGATION.map((item) => {
+          {/* Center: Pipeline 4-Stage Sequential Navigation */}
+          <nav className="hidden md:flex items-center h-full gap-5 lg:gap-7">
+            {PIPELINE_NAVIGATION.map((item) => {
+              const active = isActive(pathname, item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "relative flex items-center h-full text-[13px] tracking-tight transition-colors",
+                    active
+                      ? "text-foreground font-medium"
+                      : "text-muted-foreground hover:text-foreground font-normal"
+                  )}
+                >
+                  <span>{item.label}</span>
+                  {active && (
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-foreground" />
+                  )}
+                </Link>
+              );
+            })}
+
+            <div className="h-3.5 w-px bg-border/40 my-auto hidden lg:block" />
+
+            {UTILITY_NAVIGATION.map((item) => {
               const active = isActive(pathname, item.href);
               return (
                 <Link
@@ -170,9 +198,8 @@ export function AppShell({
           />
           <div className="absolute right-0 top-0 flex h-full w-72 flex-col bg-background shadow-2xl p-5 border-l border-border animate-in slide-in-from-right duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-border">
-              <div className="flex items-center gap-2">
-                <SavoMark className="h-5 w-auto text-primary" />
-                <span className="font-mono text-xs font-bold tracking-wider">SAVO OPS</span>
+              <div className="flex items-center">
+                <SavoLogo className="h-5 w-auto text-foreground" />
               </div>
               <button
                 type="button"
@@ -183,7 +210,7 @@ export function AppShell({
               </button>
             </div>
             <nav className="mt-4 space-y-1">
-              {NAVIGATION.map((item) => {
+              {ALL_NAVIGATION.map((item) => {
                 const active = isActive(pathname, item.href);
                 const Icon = item.icon;
                 return (
@@ -228,7 +255,7 @@ export function AppShell({
 
       {/* Mobile Bottom Tab Bar (Apple HIG 5-Tab Bar with Safe Area) */}
       <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-background/95 backdrop-blur-md pb-[env(safe-area-inset-bottom,0px)] md:hidden">
-        {NAVIGATION.map((item) => {
+        {ALL_NAVIGATION.map((item) => {
           const active = isActive(pathname, item.href);
           const Icon = item.icon;
           return (
