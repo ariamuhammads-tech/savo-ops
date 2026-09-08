@@ -305,7 +305,7 @@ export default function LeadsPage() {
               setShowScoutModal(true);
               if (scoutCandidates.length === 0) handleRunScout(scoutArea);
             }}
-            className="apple-btn-primary"
+            className="bg-foreground text-background font-mono text-xs font-semibold px-4 py-2 hover:opacity-90 inline-flex items-center gap-1.5 transition-opacity cursor-pointer"
           >
             <Sparkles className="size-3.5" />
             <span>Hades Scout 5 Kafe</span>
@@ -314,7 +314,7 @@ export default function LeadsPage() {
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="apple-btn-secondary"
+            className="border border-border hover:bg-secondary font-mono text-xs text-foreground px-4 py-2 inline-flex items-center gap-1.5 transition-colors cursor-pointer"
           >
             <Plus className="size-3.5" />
             <span>Tambah Manual</span>
@@ -331,7 +331,7 @@ export default function LeadsPage() {
             placeholder="Cari nama kafe atau email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-md border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors"
+            className="w-full border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors"
           />
         </div>
 
@@ -340,7 +340,7 @@ export default function LeadsPage() {
           <select
             value={selectedArea}
             onChange={(e) => setSelectedArea(e.target.value)}
-            className="w-full rounded-md border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors font-mono"
+            className="w-full border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors font-mono"
           >
             {BANDUNG_AREAS.map((area) => (
               <option key={area} value={area}>
@@ -355,7 +355,7 @@ export default function LeadsPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full rounded-md border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors font-mono"
+            className="w-full border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors font-mono"
           >
             <option value="all">Semua Status Email</option>
             <option value="needs_followup">⚠️ Butuh Follow-Up (Hening ≥ 4 Hari)</option>

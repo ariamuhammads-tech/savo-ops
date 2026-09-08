@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -81,83 +81,87 @@ export default function DashboardHadesPage() {
 
       {/* Aura Expansive Content Arena */}
       <div className="content-container space-y-12">
-        {/* Compact Standards Ribbon (6 Metrik Pipeline) */}
+        {/* Architectural Standards Ribbon (Zero Box, Continuous Datum Ticker) */}
         <section>
-          <div className="flex items-baseline justify-between mb-4">
-            <h2 className="text-xs font-mono font-bold uppercase tracking-[0.14em] text-foreground">
-              Pipeline Metrik Akuisisi Bandung
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-muted-foreground">
+              PIPELINE METRIK // LIVE DATA
             </h2>
-            <span className="text-[11px] font-mono text-muted-foreground">
-              Live Pipeline Data
+            <span className="text-[10.5px] font-mono text-muted-foreground/60">
+              BANDUNG WHOLESALE SUPPLY
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-            <div className="border border-border rounded-lg p-4 bg-background hover:border-foreground transition-all">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block">
-                Prospek
+          <div className="border-y border-border divide-y divide-border sm:divide-y-0 sm:divide-x divide-border grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+            <div className="py-6 px-4 lg:px-6">
+              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground block">
+                01 // PROSPEK
               </span>
-              <p className="text-3xl font-extrabold tracking-tight text-foreground my-1">
+              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-foreground my-2">
                 {totalCount}
               </p>
-              <span className="text-[11px] text-muted-foreground block font-mono">Terkurasi BDG</span>
+              <span className="text-[10.5px] text-muted-foreground font-mono block">
+                Terkurasi BDG
+              </span>
             </div>
 
-            <div className="border border-amber-500/30 rounded-lg p-4 bg-amber-500/5 hover:border-amber-500 transition-all">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400 block">
-                Draf Antrean
+            <div className="py-6 px-4 lg:px-6">
+              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400 block">
+                02 // ANTREAN
               </span>
-              <p className="text-3xl font-extrabold tracking-tight text-amber-800 dark:text-amber-300 my-1">
+              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-amber-700 dark:text-amber-400 my-2">
                 {stagedCount}
               </p>
-              <span className="text-[11px] text-amber-700/80 dark:text-amber-400/80 block font-mono">Perlu dicek</span>
+              <span className="text-[10.5px] text-muted-foreground font-mono block">
+                Perlu Tinjauan
+              </span>
             </div>
 
-            <div className="border border-border rounded-lg p-4 bg-background hover:border-foreground transition-all">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block">
-                Terkirim
+            <div className="py-6 px-4 lg:px-6">
+              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground block">
+                03 // TERKIRIM
               </span>
-              <p className="text-3xl font-extrabold tracking-tight text-foreground my-1">
+              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-foreground my-2">
                 {sentCount}
               </p>
-              <span className="text-[11px] text-muted-foreground block font-mono">Menunggu respon</span>
+              <span className="text-[10.5px] text-muted-foreground font-mono block">
+                Menunggu Respon
+              </span>
             </div>
 
-            <div className={`border rounded-lg p-4 transition-all ${needsFollowUpCount > 0 ? "border-amber-500 bg-amber-500/10" : "border-border bg-background hover:border-foreground"}`}>
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300 flex items-center gap-1">
-                <AlertTriangle className="size-3 text-amber-600" />
-                Hening ≥4H
+            <div className="py-6 px-4 lg:px-6">
+              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-amber-800 dark:text-amber-300 block">
+                04 // HENING ≥4H
               </span>
-              <p className={`text-3xl font-extrabold tracking-tight my-1 ${needsFollowUpCount > 0 ? "text-amber-600 dark:text-amber-400 animate-pulse" : "text-foreground"}`}>
+              <p className={`text-4xl lg:text-5xl font-extrabold tracking-tighter my-2 ${needsFollowUpCount > 0 ? "text-amber-600 dark:text-amber-400" : "text-foreground"}`}>
                 {needsFollowUpCount}
               </p>
-              <span className="text-[11px] text-amber-800/80 dark:text-amber-300/80 block font-mono font-medium">
-                {needsFollowUpCount > 0 ? "Butuh Nudge" : "Nihil"}
+              <span className="text-[10.5px] text-muted-foreground font-mono block">
+                {needsFollowUpCount > 0 ? "Perlu Nudge" : "Nihil"}
               </span>
             </div>
 
-            <div className="border border-emerald-500/30 rounded-lg p-4 bg-emerald-500/5 hover:border-emerald-500 transition-all">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-emerald-700 dark:text-emerald-400 flex items-center gap-1">
-                <MessageSquare className="size-3 text-emerald-600" />
-                Respon
+            <div className="py-6 px-4 lg:px-6">
+              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-400 block">
+                05 // RESPON
               </span>
-              <p className="text-3xl font-extrabold tracking-tight text-emerald-700 dark:text-emerald-300 my-1">
+              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-emerald-700 dark:text-emerald-400 my-2">
                 {repliedCount}
               </p>
-              <span className="text-[11px] text-emerald-700/80 dark:text-emerald-400/80 block font-mono font-medium">
+              <span className="text-[10.5px] text-muted-foreground font-mono block">
                 Email & WA
               </span>
             </div>
 
-            <div className="border border-border rounded-lg p-4 bg-background hover:border-foreground transition-all">
-              <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-muted-foreground block">
-                Mitra Aktif
+            <div className="py-6 px-4 lg:px-6">
+              <span className="text-[10px] font-mono uppercase tracking-[0.16em] text-muted-foreground block">
+                06 // MITRA
               </span>
-              <p className="text-3xl font-extrabold tracking-tight text-foreground my-1">
+              <p className="text-4xl lg:text-5xl font-extrabold tracking-tighter text-foreground my-2">
                 {partnerCount}
               </p>
-              <span className="text-[11px] text-emerald-600 dark:text-emerald-400 block font-mono font-medium">
-                Repeat order
+              <span className="text-[10.5px] text-muted-foreground font-mono block">
+                Repeat Order
               </span>
             </div>
           </div>

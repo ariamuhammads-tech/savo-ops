@@ -171,25 +171,20 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Notice Banner: Hening >= 4 Hari (Perlu Follow-up) */}
+    <div className="space-y-8">
+      {/* Notice Ticker: Hening >= 4 Hari (Pure Typographic Strip - Zero Box) */}
       {needsFollowUpLeads.length > 0 && (
-        <div className="p-4 rounded-xl border border-amber-400 bg-amber-500/10 dark:bg-amber-950/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="py-4 border-y border-amber-500/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-start gap-3">
-            <div className="size-8 rounded-lg bg-amber-500/20 text-amber-800 dark:text-amber-200 flex items-center justify-center shrink-0 mt-0.5">
-              <AlertTriangle className="size-4" />
-            </div>
+            <AlertTriangle className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-display text-sm font-bold text-amber-900 dark:text-amber-200">
-                  Notice Hades: {needsFollowUpLeads.length} Kafe Belum Membalas (Hening ≥ 4 Hari)
-                </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-200 dark:bg-amber-900 text-amber-900 dark:text-amber-100">
-                  Perlu Nudge
+                <span className="font-mono text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">
+                  NOTICE HADES // {needsFollowUpLeads.length} KAFE HENING ≥ 4 HARI
                 </span>
               </div>
-              <p className="text-xs text-amber-800/90 dark:text-amber-300/90 mt-1 leading-relaxed">
-                Kafe-kafe ini telah dikirimkan email penawaran sample tester 4–7 hari lalu tanpa respon. Anda dapat memicu draf *gentle follow-up* otomatis atau menandai jika mereka telah membalas via WA/Email.
+              <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
+                Kafe telah dikirimi email penawaran sample tester 4–7 hari lalu tanpa respon. Anda dapat memicu draf gentle follow-up atau menandai balasan.
               </p>
             </div>
           </div>
@@ -197,74 +192,72 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
           <div className="flex items-center gap-2 shrink-0">
             <Link
               href="#section-tracking-terkirim"
-              className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-amber-600 hover:bg-amber-700 text-white transition-colors inline-flex items-center gap-1.5 shadow-xs"
+              className="font-mono text-xs font-bold text-amber-700 dark:text-amber-400 hover:underline inline-flex items-center gap-1 shrink-0"
             >
-              Lihat Kafe Hening
+              <span>Lihat Kafe Hening</span>
               <ArrowRight className="size-3" />
             </Link>
           </div>
         </div>
       )}
 
-
-
-      {/* Staged Items List */}
+      {/* Staged Items List (Open Hairline Index - Zero Box) */}
       {stagedLeads.length === 0 ? (
-        <div className="p-8 text-center border border-dashed border-border rounded-xl">
-          <CheckCircle2 className="mx-auto size-8 text-emerald-600 mb-2" />
-          <p className="font-display text-base font-bold text-foreground">
-            Semua Draf Email Sudah Disetujui
+        <div className="py-16 text-center border-y border-border">
+          <CheckCircle2 className="mx-auto size-6 text-emerald-600 mb-2" />
+          <p className="font-mono text-xs uppercase tracking-widest text-foreground font-bold">
+            SEMUA DRAF EMAIL TELAH DISETUJUI
           </p>
           <p className="text-xs text-muted-foreground mt-1">
-            Tidak ada antrean email tertunda saat ini. Anda bisa meminta Hades menyusun draf baru untuk kafe lain.
+            Tidak ada antrean email tertunda saat ini. Gunakan Hades Scout atau Konsol Perintah untuk menambah target baru.
           </p>
         </div>
       ) : (
         <div className="divide-y divide-border border-t border-b border-border">
-          {stagedLeads.map((lead) => {
+          {stagedLeads.map((lead, idx) => {
             const isExpanded = expandedId === lead.id;
             const isSending = sendingId === lead.id;
 
             return (
               <div
                 key={lead.id}
-                className="py-5 px-2 hover:bg-secondary/20 transition-colors"
+                className="py-6 transition-colors"
               >
                 {/* Row Header */}
                 <div className="space-y-3">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+                      <div className="flex items-center gap-2 font-mono text-[10.5px] text-muted-foreground">
+                        <span className="font-bold text-foreground">
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+                        <span>//</span>
+                        <span className="uppercase tracking-wider text-foreground font-semibold">
                           {lead.area}
                         </span>
-                        <span className="text-border">•</span>
-                        <span className="text-xs text-muted-foreground">{lead.email}</span>
+                        <span>•</span>
+                        <span>{lead.email}</span>
                       </div>
-                      <h3 className="font-display text-lg font-bold tracking-tight text-foreground">
+                      <h3 className="font-display text-2xl font-bold tracking-tight text-foreground">
                         {lead.name}
                       </h3>
                     </div>
 
-                    <span
-                      className={`text-[11px] font-medium px-2.5 py-0.5 rounded-md border ${
-                        STATUS_CONFIG[lead.status].badgeClass
-                      }`}
-                    >
-                      {STATUS_CONFIG[lead.status].label}
+                    <span className="font-mono text-[10.5px] uppercase tracking-wider text-amber-700 dark:text-amber-400 font-bold">
+                      ● STAGED REVIEW
                     </span>
                   </div>
 
                   {/* Target Product & Subjek */}
-                  <div className="pt-2 border-t border-border/50 text-xs space-y-1.5">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <span className="font-semibold text-foreground">Target Produk:</span>
+                  <div className="pt-2 border-t border-border/50 text-xs flex flex-wrap items-baseline gap-x-6 gap-y-1 text-muted-foreground">
+                    <div>
+                      <span className="font-mono font-bold text-foreground uppercase text-[10.5px]">PRODUK:</span>{" "}
                       <span>{PRODUCT_LABELS[lead.targetProduct]}</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                      <span className="font-semibold text-foreground shrink-0">Subjek:</span>
-                      <span className="font-medium text-foreground/90">
-                        {lead.stagedDraft.subject}
+                      <span className="font-mono font-bold text-foreground uppercase text-[10.5px]">SUBJEK:</span>
+                      <span className="text-foreground font-medium">
+                        &ldquo;{lead.stagedDraft.subject}&rdquo;
                       </span>
                     </div>
                   </div>
@@ -274,40 +267,40 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                     <button
                       type="button"
                       onClick={() => setExpandedId(isExpanded ? null : lead.id)}
-                      className="text-xs font-semibold text-primary inline-flex items-center gap-1 hover:underline"
+                      className="font-mono text-[11px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1 cursor-pointer transition-colors"
                     >
                       {isExpanded ? (
                         <>
                           <ChevronUp className="size-3.5" />
-                          Sembunyikan Isi Email
+                          <span>SEMBUNYIKAN MANUSKRIP EMAIL</span>
                         </>
                       ) : (
                         <>
                           <ChevronDown className="size-3.5" />
-                          Lihat Draf Isi Email Lengkap
+                          <span>BACA MANUSKRIP EMAIL LENGKAP →</span>
                         </>
                       )}
                     </button>
 
                     {isExpanded && (
-                      <div className="mt-3 p-4 rounded-lg bg-secondary/50 border border-border/60 text-xs leading-relaxed whitespace-pre-line font-mono text-foreground/90">
+                      <div className="mt-4 pl-6 border-l-2 border-foreground py-2 text-xs leading-relaxed whitespace-pre-line font-mono text-foreground/90 bg-muted/10">
                         {lead.stagedDraft.body}
                       </div>
                     )}
                   </div>
 
                   {/* Action Buttons Bar */}
-                  <div className="pt-3 border-t border-border/60 flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="pt-4 border-t border-border/60 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
                       <Mail className="size-3.5" />
-                      <span>Kirim dari: <strong className="text-foreground">thesavorium@gmail.com</strong></span>
+                      <span>SMTP SENDER: <strong className="text-foreground">thesavorium@gmail.com</strong></span>
                     </div>
 
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-3">
                       <button
                         type="button"
                         onClick={() => handleCopy(lead.stagedDraft.body, lead.id)}
-                        className="apple-btn-secondary px-3 py-2 text-xs inline-flex items-center gap-1.5 cursor-pointer"
+                        className="font-mono text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 cursor-pointer py-2 px-3 border border-border hover:bg-secondary/40 transition-colors"
                       >
                         {copiedId === lead.id ? (
                           <>
@@ -317,7 +310,7 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                         ) : (
                           <>
                             <Copy className="size-3.5" />
-                            <span>Salin Draf</span>
+                            <span>Salin Teks</span>
                           </>
                         )}
                       </button>
@@ -326,17 +319,17 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                         type="button"
                         disabled={isSending}
                         onClick={() => handleApproveAndSend(lead)}
-                        className="apple-btn-primary px-4 py-2 text-xs inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                        className="bg-foreground text-background font-mono text-xs font-semibold px-5 py-2 inline-flex items-center gap-2 cursor-pointer hover:opacity-90 disabled:opacity-50 transition-opacity"
                       >
                         {isSending ? (
                           <>
                             <span className="size-3.5 border-2 border-background border-t-transparent rounded-full animate-spin" />
-                            <span>Mengirim...</span>
+                            <span>Mengirim via SMTP...</span>
                           </>
                         ) : (
                           <>
                             <Send className="size-3.5" />
-                            <span>Setujui & Kirim Email</span>
+                            <span>Setujui & Kirim Email →</span>
                           </>
                         )}
                       </button>
@@ -350,10 +343,13 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
       )}
 
       {/* Section 2: Riwayat Email Terkirim & Tracking Notice */}
-      <div id="section-tracking-terkirim" className="pt-6 border-t border-border space-y-4">
+      <div id="section-tracking-terkirim" className="pt-8 border-t border-border space-y-4">
         <div className="flex items-baseline justify-between">
           <div>
-            <h3 className="font-display text-lg font-bold tracking-tight text-foreground flex items-center gap-2">
+            <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+              02 // INBOUND TRACKER
+            </div>
+            <h3 className="font-display text-xl font-bold tracking-tight text-foreground mt-0.5 flex items-center gap-2">
               <Clock className="size-4 text-muted-foreground" />
               Tracking Email Terkirim & Deteksi Hening ({sentLeads.length})
             </h3>
@@ -364,31 +360,30 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
         </div>
 
         {sentLeads.length === 0 ? (
-          <div className="p-6 text-center border border-dashed border-border rounded-xl text-xs text-muted-foreground">
+          <div className="py-12 text-center border-y border-border text-xs font-mono text-muted-foreground">
             Belum ada email yang berstatus terkirim menunggu respon.
           </div>
         ) : (
           <div className="divide-y divide-border border-t border-b border-border">
-            {sentLeads.map((sent) => {
+            {sentLeads.map((sent, idx) => {
               const aging = getLeadAgingNotice(sent);
               const isGenerating = isGeneratingFollowUp === sent.id;
 
               return (
                 <div
                   key={sent.id}
-                  className={`p-4 space-y-3 transition-colors ${
-                    aging?.isActionRequired
-                      ? "bg-amber-500/5 hover:bg-amber-500/10"
-                      : "hover:bg-secondary/30"
-                  }`}
+                  className="py-5 space-y-3 transition-colors"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-foreground text-sm">{sent.name}</span>
-                        <span className="text-xs text-muted-foreground">({sent.area})</span>
+                        <span className="font-mono text-xs font-bold text-muted-foreground">
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+                        <span className="font-bold text-foreground text-base">{sent.name}</span>
+                        <span className="text-xs text-muted-foreground font-mono">({sent.area})</span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-xs text-muted-foreground mt-0.5 font-mono">
                         Kontak: {sent.email} • WA: {sent.whatsapp}
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">
@@ -396,16 +391,14 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                       </p>
                     </div>
 
-                    <div className="flex flex-col items-end gap-1.5">
+                    <div className="flex flex-col items-end gap-1 font-mono">
                       {aging && (
-                        <span
-                          className={`text-xs px-2.5 py-1 rounded-md border ${aging.badgeClass}`}
-                        >
+                        <span className="text-xs font-bold text-amber-700 dark:text-amber-400">
                           {aging.label}
                         </span>
                       )}
                       {sent.sentAt && (
-                        <span className="text-[10px] text-muted-foreground font-mono">
+                        <span className="text-[10px] text-muted-foreground">
                           Terkirim: {new Date(sent.sentAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
                         </span>
                       )}
@@ -413,30 +406,30 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                   </div>
 
                   {/* Action Bar: Quick-Toggle Response & Hades Follow-Up */}
-                  <div className="pt-2 border-t border-border/50 flex flex-wrap items-center justify-between gap-2">
-                    {/* Quick-Toggle Response (Opsi A) */}
-                    <div className="flex flex-wrap items-center gap-1.5 text-xs">
-                      <span className="text-[11px] text-muted-foreground font-medium mr-1">
-                        Tandai Respon:
+                  <div className="pt-2 border-t border-border/50 flex flex-wrap items-center justify-between gap-3">
+                    {/* Quick-Toggle Response */}
+                    <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                      <span className="text-[10.5px] text-muted-foreground uppercase mr-1">
+                        TANDAI RESPON:
                       </span>
                       <button
                         type="button"
                         onClick={() => handleSetStatus(sent.id, "replied_email")}
-                        className="px-2.5 py-1 rounded-md border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-300 text-[11px] font-semibold transition-colors cursor-pointer"
+                        className="px-2.5 py-1 border border-emerald-500/40 text-emerald-800 dark:text-emerald-300 text-[10.5px] hover:bg-emerald-500/10 transition-colors cursor-pointer"
                       >
-                        ✅ Balas via Email
+                        ✅ Balas Email
                       </button>
                       <button
                         type="button"
                         onClick={() => handleSetStatus(sent.id, "replied_whatsapp")}
-                        className="px-2.5 py-1 rounded-md border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 text-emerald-800 dark:text-emerald-300 text-[11px] font-semibold transition-colors cursor-pointer"
+                        className="px-2.5 py-1 border border-emerald-500/40 text-emerald-800 dark:text-emerald-300 text-[10.5px] hover:bg-emerald-500/10 transition-colors cursor-pointer"
                       >
-                        💬 Balas via WA/IG
+                        💬 Balas WA/IG
                       </button>
                       <button
                         type="button"
                         onClick={() => handleSetStatus(sent.id, "rejected")}
-                        className="px-2.5 py-1 rounded-md border border-border bg-card hover:bg-secondary text-muted-foreground text-[11px] transition-colors cursor-pointer"
+                        className="px-2.5 py-1 border border-border text-muted-foreground hover:text-foreground text-[10.5px] transition-colors cursor-pointer"
                       >
                         ❌ Belum Tertarik
                       </button>
@@ -448,7 +441,7 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                         href={`https://wa.me/62${sent.whatsapp.replace(/\D/g, "").replace(/^0/, "")}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800 rounded-md bg-emerald-50/50 dark:bg-emerald-950/30 hover:bg-emerald-100 transition-colors"
+                        className="inline-flex items-center gap-1 px-3 py-1 text-xs font-mono text-foreground border border-border hover:bg-muted/30 transition-colors"
                       >
                         <Phone className="size-3" />
                         Chat WA
@@ -458,21 +451,17 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                         type="button"
                         disabled={isGenerating}
                         onClick={() => handleTriggerFollowUp(sent)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-md transition-all cursor-pointer ${
-                          aging?.isActionRequired
-                            ? "bg-amber-600 hover:bg-amber-700 text-white shadow-xs animate-pulse"
-                            : "bg-secondary hover:bg-secondary/80 text-foreground"
-                        }`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-mono font-bold bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
                       >
                         {isGenerating ? (
                           <>
-                            <span className="size-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                            <span className="size-3 border-2 border-background border-t-transparent rounded-full animate-spin" />
                             Meracik...
                           </>
                         ) : (
                           <>
-                            <Sparkles className="size-3 text-amber-200" />
-                            ⚡ Hades Follow-Up
+                            <Sparkles className="size-3" />
+                            <span>⚡ Hades Follow-Up</span>
                           </>
                         )}
                       </button>
@@ -487,35 +476,39 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
 
       {/* Section 3: Respon Masuk & Jadwal Tester */}
       {repliedLeads.length > 0 && (
-        <div className="pt-6 border-t border-border space-y-3">
+        <div className="pt-8 border-t border-border space-y-4">
           <div className="flex items-baseline justify-between">
-            <h3 className="font-display text-base font-bold tracking-tight text-foreground flex items-center gap-2">
-              <MessageSquare className="size-4 text-emerald-600" />
-              Kafe Merespon & Rencana Tester ({repliedLeads.length})
-            </h3>
-            <span className="text-xs text-muted-foreground">
-              Tindak lanjuti jadwal pengiriman Curated Tasting Box
+            <div>
+              <div className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground">
+                03 // PIPELINE CONVERSIONS
+              </div>
+              <h3 className="font-display text-xl font-bold tracking-tight text-foreground flex items-center gap-2 mt-0.5">
+                <MessageSquare className="size-4 text-emerald-600" />
+                Kafe Merespon & Rencana Tester ({repliedLeads.length})
+              </h3>
+            </div>
+            <span className="text-xs font-mono text-muted-foreground">
+              Jadwal Curated Tasting Box
             </span>
           </div>
 
-          <div className="divide-y divide-border border border-border rounded-xl bg-card overflow-hidden">
-            {repliedLeads.map((item) => (
+          <div className="divide-y divide-border border-t border-b border-border">
+            {repliedLeads.map((item, idx) => (
               <div
                 key={item.id}
-                className="p-4 flex flex-wrap items-center justify-between gap-3 text-xs"
+                className="py-4 flex flex-wrap items-center justify-between gap-3 text-xs"
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-foreground text-sm">{item.name}</span>
-                    <span
-                      className={`text-[10px] px-2 py-0.5 rounded border ${
-                        STATUS_CONFIG[item.status]?.badgeClass || ""
-                      }`}
-                    >
-                      {STATUS_CONFIG[item.status]?.label || item.status}
+                    <span className="font-mono font-bold text-muted-foreground">
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-bold text-foreground text-base">{item.name}</span>
+                    <span className="font-mono text-[10px] text-emerald-700 dark:text-emerald-400 font-bold uppercase">
+                      ● {STATUS_CONFIG[item.status]?.label || item.status}
                     </span>
                   </div>
-                  <p className="text-muted-foreground mt-0.5">
+                  <p className="text-muted-foreground mt-0.5 font-mono">
                     {item.area} • Kontak: {item.contactPerson} ({item.whatsapp})
                   </p>
                 </div>
@@ -525,17 +518,17 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                     <button
                       type="button"
                       onClick={() => handleSetStatus(item.id, "sample_arranged")}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-600 hover:bg-purple-700 text-white transition-colors cursor-pointer inline-flex items-center gap-1.5"
+                      className="px-4 py-1.5 text-xs font-mono font-bold bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer inline-flex items-center gap-1.5"
                     >
                       <Package className="size-3.5" />
-                      📦 Jadwalkan Sample Drop
+                      Jadwalkan Sample Drop
                     </button>
                   )}
                   {item.status === "sample_arranged" && (
                     <button
                       type="button"
                       onClick={() => handleSetStatus(item.id, "partner")}
-                      className="px-3 py-1.5 text-xs font-bold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
+                      className="px-4 py-1.5 text-xs font-mono font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors cursor-pointer"
                     >
                       🤝 Konfirmasi Jadi Mitra Aktif
                     </button>

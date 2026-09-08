@@ -79,104 +79,93 @@ export function AgentConsole() {
   };
 
   return (
-    <div className="border border-border rounded-lg overflow-hidden bg-background">
-      {/* Console Header */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-3 bg-secondary/40">
-        <div className="flex items-center gap-3">
-          <div className="flex size-7 items-center justify-center rounded-md bg-foreground text-background font-mono text-xs font-bold">
-            HD
-          </div>
-          <div>
-            <h3 className="font-display text-sm font-bold tracking-tight text-foreground">
-              Konsol Perintah Agen Hades
-            </h3>
-            <p className="text-[11px] text-muted-foreground">
-              Online • thesavorium@gmail.com • Bandung B2B Acquisition
-            </p>
-          </div>
+    <div className="space-y-4">
+      {/* Console Header Datum Strip */}
+      <div className="border-t border-b border-border py-3 flex items-center justify-between font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <span className="font-bold text-foreground">HADES ENGINE // TERMINAL</span>
+          <span>•</span>
+          <span>thesavorium@gmail.com</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="size-1.5 rounded-full bg-emerald-500" />
+          <span>SYS READY</span>
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="h-72 overflow-y-auto p-4 space-y-3.5 text-xs">
+      {/* Messages Stream (Open Canvas, Manuscript Quotation - Zero Box) */}
+      <div className="max-h-80 overflow-y-auto py-3 space-y-5 text-xs pr-2">
         {messages.map((m) => (
-          <div
-            key={m.id}
-            className={`flex gap-3 ${m.sender === "user" ? "justify-end" : "justify-start"}`}
-          >
-            {m.sender === "agent" && (
-              <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-secondary text-primary font-mono text-[10px] font-bold">
-                HD
+          <div key={m.id}>
+            {m.sender === "agent" ? (
+              <div className="space-y-1.5">
+                <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                  <span className="font-bold text-foreground">HADES</span>
+                  <span>//</span>
+                  <span>{m.timestamp}</span>
+                </div>
+                <div className="pl-4 border-l-2 border-foreground py-1 whitespace-pre-line text-xs font-mono leading-relaxed text-foreground/90">
+                  {m.text}
+                </div>
               </div>
-            )}
-            <div
-              className={`max-w-[85%] rounded-lg p-3.5 leading-relaxed ${
-                m.sender === "user"
-                  ? "bg-primary text-primary-foreground font-medium"
-                  : "bg-secondary/60 text-foreground border border-border/80"
-              }`}
-            >
-              <div className="whitespace-pre-line font-sans">{m.text}</div>
-              <div
-                className={`mt-1.5 text-[10px] text-right ${
-                  m.sender === "user" ? "text-primary-foreground/70" : "text-muted-foreground"
-                }`}
-              >
-                {m.timestamp}
-              </div>
-            </div>
-            {m.sender === "user" && (
-              <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-foreground text-background font-mono text-[10px] font-bold">
-                AM
+            ) : (
+              <div className="space-y-1.5 text-right">
+                <div className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest flex items-center justify-end gap-2">
+                  <span>{m.timestamp}</span>
+                  <span>//</span>
+                  <span className="font-bold text-foreground">ARIA</span>
+                </div>
+                <div className="pr-4 border-r-2 border-muted-foreground py-1 whitespace-pre-line text-xs font-mono leading-relaxed text-foreground">
+                  {m.text}
+                </div>
               </div>
             )}
           </div>
         ))}
       </div>
 
-      {/* Quick Command Buttons (Swiss monoline style) */}
-      <div className="border-t border-border px-4 py-2 bg-secondary/20 flex gap-2 overflow-x-auto no-scrollbar text-xs">
+      {/* Quick Command Presets */}
+      <div className="py-2.5 border-t border-border flex flex-wrap items-center gap-3 font-mono text-[10.5px]">
+        <span className="text-muted-foreground uppercase">PRESETS:</span>
         <button
           type="button"
           onClick={() => executeCommand("Rekomendasikan kafe di Riau & Dago untuk Bitterballen")}
-          className="inline-flex shrink-0 items-center gap-1.5 px-3 py-1 border border-border rounded-md bg-card hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          className="text-foreground hover:underline cursor-pointer"
         >
-          <Coffee className="size-3" />
-          Rekomendasi Riau & Dago
+          [ Rekomendasi Riau & Dago ]
         </button>
         <button
           type="button"
           onClick={() => executeCommand("Hitung unit economics dan margin kafe untuk semua produk SAVO")}
-          className="inline-flex shrink-0 items-center gap-1.5 px-3 py-1 border border-border rounded-md bg-card hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          className="text-foreground hover:underline cursor-pointer"
         >
-          <TrendingUp className="size-3" />
-          Simulasi Margin Kafe (50%+)
+          [ Simulasi Margin Kafe (50%+) ]
         </button>
         <button
           type="button"
           onClick={() => executeCommand("Jelaskan strategi porsi Free Tasting Sample")}
-          className="inline-flex shrink-0 items-center gap-1.5 px-3 py-1 border border-border rounded-md bg-card hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
+          className="text-foreground hover:underline cursor-pointer"
         >
-          <Mail className="size-3" />
-          Detail Porsi Sample Tester
+          [ Detail Porsi Tester ]
         </button>
       </div>
 
-      {/* Command Input Bar */}
-      <form onSubmit={handleSubmit} className="border-t border-border p-3 flex gap-2 bg-card">
+      {/* Command Input Bar (Architectural Command Line) */}
+      <form onSubmit={handleSubmit} className="border-t border-b border-border py-2 flex items-center gap-3">
+        <span className="font-mono text-foreground font-bold text-sm select-none">&gt;</span>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ketik instruksi untuk Hades (misal: 'Cari kafe di Setiabudhi', 'Hitung HPP porsi kafe')..."
-          className="flex-1 rounded-md border border-border bg-secondary/40 px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+          placeholder="Ketik instruksi ke Hades (misal: 'Cari kafe di Setiabudhi', 'Hitung HPP porsi kafe')..."
+          className="flex-1 bg-transparent border-none text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden font-mono"
         />
         <button
           type="submit"
           disabled={isLoading || !input.trim()}
-          className="apple-btn-primary h-9 px-4 text-xs font-semibold"
+          className="bg-foreground text-background font-mono text-xs font-bold px-4 py-2 hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer"
         >
-          {isLoading ? "Memproses..." : "Kirim Perintah"}
+          {isLoading ? "MEMPROSES..." : "EKSEKUSI ↵"}
         </button>
       </form>
     </div>

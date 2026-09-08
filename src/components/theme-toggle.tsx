@@ -37,7 +37,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={dark ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
       title={dark ? "Mode terang" : "Mode gelap"}
       className={cn(
-        "flex size-9 items-center justify-center rounded-xl border border-border bg-secondary/60 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground",
+        "p-1.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer inline-flex items-center justify-center",
         className,
       )}
     >

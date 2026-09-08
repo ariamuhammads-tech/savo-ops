@@ -22,11 +22,11 @@ import { ThemeToggle } from "@/components/theme-toggle";
 type NavItem = { href: string; label: string; icon: LucideIcon; badge?: string };
 
 const NAVIGATION: NavItem[] = [
-  { href: "/", label: "HQ Hades", icon: LayoutDashboard },
-  { href: "/outbox", label: "Antrean Outbox", icon: Mail },
-  { href: "/leads", label: "Prospek Bandung", icon: Building2 },
-  { href: "/katalog", label: "Katalog & Margin", icon: Package },
-  { href: "/invoice", label: "Generator Invoice", icon: ReceiptText },
+  { href: "/", label: "01 HQ", icon: LayoutDashboard },
+  { href: "/outbox", label: "02 OUTBOX", icon: Mail },
+  { href: "/leads", label: "03 PROSPEK", icon: Building2 },
+  { href: "/katalog", label: "04 KATALOG", icon: Package },
+  { href: "/invoice", label: "05 INVOICE", icon: ReceiptText },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -50,23 +50,18 @@ function NavLink({
       onClick={onClick}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group flex items-center justify-between rounded-lg px-3 py-2.5 text-xs font-medium transition-all duration-150",
+        "group flex items-center justify-between px-3 py-2.5 text-xs font-mono tracking-wider uppercase transition-colors",
         active
-          ? "bg-foreground text-background font-semibold shadow-xs"
-          : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground active:scale-[0.99]"
+          ? "text-foreground font-bold border-l-2 border-foreground bg-muted/20"
+          : "text-muted-foreground hover:text-foreground"
       )}
     >
       <div className="flex items-center gap-2.5">
-        <Icon className={cn("size-4 shrink-0 transition-transform duration-150 group-hover:scale-105", active ? "text-background" : "text-muted-foreground group-hover:text-foreground")} />
+        <Icon className={cn("size-3.5 shrink-0", active ? "text-foreground" : "text-muted-foreground group-hover:text-foreground")} />
         <span>{item.label}</span>
       </div>
       {item.badge && (
-        <span
-          className={cn(
-            "text-[10px] font-mono px-1.5 py-0.5 rounded",
-            active ? "bg-background/20 text-background" : "bg-secondary text-muted-foreground"
-          )}
-        >
+        <span className="text-[10px] font-mono text-muted-foreground">
           {item.badge}
         </span>
       )}
@@ -79,28 +74,12 @@ function SignOutButton({ className }: { className?: string }) {
     <form action="/auth/signout" method="post" className={className}>
       <button
         type="submit"
-        className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+        className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground/70 hover:text-destructive transition-colors cursor-pointer inline-flex items-center gap-1.5"
       >
-        <LogOut className="size-4" />
-        <span>Keluar Sistem</span>
+        <LogOut className="size-3" />
+        <span>KELUAR</span>
       </button>
     </form>
-  );
-}
-
-function Brand() {
-  return (
-    <div className="flex items-center gap-2.5">
-      <SavoLogo className="h-6 w-auto text-primary" />
-      <div className="border-l border-border pl-2.5">
-        <span className="font-display text-xs font-bold tracking-wider text-foreground block">
-          HADES // B2B
-        </span>
-        <span className="text-[9px] font-mono text-muted-foreground block -mt-0.5">
-          thesavorium@gmail.com
-        </span>
-      </div>
-    </div>
   );
 }
 
@@ -117,22 +96,20 @@ export function AppShell({
 
   return (
     <div className="min-h-dvh bg-background text-foreground flex flex-col">
-      {/* Aura Top Minimalist Meta Bar (Sticky Desktop & Tablet) */}
+      {/* Aura Top Architectural Meta Bar */}
       <header className="top-meta-bar">
         {/* Brand & Technical Meta */}
         <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2.5 hover:opacity-85 transition-opacity">
-            <SavoMark className="h-5 w-auto text-primary" />
-            <div className="flex items-baseline gap-2 font-mono text-[11px] font-semibold text-foreground tracking-wider">
-              <span>SAVO OPS</span>
-              <span className="text-muted-foreground font-normal hidden sm:inline">// HADES B2B BUREAU</span>
-              <span className="text-muted-foreground/60 hidden lg:inline">•</span>
-              <span className="text-muted-foreground font-normal text-[10px] hidden lg:inline">thesavorium@gmail.com</span>
-            </div>
+          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <SavoMark className="h-4.5 w-auto text-foreground" />
+            <span className="font-extrabold text-xs tracking-tight text-foreground font-sans">SAVO</span>
+            <span className="font-mono text-[9.5px] tracking-[0.2em] text-muted-foreground uppercase">
+              // HADES
+            </span>
           </Link>
         </div>
 
-        {/* Center: Aura Flat Navigation Links */}
+        {/* Center: Clean Architectural Navigation Links */}
         <nav className="hidden md:flex items-center gap-6 lg:gap-8">
           {NAVIGATION.map((item) => {
             const active = isActive(pathname, item.href);
@@ -141,29 +118,31 @@ export function AppShell({
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "nav-link-item",
-                  active && "active text-foreground font-semibold"
+                  "font-mono text-[10.5px] uppercase tracking-[0.16em] transition-colors inline-flex items-center gap-1.5 py-1",
+                  active
+                    ? "text-foreground font-bold"
+                    : "text-muted-foreground/60 hover:text-foreground font-medium"
                 )}
               >
+                {active && <span className="size-1 rounded-full bg-foreground inline-block" />}
                 <span>{item.label}</span>
-                {item.badge && (
-                  <span className="nav-badge-count">{item.badge}</span>
-                )}
               </Link>
             );
           })}
         </nav>
 
         {/* Right: Status Indicator & Quick Actions */}
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-1.5 font-mono text-[10.5px] text-muted-foreground">
-            <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+        <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-1.5 font-mono text-[9.5px] tracking-[0.14em] text-muted-foreground">
+            <span className="size-1.5 rounded-full bg-emerald-500" />
             <span>ONLINE</span>
           </div>
 
-          <div className="h-4 w-px bg-border hidden sm:block" />
+          <div className="h-3 w-px bg-border hidden sm:block" />
 
           <ThemeToggle />
+
+          <div className="h-3 w-px bg-border hidden sm:block" />
 
           <div className="hidden sm:block">
             <SignOutButton />
@@ -174,7 +153,7 @@ export function AppShell({
             type="button"
             onClick={() => setMenuOpen(true)}
             aria-label="Buka menu"
-            className="md:hidden rounded-md border border-border p-1.5 text-foreground hover:bg-secondary cursor-pointer"
+            className="md:hidden p-1 text-muted-foreground hover:text-foreground cursor-pointer"
           >
             <MenuIcon className="size-4" />
           </button>
