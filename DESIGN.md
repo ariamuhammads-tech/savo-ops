@@ -1,17 +1,23 @@
-﻿# Design System & Visual Specification: SAVO Ops
+﻿# Design System & Visual Specification: SAVO Ops (Pakem AURA)
 
 ## 1. Brand Philosophy & Aesthetic Direction
 
-- **Core Aesthetic:** Swiss International Style + Apple Human Interface Guidelines (HIG) + Boutique F&B Artisan Wholesale.
-- **Visual Personality:** Quiet Confidence, Restraint, Precision, Tactile Cleanliness, Zero Slop.
-- **Anti-Container Laziness Law:** Dilarang keras membungkus elemen secara serampangan ke dalam *card containers*, *bento boxes*, atau kotak ber-radius/border sebagai kruk spasial. Tata letak dibangun dari kontras skala modular tipografi, *whitespace* murni, dan *monoline technical datum lines* (hairline 1px).
-- **Zero Primitive Hacks:** Dilarang menggunakan gradien cahaya tiruan, bayangan 2D buram berlebih, atau elemen dekoratif animasi api palsu.
-- **Color Identity:**
-  - Background: Warm Bone / Ecru Paper (`#FBF8F4` Light / `#17120E` Dark)
-  - Ink Foreground: Deep Espresso (`#1A1714` Light / `#F2EAE1` Dark)
-  - Brand Accent: SAVO Savory Terracotta (`#C0492B` Light / `#E0603C` Dark)
-  - Structural Datum: Technical Warm Hairline (`#EAE0D8` Light / `#362E26` Dark)
-  - Muted Text: Warm Secondary Stone (`#756258` Light / `#A79A8C` Dark)
+- **Core Aesthetic:** Modern Japanese Minimalism (*Wa-Modern*, *Ma* - intentional negative space) merged with High-Tech Minimalist Digital Architecture (Reference Benchmark: *Aura corporate website* by UPROCK.DESIGN / Arslan Usmanov).
+- **Visual Personality:** Quiet Mastery, Pristine Cleanliness, Mathematical Precision, Expansive Whitespace, Zero Slop.
+- **Anti-Container Laziness Law (Larangan "Sange Kotak"):**
+  - Dilarang keras membungkus teks, metrik, tabel, atau form ke dalam kotak ber-radius/border bertumpuk (*card-inside-card* / *bento boxes*) sebagai kruk menutupi ketidakmampuan mengolah ruang negatif.
+  - Tata letak dibangun murni dari kontras tipografi, kelegaan kanvas putih (*pure white expanse*), dan garis datum teknis monoline 1px (*hairline* `#E5E6EB`).
+- **Zero Primitive Hacks:**
+  - Dilarang menggunakan gradien cahaya tiruan, bayangan 2D buram berlebih, atau elemen animasi api/gas palsu.
+- **Color Identity (AURA Standard):**
+  - **Canvas Background:** Pure Pristine White (`#FFFFFF` Light / `#0A0A0B` Dark Obsidian)
+  - **Surfaces:** Clean Light Grays (`#F7F7F8`, `#FAFAFA` Light / `#141416`, `#18181B` Dark)
+  - **Inks:**
+    - Primary Ink: Deep Carbon Black (`#0A0A0B` Light / `#F8FAFC` Dark)
+    - Secondary Ink: Refined Graphite (`#4A4D57` Light / `#A1A1AA` Dark)
+    - Muted Ink: Technical Cool Gray (`#8E92A0` Light / `#71717A` Dark)
+  - **Brand Accent:** SAVO Terracotta (`#C0492B` Light / `#E0603C` Dark)
+  - **Structural Hairline:** Ultra-Sharp 1px Monoline (`#E5E6EB` Light / `#232326` Dark)
 
 ---
 
@@ -20,138 +26,89 @@
 ```yaml
 tokens:
   colors:
-    primary:
-      light: "#C0492B"
-      dark: "#E0603C"
-      foreground: "#FFF8F4"
     background:
-      light: "#FBF8F4"
-      dark: "#17120E"
-    surface:
       light: "#FFFFFF"
-      dark: "#201A15"
-    surface_container_low:
-      light: "#F4EFE9"
-      dark: "#2A231D"
+      dark: "#0A0A0B"
+    surface:
+      light: "#F7F7F8"
+      dark: "#141416"
+    surface_subtle:
+      light: "#FAFAFA"
+      dark: "#18181B"
+    border_hairline:
+      light: "#E5E6EB"
+      dark: "#232326"
     text:
       primary:
-        light: "#1A1714"
-        dark: "#F2EAE1"
+        light: "#0A0A0B"
+        dark: "#F8FAFC"
       secondary:
-        light: "#756258"
-        dark: "#A79A8C"
+        light: "#4A4D57"
+        dark: "#A1A1AA"
       muted:
-        light: "#948479"
-        dark: "#84776C"
-    border:
-      hairline:
-        light: "#EAE0D8"
-        dark: "#362E26"
-      active:
+        light: "#8E92A0"
+        dark: "#71717A"
+    brand:
+      terracotta:
         light: "#C0492B"
         dark: "#E0603C"
+        foreground: "#FFFFFF"
     status:
       success:
-        bg_light: "#ECFDF5"
-        text_light: "#065F46"
-        border_light: "#A7F3D0"
-        bg_dark: "#064E3B"
-        text_dark: "#6EE7B7"
-        border_dark: "#047857"
+        light: "#15803D"
+        dark: "#22C55E"
+        bg_light: "#F0FDF4"
       warning:
+        light: "#B45309"
+        dark: "#F59E0B"
         bg_light: "#FFFBEB"
-        text_light: "#92400E"
-        border_light: "#FDE68A"
-        bg_dark: "#78350F"
-        text_dark: "#FCD34D"
-        border_dark: "#B45309"
-      error:
+      destructive:
+        light: "#D32F2F"
+        dark: "#EF4444"
         bg_light: "#FEF2F2"
-        text_light: "#991B1B"
-        border_light: "#FECACA"
-        bg_dark: "#7F1D1D"
-        text_dark: "#FCA5A5"
-        border_dark: "#DC2626"
-      neutral:
-        bg_light: "#F4EFE9"
-        text_light: "#574A43"
-        border_light: "#E5DDD5"
-        bg_dark: "#26201B"
-        text_dark: "#B5A79E"
-        border_dark: "#3D342D"
 
   typography:
     font_families:
-      display: "'Oriya MN', 'OriyaMN-Bold', -apple-system, sans-serif"
-      sans: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif"
-      mono: "'JetBrains Mono', 'SF Mono', ui-monospace, monospace"
+      display: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+      sans: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif"
+      mono: "'JetBrains Mono', 'SF Mono', monospace"
     scale:
       xs: "11px"
       sm: "12px"
-      base: "14px"
+      base: "13.5px"
       md: "15px"
-      lg: "17px"
-      xl: "20px"
-      "2xl": "24px"
-      "3xl": "30px"
-      "4xl": "36px"
-    line_height:
-      tight: 1.2
-      snug: 1.35
-      normal: 1.5
-      relaxed: 1.65
+      lg: "18px"
+      xl: "22px"
+      "2xl": "26px"
+      "3xl": "32px"
+      "4xl": "40px"
 
-  spacing:
-    unit: "8px"
-    scale: [0, 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96]
-
-  radii:
-    none: "0px"
-    xs: "4px"
-    sm: "6px"
-    md: "10px"
-    lg: "14px"
-    full: "9999px"
-
-  shadows:
-    xs: "0 1px 2px rgba(26, 23, 20, 0.04)"
-    card: "0 1px 3px rgba(26, 23, 20, 0.05), 0 1px 2px rgba(26, 23, 20, 0.03)"
-    card_hover: "0 4px 14px -2px rgba(26, 23, 20, 0.08)"
-    popover: "0 12px 32px -4px rgba(26, 23, 20, 0.14)"
-
-  motion:
-    spring: "cubic-bezier(0.16, 1, 0.3, 1)"
-    duration_fast: "150ms"
-    duration_normal: "240ms"
-    duration_slow: "360ms"
+  spacing_and_layout:
+    top_meta_bar_height: "56px"
+    max_content_width: "1440px"
+    content_padding_desktop: "36px 48px"
+    content_padding_mobile: "20px"
 ```
 
 ---
 
-## 3. Apple HIG Ergonomics & Accessibility Compliance
+## 3. Aura Component Hierarchy
 
-1. **Click & Touch Targets:**
-   - Desktop standard click target: minimal $\ge 28\text{px}$, optimal $32\text{px} - 38\text{px}$.
-   - Mobile touch target: minimal $\ge 44\text{pt}$ ($44\text{px} - 52\text{px}$).
-   - Jarak antar-tombol minimal $8\text{px}$ untuk mencegah salah tekan (*fat-finger prevention*).
-2. **Color Contrast (WCAG 2.1 AA/AAA):**
-   - Teks utama (`#1A1714` pada `#FBF8F4`) memiliki rasio kontras $> 14:1$ (lulus WCAG AAA).
-   - Teks sekunder/muted (`#756258` pada `#FBF8F4`) memiliki rasio kontras $\ge 4.8:1$ (lulus WCAG AA).
-   - Indikator status (amber, emerald, red) wajib disertai teks atau ikon pendamping, tidak hanya warna semata.
-3. **Platform Conventions:**
-   - **Desktop:** Sidebar vertikal monoline kiri ($256\text{px}$ lebar tetap, ketinggian baris item $38\text{px}$, ikon $16\text{px}$).
-   - **Mobile:** Bottom navigation bar 5 tab tetap di bagian bawah dengan `env(safe-area-inset-bottom)` dan ketinggian $52\text{px}$.
-4. **Editorial Hierarchy:**
-   - Nomor metrik modular menggunakan Display font dengan bobot tegas (`font-bold`).
-   - Metadata teknis (kode lead, tanggal, harga grosir satuan) selalu menggunakan monospaced font berukuran $10\text{px} - 11\text{px}$.
-   - Teks antarmuka menggunakan *sentence case* (bukan ALLCAPS di seluruh kalimat).
+1. **Top Minimalist Meta Bar (Sticky):**
+   - Menggantikan sidebar tradisional yang memotong layar.
+   - Menyajikan identitas brand mono, navigasi horizontal teks murni dengan active underline indicator, status server real-time (`● ONLINE`), dan kontrol tema.
 
----
+2. **Hero Expanse Centerpiece:**
+   - Menghadirkan *white space* terbuka yang megah.
+   - Menampilkan logo resmi SAVO yang mengambang dengan bayangan optik mikro (`drop-shadow(0 8px 24px rgba(0,0,0,0.06))`).
+   - Dilengkapi metadata teknis kiri & kanan serta dynamic companion pill.
 
-## 4. Component Rules
+3. **Principle Divider Strip:**
+   - Garis penopang monoline 1px teknis yang memuat doktrin operasional B2B resmi SAVO.
 
-- **Primary Action Button:** Background solid `bg-foreground text-background`, sudut `rounded-lg`, elevasi mikro Apple HIG, responsif saat hover/active (`hover:opacity-90 active:scale-[0.99]`).
-- **Secondary Action Button:** Background `bg-card border border-border text-foreground`, sudut `rounded-lg`, hover `hover:bg-secondary`.
-- **Segmented Controls (Hades Copilot):** Wadah `bg-secondary/70 p-0.5 rounded-lg border border-border`, tombol aktif `bg-card text-foreground font-semibold shadow-xs`.
-- **Swiss Monoline Metric Shelf:** Deretan metrik tanpa kotak individual terisolasi, dipisahkan oleh garis batas monoline teknis 1px (`divide-x divide-border`).
-- **Data Tables / Lists:** Baris data lapang dengan padding vertikal $12\text{px} - 16\text{px}$, pemisah `border-b border-border/80`, dan status badge yang tegas.
+4. **Compact Standards Ribbon (Pipeline Metrik):**
+   - 6 ubin metrik minimalis tanpa border tebal rounded-xl bertumpuk. Angka bold 32px dengan label mono uppercase.
+
+5. **Aura Section Blocks (Zero Card Wrapping):**
+   - Setiap seksi dibuka dengan monoline border-top 1px, nomor indeks mono (`01 // MEJA PERSETUJUAN DRAF EMAIL`), headline kontras tinggi, dan paragraf lead terbuka.
+   - Daftar antrean dan data disajikan dalam flat hairline rows atau full-width `.aura-table`.

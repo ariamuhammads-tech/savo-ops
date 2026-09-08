@@ -272,7 +272,7 @@ export default function OutboxPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="content-container space-y-8">
       {/* Header */}
       <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
         <div>
@@ -281,26 +281,26 @@ export default function OutboxPage() {
               OUTBOX // STAGED EMAIL WORKSPACE
             </span>
             <span
-              className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${
+              className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
                 sentTodayCount >= 5
                   ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
-                  : "bg-primary/10 text-primary border-primary/20"
+                  : "bg-secondary text-foreground border-border"
               }`}
             >
               🎯 Kuota Hari Ini: {sentTodayCount}/5 Terkirim
             </span>
           </div>
-          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mt-1">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground mt-1">
             Meja Persetujuan Draf Email Hades
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
             Periksa dan sesuaikan draf penawaran B2B sebelum dikirim otomatis melalui thesavorium@gmail.com.
           </p>
         </div>
       </div>
 
       {sentTodayCount >= 5 && (
-        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3.5 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
+        <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-4 text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2.5">
           <span className="text-base">⚠️</span>
           <div>
             <p className="font-bold">Batas Sehat Outreach (5 Email / Hari) Telah Tercapai</p>
@@ -311,13 +311,16 @@ export default function OutboxPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Venue Selector */}
-        <div className="space-y-3">
-          <span className="text-xs font-mono uppercase tracking-[0.1em] text-muted-foreground block">
-            Pilih Target Kafe ({leads.length})
-          </span>
-          <div className="border border-border rounded-xl bg-card divide-y divide-border overflow-hidden">
+        <div className="lg:col-span-4 space-y-3">
+          <div className="flex items-center justify-between pb-1 border-b border-border">
+            <span className="text-[11px] font-mono uppercase tracking-[0.14em] text-muted-foreground font-semibold">
+              Pilih Target Kafe ({leads.length})
+            </span>
+            <span className="text-[10px] font-mono text-muted-foreground">OUTBOX QUEUE</span>
+          </div>
+          <div className="border-t border-b border-border divide-y divide-border">
             {leads.map((lead) => {
               const isSelected = lead.id === currentLead.id;
               const isSent = lead.status === "sent";
@@ -327,309 +330,321 @@ export default function OutboxPage() {
                   key={lead.id}
                   type="button"
                   onClick={() => handleSelectLead(lead.id)}
-                  className={`w-full text-left p-3.5 transition-colors block ${
+                  className={`w-full text-left py-3 px-3.5 transition-colors block cursor-pointer ${
                     isSelected
-                      ? "bg-secondary/80 border-l-2 border-primary"
-                      : "hover:bg-secondary/40"
+                      ? "bg-secondary/70 border-l-2 border-foreground"
+                      : "hover:bg-secondary/30"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-1">
-                    <span className="font-display text-sm font-bold text-foreground">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-xs font-bold text-foreground tracking-tight">
                       {lead.name}
                     </span>
                     {isSent ? (
-                      <div className="flex flex-col items-end gap-0.5">
+                      <div className="flex flex-col items-end gap-0.5 shrink-0">
                         <span className="text-[10px] text-blue-600 font-mono font-bold">SENT</span>
                         {(() => {
                           const aging = getLeadAgingNotice(lead);
                           if (!aging) return null;
                           return (
-                            <span className={`text-[9px] px-1.5 py-0.5 rounded border ${aging.badgeClass}`}>
+                            <span className={`text-[9px] px-1.5 py-0.2 rounded border ${aging.badgeClass}`}>
                               {aging.statusCategory === "needs_followup" ? `⚠️ ${aging.ageDays}h` : `${aging.ageDays}h`}
                             </span>
                           );
                         })()}
                       </div>
                     ) : (
-                      <span className="text-[10px] text-amber-700 font-mono font-bold">STAGED</span>
+                      <span className="text-[10px] text-amber-700 dark:text-amber-400 font-mono font-bold shrink-0">STAGED</span>
                     )}
                   </div>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{lead.area}</p>
+                  <p className="text-[10.5px] text-muted-foreground mt-0.5 font-mono">{lead.area}</p>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Right Column: Email Editor & Approval */}
-        <div className="md:col-span-2 space-y-4">
-          <div className="border border-border rounded-xl bg-card p-5 space-y-4">
-            {/* Header info */}
-            <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border pb-3">
-              <div>
-                <span className="text-xs font-semibold text-primary font-mono uppercase">
-                  {PRODUCT_LABELS[currentLead.targetProduct]}
-                </span>
-                <h3 className="font-display text-lg font-bold text-foreground">
-                  Draf untuk {currentLead.name}
-                </h3>
-              </div>
-              <div className="text-xs font-mono">
-                {currentLead.status === "sent" ? (
-                  <div className="flex flex-wrap items-center gap-2">
-                    {(() => {
-                      const aging = getLeadAgingNotice(currentLead);
-                      if (!aging) return <span className="text-blue-600 font-medium">Sudah Terkirim</span>;
-                      return (
-                        <span className={`px-2 py-0.5 rounded border text-[11px] font-sans ${aging.badgeClass}`}>
-                          {aging.label}
-                        </span>
-                      );
-                    })()}
-                    <div className="flex items-center gap-1 font-sans">
-                      <button
-                        type="button"
-                        onClick={() => handleSetStatus(currentLead.id, "replied_email")}
-                        className="px-2 py-0.5 rounded border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
-                      >
-                        ✅ Balas Email
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSetStatus(currentLead.id, "replied_whatsapp")}
-                        className="px-2 py-0.5 rounded border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
-                      >
-                        💬 Balas WA
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSetStatus(currentLead.id, "rejected")}
-                        className="px-2 py-0.5 rounded border border-border bg-card hover:bg-secondary text-[10px] text-muted-foreground cursor-pointer"
-                      >
-                        ❌ Tolak
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <span className="text-amber-700 font-medium">Menunggu Persetujuan Anda</span>
-                )}
-              </div>
+        {/* Right Column: Email Editor & Approval (AURA Open Workbench) */}
+        <div className="lg:col-span-8">
+          {!currentLead ? (
+            <div className="border-t border-b border-border py-20 text-center text-xs text-muted-foreground font-mono">
+              Pilih target kafe di sebelah kiri untuk membuka draf email...
             </div>
-
-            {/* Email Metadata */}
-            <div className="rounded-lg bg-secondary/30 p-3 text-xs space-y-1.5 border border-border/50 font-mono">
-              <div className="flex">
-                <span className="w-16 text-muted-foreground shrink-0">From:</span>
-                <span className="font-medium text-foreground">
-                  Savo Eats &lt;thesavorium@gmail.com&gt;
-                </span>
-              </div>
-              <div className="flex">
-                <span className="w-16 text-muted-foreground shrink-0">To:</span>
-                <span className="font-medium text-foreground">{currentLead.email}</span>
-              </div>
-            </div>
-
-            {/* Inline Hades AI Copilot */}
-            <div className="rounded-lg border border-primary/25 bg-primary/[0.03] p-3.5 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
-                  <Sparkles className="size-3.5 text-primary" />
-                  <span>Hades AI Copilot</span>
-                  <span className="text-[10px] font-mono font-normal text-muted-foreground">
-                    • Tulis & poles draf tanpa copas
+          ) : (
+            <div className="space-y-6">
+              {/* Header info */}
+              <div className="flex flex-wrap items-baseline justify-between gap-4 border-b border-border pb-4">
+                <div>
+                  <span className="text-[10.5px] font-bold text-primary font-mono uppercase tracking-wider">
+                    {PRODUCT_LABELS[currentLead.targetProduct]}
                   </span>
+                  <h3 className="font-display text-2xl font-extrabold tracking-tight text-foreground mt-0.5">
+                    Draf untuk {currentLead.name}
+                  </h3>
                 </div>
-                {isRefining && (
-                  <span className="flex items-center gap-1.5 text-[11px] font-mono text-primary animate-pulse">
-                    <Loader2 className="size-3 animate-spin" />
-                    Hades sedang memproses...
-                  </span>
+                <div className="text-xs font-mono">
+                  {currentLead.status === "sent" ? (
+                    <div className="flex flex-wrap items-center gap-2">
+                      {(() => {
+                        const aging = getLeadAgingNotice(currentLead);
+                        if (!aging) return <span className="text-blue-600 font-medium">Sudah Terkirim</span>;
+                        return (
+                          <span className={`px-2 py-0.5 rounded border text-[11px] font-sans ${aging.badgeClass}`}>
+                            {aging.label}
+                          </span>
+                        );
+                      })()}
+                      <div className="flex items-center gap-1 font-sans">
+                        <button
+                          type="button"
+                          onClick={() => handleSetStatus(currentLead.id, "replied_email")}
+                          className="px-2 py-0.5 border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
+                        >
+                          ✅ Balas Email
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleSetStatus(currentLead.id, "replied_whatsapp")}
+                          className="px-2 py-0.5 border border-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 text-[10px] font-semibold text-emerald-800 dark:text-emerald-300 hover:bg-emerald-100 cursor-pointer"
+                        >
+                          💬 Balas WA
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleSetStatus(currentLead.id, "rejected")}
+                          className="px-2 py-0.5 border border-border bg-card hover:bg-secondary text-[10px] text-muted-foreground cursor-pointer"
+                        >
+                          ❌ Tolak
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-amber-700 dark:text-amber-400 font-mono text-[11px] font-bold">● MENUNGGU PERSETUJUAN</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Monoline Technical Metadata Readout */}
+              <div className="py-2.5 border-b border-border flex flex-wrap items-center gap-x-8 gap-y-2 text-xs font-mono text-muted-foreground">
+                <div>
+                  <span className="text-foreground font-bold">FROM:</span> thesavorium@gmail.com
+                </div>
+                <div>
+                  <span className="text-foreground font-bold">TO:</span> {currentLead.email}
+                </div>
+                {currentLead.contactPerson && (
+                  <div>
+                    <span className="text-foreground font-bold">PIC:</span> {currentLead.contactPerson}
+                  </div>
                 )}
               </div>
 
-              {/* Quick Preset Buttons (Apple HIG Segmented Bar) */}
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                <button
-                  type="button"
-                  disabled={isRefining}
-                  onClick={() => handleRefine("touch1")}
-                  className="apple-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium disabled:opacity-50 cursor-pointer active:scale-95"
-                >
-                  <span>⚡ Touch 1 (Menu Tambahan)</span>
-                </button>
-                <button
-                  type="button"
-                  disabled={isRefining}
-                  onClick={() => handleRefine("touch2")}
-                  className="apple-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium disabled:opacity-50 cursor-pointer active:scale-95"
-                >
-                  <span>⚡ Touch 2 (Rincian B2B & Margin)</span>
-                </button>
-                <button
-                  type="button"
-                  disabled={isRefining}
-                  onClick={() => handleRefine("followup")}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 text-[11px] font-medium border border-amber-300 dark:border-amber-800 transition-colors disabled:opacity-50 cursor-pointer active:scale-95"
-                >
-                  <span>⚡ Gentle Nudge (Follow-Up Hening)</span>
-                </button>
-                <button
-                  type="button"
-                  disabled={isRefining}
-                  onClick={() => handleRefine("shorten")}
-                  className="apple-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium disabled:opacity-50 cursor-pointer active:scale-95"
-                >
-                  <span>⚡ Persingkat Draf</span>
-                </button>
-              </div>
+              {/* Inline Hades AI Copilot */}
+              <div className="border-b border-border pb-5 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs">
+                    <Sparkles className="size-3.5 text-primary" />
+                    <span className="font-bold text-foreground font-mono uppercase tracking-wider text-[11px]">
+                      Hades Copilot
+                    </span>
+                    <span className="text-[10px] font-mono text-muted-foreground">
+                      // Refinement Engine
+                    </span>
+                  </div>
+                  {isRefining && (
+                    <span className="flex items-center gap-1.5 text-[11px] font-mono text-primary animate-pulse">
+                      <Loader2 className="size-3 animate-spin" />
+                      Hades sedang memproses...
+                    </span>
+                  )}
+                </div>
 
-              {/* Custom instruction prompt */}
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (hadesInstruction.trim()) handleRefine("custom");
-                }}
-                className="flex gap-2 pt-1"
-              >
-                <input
-                  type="text"
-                  value={hadesInstruction}
-                  onChange={(e) => setHadesInstruction(e.target.value)}
-                  placeholder="Ketik instruksi khusus (misal: 'Sebutkan kita bisa drop sore ini ke Mas Dimas')..."
-                  disabled={isRefining}
-                  className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-primary font-sans"
-                />
-                <button
-                  type="submit"
-                  disabled={isRefining || !hadesInstruction.trim()}
-                  className="apple-btn-primary inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold disabled:opacity-50 cursor-pointer"
-                >
-                  <Wand2 className="size-3" />
-                  <span>Terapkan</span>
-                </button>
-              </form>
-            </div>
-
-            {/* Subject Input */}
-            <div>
-              <label className="block text-xs font-semibold mb-1">Subjek Email</label>
-              <input
-                type="text"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className="w-full rounded-md border border-border bg-card px-3 py-2 text-xs font-medium text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary font-sans"
-              />
-            </div>
-
-            {/* Body Textarea */}
-            <div>
-              <label className="block text-xs font-semibold mb-1">Isi Pesan Email</label>
-              <textarea
-                rows={11}
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                className="w-full rounded-md border border-border bg-card p-3 text-xs leading-relaxed text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary font-sans"
-              />
-            </div>
-
-            {/* Attachments Section */}
-            <div className="space-y-2.5 pt-2 border-t border-border/60">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                  <Paperclip className="size-3.5 text-muted-foreground" />
-                  Lampirkan Foto Produk / Menu (Opsional)
-                </span>
-                <div className="flex items-center gap-2">
+                {/* Quick Preset Buttons */}
+                <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => setShowCatalogPicker(true)}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-md bg-secondary hover:bg-secondary/80 text-foreground transition-colors cursor-pointer border border-border"
-                    title="Gunakan foto produk yang tersimpan di katalog"
+                    disabled={isRefining}
+                    onClick={() => handleRefine("touch1")}
+                    className="btn-pill-action text-[11px] font-medium"
                   >
-                    <Camera className="size-3 text-primary" />
-                    Ambil dari Katalog Aset
+                    <span>⚡ Touch 1 (Menu Tambahan)</span>
                   </button>
-                  <label className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer">
-                    <Plus className="size-3.5" />
-                    File Komputer
-                    <input
-                      type="file"
-                      accept="image/png,image/jpeg,image/webp"
-                      multiple
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-                  </label>
+                  <button
+                    type="button"
+                    disabled={isRefining}
+                    onClick={() => handleRefine("touch2")}
+                    className="btn-pill-action text-[11px] font-medium"
+                  >
+                    <span>⚡ Touch 2 (Rincian B2B & Margin)</span>
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isRefining}
+                    onClick={() => handleRefine("followup")}
+                    className="btn-pill-action text-[11px] font-medium text-amber-700 dark:text-amber-400 border-amber-300 dark:border-amber-800"
+                  >
+                    <span>⚡ Gentle Nudge (Follow-Up)</span>
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isRefining}
+                    onClick={() => handleRefine("shorten")}
+                    className="btn-pill-action text-[11px] font-medium"
+                  >
+                    <span>⚡ Persingkat Draf</span>
+                  </button>
                 </div>
+
+                {/* Custom instruction prompt */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (hadesInstruction.trim()) handleRefine("custom");
+                  }}
+                  className="flex gap-2 pt-1"
+                >
+                  <input
+                    type="text"
+                    value={hadesInstruction}
+                    onChange={(e) => setHadesInstruction(e.target.value)}
+                    placeholder="Instruksi khusus ke Hades (misal: 'Sebutkan kita bisa drop sampel sore ini ke Mas Dimas')..."
+                    disabled={isRefining}
+                    className="flex-1 border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:border-foreground font-sans transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isRefining || !hadesInstruction.trim()}
+                    className="bg-foreground text-background px-4 py-2 text-xs font-semibold hover:opacity-90 disabled:opacity-50 cursor-pointer inline-flex items-center gap-1.5 transition-opacity"
+                  >
+                    <Wand2 className="size-3" />
+                    <span>Terapkan</span>
+                  </button>
+                </form>
               </div>
 
-              {attachments.length === 0 ? (
-                <p className="text-[11px] text-muted-foreground">
-                  Belum ada foto yang dilampirkan. Klik <strong>Ambil dari Katalog Aset</strong> untuk melampirkan foto resmi produk tanpa perlu upload ulang.
-                </p>
-              ) : (
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {attachments.map((att) => (
-                    <div
-                      key={att.id}
-                      className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-border bg-secondary/50 text-xs text-foreground font-mono"
+              {/* Subject Input */}
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-bold uppercase tracking-wider font-mono text-muted-foreground">
+                  Subjek Email
+                </label>
+                <input
+                  type="text"
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  className="w-full border border-border bg-background px-3 py-2 text-xs font-medium text-foreground focus:outline-hidden focus:border-foreground font-sans transition-colors"
+                />
+              </div>
+
+              {/* Body Textarea */}
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-bold uppercase tracking-wider font-mono text-muted-foreground">
+                  Isi Pesan Email
+                </label>
+                <textarea
+                  rows={13}
+                  value={body}
+                  onChange={(e) => setBody(e.target.value)}
+                  className="w-full border border-border bg-background p-3.5 text-xs leading-relaxed text-foreground focus:outline-hidden focus:border-foreground font-sans transition-colors resize-y font-mono"
+                />
+              </div>
+
+              {/* Attachments Section */}
+              <div className="space-y-3 pt-3 border-t border-border">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-foreground flex items-center gap-1.5 font-mono">
+                    <Paperclip className="size-3.5 text-muted-foreground" />
+                    LAMPIRAN FOTO PRODUK (OPSIONAL)
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowCatalogPicker(true)}
+                      className="btn-pill-action text-[11px] font-medium inline-flex items-center gap-1.5"
                     >
-                      <ImageIcon className="size-3.5 text-primary" />
-                      <span className="max-w-[150px] truncate">{att.filename}</span>
-                      <span className="text-[10px] text-muted-foreground">({att.sizeKb} KB)</span>
-                      <button
-                        type="button"
-                        onClick={() => removeAttachment(att.id)}
-                        className="text-muted-foreground hover:text-destructive transition-colors ml-1 cursor-pointer"
-                        title="Hapus foto ini"
-                      >
-                        <X className="size-3" />
-                      </button>
-                    </div>
-                  ))}
+                      <Camera className="size-3 text-primary" />
+                      <span>Ambil dari Katalog Aset</span>
+                    </button>
+                    <label className="inline-flex items-center gap-1 text-xs font-mono text-muted-foreground hover:text-foreground cursor-pointer">
+                      <Plus className="size-3.5" />
+                      Upload Lokal
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        multiple
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  </div>
                 </div>
-              )}
-            </div>
 
-            {/* Action Buttons */}
-            <div className="pt-3 border-t border-border flex flex-wrap items-center justify-between gap-3">
-              <button
-                type="button"
-                onClick={handleCopy}
-                className="apple-btn-secondary px-3.5 py-2 text-xs inline-flex items-center gap-1.5 cursor-pointer"
-              >
-                {copied ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
-                <span>{copied ? "Tersalin" : "Salin Teks"}</span>
-              </button>
-
-              <button
-                type="button"
-                disabled={isSending || currentLead.status === "sent"}
-                onClick={handleSend}
-                className="apple-btn-primary px-5 py-2.5 text-xs inline-flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
-              >
-                {isSending ? (
-                  <>
-                    <span className="size-3.5 border-2 border-background border-t-transparent rounded-full animate-spin" />
-                    <span>Mengirim via SMTP...</span>
-                  </>
-                ) : currentLead.status === "sent" ? (
-                  <>
-                    <CheckCircle2 className="size-3.5" />
-                    <span>Email Sudah Terkirim</span>
-                  </>
+                {attachments.length === 0 ? (
+                  <p className="text-[11px] text-muted-foreground font-mono">
+                    Belum ada foto yang dilampirkan. Klik <strong>Ambil dari Katalog Aset</strong> untuk melampirkan foto resmi produk.
+                  </p>
                 ) : (
-                  <>
-                    <Send className="size-3.5" />
-                    <span>Setujui & Kirim Email Sekarang</span>
-                  </>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {attachments.map((att) => (
+                      <div
+                        key={att.id}
+                        className="inline-flex items-center gap-2 px-3 py-1.5 border border-border bg-secondary/30 text-xs text-foreground font-mono"
+                      >
+                        <ImageIcon className="size-3.5 text-primary" />
+                        <span className="max-w-[160px] truncate">{att.filename}</span>
+                        <span className="text-[10px] text-muted-foreground">({att.sizeKb} KB)</span>
+                        <button
+                          type="button"
+                          onClick={() => removeAttachment(att.id)}
+                          className="text-muted-foreground hover:text-destructive transition-colors ml-1 cursor-pointer"
+                          title="Hapus foto ini"
+                        >
+                          <X className="size-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 )}
-              </button>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-6 border-t border-border flex flex-wrap items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  className="border border-border hover:bg-secondary px-4 py-2.5 text-xs font-mono inline-flex items-center gap-1.5 cursor-pointer text-foreground transition-colors"
+                >
+                  {copied ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                  <span>{copied ? "Draf Tersalin" : "Salin Teks"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isSending || currentLead.status === "sent"}
+                  onClick={handleSend}
+                  className="bg-foreground text-background px-6 py-2.5 text-xs font-semibold inline-flex items-center gap-2 cursor-pointer hover:opacity-90 disabled:opacity-50 transition-opacity"
+                >
+                  {isSending ? (
+                    <>
+                      <span className="size-3.5 border-2 border-background border-t-transparent rounded-full animate-spin" />
+                      <span>Mengirim via SMTP...</span>
+                    </>
+                  ) : currentLead.status === "sent" ? (
+                    <>
+                      <CheckCircle2 className="size-3.5" />
+                      <span>Email Sudah Terkirim</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send className="size-3.5" />
+                      <span>Setujui & Kirim Email Sekarang</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
-      </div>
+    </div>
 
       {/* Catalog Asset Picker Modal */}
       {showCatalogPicker && (

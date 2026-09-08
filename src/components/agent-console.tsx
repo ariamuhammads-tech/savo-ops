@@ -79,9 +79,9 @@ export function AgentConsole() {
   };
 
   return (
-    <div className="swiss-card overflow-hidden bg-card">
+    <div className="border border-border rounded-lg overflow-hidden bg-background">
       {/* Console Header */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-3 bg-secondary/30">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3 bg-secondary/40">
         <div className="flex items-center gap-3">
           <div className="flex size-7 items-center justify-center rounded-md bg-foreground text-background font-mono text-xs font-bold">
             HD

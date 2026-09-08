@@ -272,7 +272,7 @@ export default function LeadsPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="content-container space-y-8">
       {/* Header */}
       <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
         <div>
@@ -281,31 +281,31 @@ export default function LeadsPage() {
               DATABASE // BANDUNG B2B PROSPECTS
             </span>
             <span
-              className={`text-[10px] font-mono px-2 py-0.5 rounded-full font-bold border ${
+              className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
                 sentTodayCount >= 5
                   ? "bg-amber-500/10 text-amber-600 border-amber-500/30"
-                  : "bg-primary/10 text-primary border-primary/20"
+                  : "bg-secondary text-foreground border-border"
               }`}
             >
               🎯 Kuota Hari Ini: {sentTodayCount}/5 Terkirim
             </span>
           </div>
-          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground mt-1">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground mt-1">
             Database Prospek Kafe Bandung
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
             Daftar kafe terkurasi dengan kontak email resmi untuk penawaran suplai Bitterballen dan Baso Goreng.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={() => {
               setShowScoutModal(true);
               if (scoutCandidates.length === 0) handleRunScout(scoutArea);
             }}
-            className="apple-btn-primary inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold cursor-pointer shadow-xs active:scale-95"
+            className="apple-btn-primary"
           >
             <Sparkles className="size-3.5" />
             <span>Hades Scout 5 Kafe</span>
@@ -314,7 +314,7 @@ export default function LeadsPage() {
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="apple-btn-secondary inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium cursor-pointer active:scale-95"
+            className="apple-btn-secondary"
           >
             <Plus className="size-3.5" />
             <span>Tambah Manual</span>
@@ -331,7 +331,7 @@ export default function LeadsPage() {
             placeholder="Cari nama kafe atau email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-border bg-card pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+            className="w-full rounded-md border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors"
           />
         </div>
 
@@ -340,7 +340,7 @@ export default function LeadsPage() {
           <select
             value={selectedArea}
             onChange={(e) => setSelectedArea(e.target.value)}
-            className="w-full rounded-lg border border-border bg-card pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+            className="w-full rounded-md border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors font-mono"
           >
             {BANDUNG_AREAS.map((area) => (
               <option key={area} value={area}>
@@ -355,7 +355,7 @@ export default function LeadsPage() {
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="w-full rounded-lg border border-border bg-card pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+            className="w-full rounded-md border border-border bg-background pl-9 pr-3 py-2 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors font-mono"
           >
             <option value="all">Semua Status Email</option>
             <option value="needs_followup">⚠️ Butuh Follow-Up (Hening ≥ 4 Hari)</option>
@@ -370,19 +370,18 @@ export default function LeadsPage() {
         </div>
       </div>
 
-      {/* Swiss Editorial Table */}
-      <div className="border border-border rounded-xl bg-card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs divide-y divide-border">
-            <thead className="bg-secondary/40 text-muted-foreground font-mono uppercase tracking-[0.1em] text-[10px]">
-              <tr>
-                <th className="py-3 px-4 font-semibold">Kafe & Lokasi</th>
-                <th className="py-3 px-4 font-semibold">Email Kontak</th>
-                <th className="py-3 px-4 font-semibold">Target Produk</th>
-                <th className="py-3 px-4 font-semibold">Status Hades</th>
-                <th className="py-3 px-4 font-semibold text-right">Aksi</th>
-              </tr>
-            </thead>
+      {/* Aura Flat Table (Zero Card Wrapping) */}
+      <div className="overflow-x-auto border-t border-b border-border">
+        <table className="aura-table">
+          <thead>
+            <tr>
+              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30">Kafe & Lokasi</th>
+              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30">Email Kontak</th>
+              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30">Target Produk</th>
+              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30">Status Hades</th>
+              <th className="py-3.5 px-4 font-mono text-[10.5px] uppercase tracking-wider text-muted-foreground bg-secondary/30 text-right">Aksi</th>
+            </tr>
+          </thead>
             <tbody className="divide-y divide-border">
               {filteredLeads.map((lead) => {
                 const statusInfo = STATUS_CONFIG[lead.status];
@@ -487,7 +486,6 @@ export default function LeadsPage() {
             </tbody>
           </table>
         </div>
-      </div>
 
       {/* Add Lead Modal */}
       {showAddModal && (

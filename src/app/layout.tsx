@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Hanken_Grotesk, Source_Serif_4 } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 
-const sans = Hanken_Grotesk({
+const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
-const serif = Source_Serif_4({
-  variable: "--font-serif",
+const mono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
   display: "swap",
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -37,7 +39,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${sans.variable} ${serif.variable} antialiased`}>
+      <body className={`${sans.variable} ${mono.variable} antialiased bg-background text-foreground min-h-screen selection:bg-foreground selection:text-background`}>
         {children}
         <Toaster position="top-center" richColors />
       </body>

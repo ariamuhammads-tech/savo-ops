@@ -56,27 +56,27 @@ export default async function InvoicePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="content-container space-y-8">
       <Suspense fallback={null}>
         <FlashToast />
       </Suspense>
 
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-border pb-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between border-b border-border pb-6">
         <div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-            Sistem Finansial B2B & Wholesale
+          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-muted-foreground">
+            SISTEM FINANSIAL B2B // WHOLESALE INVOICING
           </span>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground mt-1">
             Invoice Penjualan
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
+          <p className="text-xs text-muted-foreground mt-1">
             {formatNumber(invoices.length)} invoice tercatat dalam sistem
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Link
             href="/invoice/baru"
-            className="apple-btn-primary px-4 py-2 text-xs font-semibold inline-flex items-center gap-2"
+            className="inline-flex items-center gap-2 bg-foreground text-background px-4 py-2 text-xs font-semibold hover:opacity-90 transition-opacity"
           >
             <Plus className="size-4" />
             <span>+ Buat Invoice Baru (B2B Instant)</span>
@@ -85,56 +85,56 @@ export default async function InvoicePage() {
       </div>
 
       {invoices.length === 0 ? (
-        <Card className="flex flex-col items-center gap-3 p-10 text-center border border-dashed border-border bg-card/50">
-          <div className="flex size-14 items-center justify-center rounded-full bg-secondary/80 text-foreground">
-            <FileSpreadsheet className="size-6 text-muted-foreground" />
+        <div className="flex flex-col items-center gap-4 py-20 px-6 text-center border-t border-b border-border">
+          <div className="flex size-12 items-center justify-center rounded-full bg-muted/50 text-foreground">
+            <FileSpreadsheet className="size-5 text-muted-foreground" />
           </div>
           <div className="space-y-1">
-            <p className="font-serif text-base font-bold">Belum Ada Invoice Aktif</p>
+            <p className="text-base font-bold text-foreground">Belum Ada Invoice Aktif</p>
             <p className="max-w-md text-xs text-muted-foreground leading-relaxed">
               Buat invoice B2B instan untuk kafe, resto, atau lounge mitra SAVO di Bandung. Dilengkapi preset harga grosir Baso Goreng & Bitterballen serta unduh PDF langsung.
             </p>
           </div>
           <Link
             href="/invoice/baru"
-            className="mt-2 apple-btn-primary px-4 py-2 text-xs font-semibold inline-flex items-center gap-2"
+            className="mt-2 inline-flex items-center gap-2 bg-foreground text-background px-5 py-2.5 text-xs font-semibold hover:opacity-90 transition-opacity"
           >
             <Plus className="size-3.5" />
             <span>Mulai Buat Invoice Pertama</span>
           </Link>
-        </Card>
+        </div>
       ) : (
-        <div className="space-y-2">
+        <div className="divide-y divide-border border-t border-b border-border">
           {invoices.map((inv) => (
-            <Link key={inv.id} href={`/invoice/${inv.id}`}>
-              <Card className="flex items-center justify-between gap-3 p-3.5 transition-colors hover:border-primary/40">
+            <Link key={inv.id} href={`/invoice/${inv.id}`} className="block">
+              <div className="flex items-center justify-between gap-4 py-4 px-2 hover:bg-secondary/30 transition-colors">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium">{inv.invoice_no ?? "—"}</p>
+                    <p className="font-mono font-bold text-sm text-foreground">{inv.invoice_no ?? "—"}</p>
                     <Badge variant={INV_STATUS_VARIANT[inv.status] ?? "outline"}>
                       {INV_STATUS_LABEL[inv.status] ?? inv.status}
                     </Badge>
                   </div>
-                  <p className="mt-0.5 truncate text-sm">
-                    <span className="font-medium text-foreground">
+                  <p className="mt-1 truncate text-xs">
+                    <span className="font-semibold text-foreground">
                       {inv.customer?.name ?? inv.order?.contact_name ?? "Umum"}
                     </span>
                     {(inv.customer?.phone_wa ?? inv.order?.contact_phone) && (
-                      <span className="text-muted-foreground">
+                      <span className="text-muted-foreground font-mono">
                         {" · "}
                         {inv.customer?.phone_wa ?? inv.order?.contact_phone}
                       </span>
                     )}
                   </p>
-                  <p className="truncate text-xs text-muted-foreground">
+                  <p className="truncate text-[11px] text-muted-foreground mt-0.5 font-mono">
                     {formatDate(inv.issue_date)} ·{" "}
-                    <span className="font-medium text-foreground">
+                    <span className="font-bold text-foreground">
                       {formatIDR(Number(inv.total))}
                     </span>
                   </p>
                 </div>
-                <ChevronRight className="size-5 shrink-0 text-muted-foreground" />
-              </Card>
+                <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+              </div>
             </Link>
           ))}
         </div>

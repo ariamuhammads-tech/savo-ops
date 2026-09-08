@@ -1,117 +1,119 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* =========================================================
-   SAVO brand palette — warm cream, dark ink, terracotta,
-   with an amber ember accent for the bonfire theme.
-   Used as shadcn/ui design tokens (Tailwind v4 CSS vars).
+   AURA MASTER PALETTE — Japanese Wa-Modern Minimalist (Ma)
+   Pristine White Canvas, Hairline Datums, Crisp Deep Inks.
+   Benchmark: Aura Corporate / UPROCK.DESIGN
    ========================================================= */
 :root {
-  --radius: 0.9rem;
+  --radius: 0.45rem;
 
-  --background: #fbf8f4;          /* warm bone */
-  --foreground: #1a1714;          /* on-surface ink (slightly warmer/deeper) */
+  /* Canvas & Surfaces */
+  --background: #ffffff;
+  --foreground: #0a0a0b;
+
+  --surface: #f7f7f8;
+  --surface-subtle: #fafafa;
 
   --card: #ffffff;
-  --card-foreground: #1a1714;
+  --card-foreground: #0a0a0b;
 
   --popover: #ffffff;
-  --popover-foreground: #1a1714;
+  --popover-foreground: #0a0a0b;
 
-  --primary: #c0492b;            /* SAVO terracotta (logo — unchanged) */
-  --primary-foreground: #fff8f4;
+  /* Inks */
+  --ink-primary: #0a0a0b;
+  --ink-secondary: #4a4d57;
+  --ink-muted: #8e92a0;
 
-  --secondary: #f4efe9;          /* surface-container-low (warm) */
-  --secondary-foreground: #1a1714;
+  --primary: #0a0a0b;
+  --primary-foreground: #ffffff;
 
-  --muted: #f1ebe4;
-  --muted-foreground: #756258;   /* warm secondary text */
+  --brand-terracotta: #c0492b;
+  --brand-terracotta-fg: #ffffff;
 
-  --accent: #f8ebe5;             /* warm active tint */
-  --accent-foreground: #7a2c19;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #0a0a0b;
 
-  --destructive: #ba1a1a;
+  --muted: #f4f4f5;
+  --muted-foreground: #8e92a0;
+
+  --accent: #f4f4f5;
+  --accent-foreground: #0a0a0b;
+
+  --destructive: #d32f2f;
   --destructive-foreground: #ffffff;
 
-  --success: #1f7a3d;            /* grounded green */
-  --warning: #c9892f;
-  --ember: #f59e0b;             /* amber — bonfire highlight */
+  --success: #15803d;
+  --warning: #b45309;
 
-  --border: #eae0d8;             /* warm hairline */
-  --input: #eae0d8;
-  --ring: #c0492b;
+  --border: #e5e6eb;
+  --input: #e5e6eb;
+  --ring: #0a0a0b;
 
-  --sidebar: #ffffff;
-  --sidebar-foreground: #1a1714;
-  --sidebar-primary: #c0492b;
-  --sidebar-primary-foreground: #fff8f4;
-  --sidebar-accent: #f8ebe5;
-  --sidebar-accent-foreground: #7a2c19;
-  --sidebar-border: #eae0d8;
-  --sidebar-ring: #c0492b;
+  --hairline: #e5e6eb;
+  --hairline-dark: #1a1b1e;
 
-  --font-display: "Oriya MN", "OriyaMN-Bold", "OriyaMN", -apple-system, sans-serif;
+  --font-display: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-mono), monospace;
 
-  /* Apple HIG & Swiss Editorial — Clean subtle elevation, zero fake glows */
-  --shadow-xs: 0 1px 2px rgba(26, 23, 20, 0.04);
-  --shadow-card: 0 1px 3px rgba(26, 23, 20, 0.05), 0 1px 2px rgba(26, 23, 20, 0.03);
-  --shadow-card-hover: 0 4px 14px -2px rgba(26, 23, 20, 0.08);
-  --shadow-pop: 0 12px 32px -4px rgba(26, 23, 20, 0.14);
+  /* Pure Minimalist Micro-Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-card-hover: 0 4px 14px rgba(0, 0, 0, 0.04);
 }
 
-/* =========================================================
-   Dark mode — palet gelap hangat SAVO (aksen terakota tetap).
-   Kelas .dark dipasang di <html> oleh skrip tema (localStorage
-   'savo-theme', default mengikuti preferensi sistem).
-   ========================================================= */
 .dark {
-  --background: #17120e; /* coklat tua hangat, bukan hitam pekat */
-  --foreground: #f2eae1;
+  --background: #0a0a0b;
+  --foreground: #f8fafc;
 
-  --card: #201a15;
-  --card-foreground: #f2eae1;
+  --surface: #141416;
+  --surface-subtle: #18181b;
 
-  --popover: #201a15;
-  --popover-foreground: #f2eae1;
+  --card: #0a0a0b;
+  --card-foreground: #f8fafc;
 
-  --primary: #e0603c; /* terakota lebih terang agar kontras di gelap */
-  --primary-foreground: #fff8f4;
+  --popover: #141416;
+  --popover-foreground: #f8fafc;
 
-  --secondary: #2a231d;
-  --secondary-foreground: #f2eae1;
+  --ink-primary: #f8fafc;
+  --ink-secondary: #a1a1aa;
+  --ink-muted: #71717a;
 
-  --muted: #2a231d;
-  --muted-foreground: #a79a8c;
+  --primary: #f8fafc;
+  --primary-foreground: #0a0a0b;
 
-  --accent: #3a2a21;
-  --accent-foreground: #f0ac93;
+  --brand-terracotta: #e0603c;
+  --brand-terracotta-fg: #ffffff;
 
-  --destructive: #e45b4f;
+  --secondary: #18181b;
+  --secondary-foreground: #f8fafc;
+
+  --muted: #18181b;
+  --muted-foreground: #71717a;
+
+  --accent: #18181b;
+  --accent-foreground: #f8fafc;
+
+  --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
-  --success: #4fb582;
-  --warning: #dca74d;
-  --ember: #f5a623;
+  --success: #22c55e;
+  --warning: #f59e0b;
 
-  --border: #362e26;
-  --input: #362e26;
-  --ring: #e0603c;
+  --border: #232326;
+  --input: #232326;
+  --ring: #f8fafc;
 
-  --sidebar: #201a15;
-  --sidebar-foreground: #f2eae1;
-  --sidebar-primary: #e0603c;
-  --sidebar-primary-foreground: #fff8f4;
-  --sidebar-accent: #3a2a21;
-  --sidebar-accent-foreground: #f0ac93;
-  --sidebar-border: #362e26;
-  --sidebar-ring: #e0603c;
+  --hairline: #232326;
+  --hairline-dark: #2e2e33;
 
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-card-hover: 0 4px 14px -2px rgba(0, 0, 0, 0.6);
-  --shadow-pop: 0 12px 32px -4px rgba(0, 0, 0, 0.7);
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
 @theme inline {
@@ -133,34 +135,23 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-warning: var(--warning);
-  --color-ember: var(--ember);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-
   --font-sans: var(--font-sans);
-  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
   --font-display: var(--font-display);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
   * {
     border-color: var(--border);
-    outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
   }
   html {
     scroll-behavior: smooth;
@@ -172,180 +163,392 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-  h1, h2, h3, .font-display {
+  h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
     font-weight: 700;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
   ::selection {
-    background: color-mix(in srgb, var(--primary) 22%, transparent);
+    background: #0a0a0b;
+    color: #ffffff;
   }
 }
 
-/* ===== Reusable surface / motion utilities ===== */
-.savo-surface {
-  background: color-mix(in srgb, var(--card) 85%, transparent);
-  backdrop-filter: blur(16px);
-  border: 1px solid color-mix(in srgb, var(--border) 80%, transparent);
-  box-shadow: var(--shadow-card);
+/* ===== Aura Top Minimalist Bar ===== */
+.top-meta-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 48px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  background-color: var(--background);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  gap: 20px;
 }
-.savo-lift {
-  transition:
-    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.25s ease,
-    background-color 0.25s ease;
+
+@media (max-width: 768px) {
+  .top-meta-bar {
+    padding: 12px 20px;
+  }
 }
-.savo-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card-hover);
+
+.top-nav-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  white-space: nowrap;
 }
-/* ===== Swiss Editorial & Apple HIG Monoline Utilities ===== */
-.swiss-datum {
-  height: 1px;
-  background-color: var(--border);
-  width: 100%;
+
+.nav-link-item {
+  color: var(--muted-foreground);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 150ms ease;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
 }
-.swiss-card {
-  background-color: var(--card);
+
+.nav-link-item.active, .nav-link-item:hover {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.nav-link-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--foreground);
+}
+
+.nav-badge-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  background: var(--foreground);
+  color: var(--background);
+  line-height: 1;
+}
+
+/* ===== Aura Hero Expanse ===== */
+.hero-expanse {
+  padding: 48px 48px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  background: var(--background);
+}
+
+@media (max-width: 768px) {
+  .hero-expanse {
+    padding: 32px 20px 24px;
+  }
+}
+
+.hero-meta-left {
+  position: absolute;
+  left: 48px;
+  top: 48px;
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted-foreground);
+  line-height: 1.8;
+}
+
+.hero-meta-right {
+  position: absolute;
+  right: 48px;
+  top: 48px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted-foreground);
+  line-height: 1.8;
+}
+
+@media (max-width: 1024px) {
+  .hero-meta-left, .hero-meta-right {
+    display: none;
+  }
+}
+
+.hero-brand-name {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  color: var(--foreground);
+}
+
+.hero-tagline {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--muted-foreground);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+/* Dynamic Companion Pill */
+.pixel-companion-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--secondary);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-card);
-}
-.apple-interactive {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.apple-interactive:hover {
-  border-color: color-mix(in srgb, var(--foreground) 25%, var(--border));
-  box-shadow: var(--shadow-card-hover);
+  border-radius: 9999px;
+  padding: 6px 16px 6px 12px;
+  box-shadow: var(--shadow-xs);
+  transition: all 180ms ease;
 }
 
-/* ===== Motion ===== */
-@keyframes savo-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+.pixel-companion-bar:hover {
+  border-color: var(--foreground);
+  background: var(--background);
 }
-@keyframes savo-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+
+/* ===== Aura Principle Strip ===== */
+.principle-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 48px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--muted-foreground);
+  background: var(--surface-subtle);
+  font-family: var(--font-mono);
+  flex-wrap: wrap;
+  gap: 12px;
 }
-@keyframes savo-pop {
-  0% {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
+
+@media (max-width: 768px) {
+  .principle-strip {
+    padding: 10px 20px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
-.savo-in {
-  animation: savo-fade-up 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+/* ===== Aura Content Sections Architecture ===== */
+.content-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px 48px 90px;
 }
-.savo-in-fade {
-  animation: savo-fade 0.5s ease-out both;
-}
-.savo-pop {
-  animation: savo-pop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-/* Stagger helper for lists/grids */
-.savo-stagger > * {
-  animation: savo-fade-up 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-.savo-stagger > *:nth-child(1) { animation-delay: 0.02s; }
-.savo-stagger > *:nth-child(2) { animation-delay: 0.06s; }
-.savo-stagger > *:nth-child(3) { animation-delay: 0.1s; }
-.savo-stagger > *:nth-child(4) { animation-delay: 0.14s; }
-.savo-stagger > *:nth-child(5) { animation-delay: 0.18s; }
-.savo-stagger > *:nth-child(6) { animation-delay: 0.22s; }
 
-/* ===== Swiss Editorial & Apple HIG Interactive Tokens ===== */
+@media (max-width: 768px) {
+  .content-container {
+    padding: 24px 20px 80px;
+  }
+}
+
+.aura-section-block {
+  border-top: 1px solid var(--border);
+  padding: 36px 0 44px;
+}
+
+.aura-section-block:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.section-index-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-headline {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  color: var(--foreground);
+  margin-bottom: 6px;
+}
+
+.section-desc-lead {
+  font-size: 13.5px;
+  color: var(--ink-secondary);
+  max-width: 800px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+/* ===== Aura Precision Table ===== */
+.aura-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--border);
+}
+
+.aura-table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+  background: var(--surface-subtle);
+}
+
+.aura-table td {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  vertical-align: middle;
+  color: var(--foreground);
+}
+
+.aura-table tr:hover td {
+  background: var(--surface);
+}
+
+/* ===== Aura Action Pills & Apple Buttons ===== */
 .apple-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background-color: var(--foreground);
   color: var(--background);
   font-weight: 600;
-  border-radius: var(--radius-md);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  border: 1px solid transparent;
 }
+
 .apple-btn-primary:hover {
-  opacity: 0.92;
+  opacity: 0.9;
   transform: translateY(-1px);
-  box-shadow: var(--shadow-card);
 }
+
 .apple-btn-primary:active {
-  transform: scale(0.985);
+  transform: scale(0.98);
 }
 
 .apple-btn-secondary {
-  background-color: var(--card);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: var(--background);
   color: var(--foreground);
   border: 1px solid var(--border);
   font-weight: 500;
-  border-radius: var(--radius-md);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
 }
+
 .apple-btn-secondary:hover {
   background-color: var(--secondary);
-  border-color: color-mix(in srgb, var(--foreground) 20%, var(--border));
+  border-color: var(--foreground);
 }
+
 .apple-btn-secondary:active {
-  transform: scale(0.985);
+  transform: scale(0.98);
+}
+
+.btn-pill-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.btn-pill-action:hover {
+  background: var(--foreground);
+  color: var(--background);
+  border-color: var(--foreground);
 }
 
 .apple-segmented-container {
   display: inline-flex;
   align-items: center;
-  padding: 2px;
+  padding: 3px;
   background-color: var(--secondary);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 6px;
+  gap: 2px;
 }
 
 .apple-segmented-item {
-  padding: 4px 10px;
+  padding: 5px 12px;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 500;
   color: var(--muted-foreground);
-  border-radius: calc(var(--radius-md) - 2px);
-  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 4px;
+  transition: all 0.15s ease;
   cursor: pointer;
 }
+
 .apple-segmented-item:hover {
   color: var(--foreground);
 }
+
 .apple-segmented-item.active {
-  background-color: var(--card);
+  background-color: var(--background);
   color: var(--foreground);
   font-weight: 600;
   box-shadow: var(--shadow-xs);
 }
 
-.swiss-datum-vertical {
-  width: 1px;
+.swiss-datum {
+  height: 1px;
   background-color: var(--border);
-  height: 100%;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .savo-in,
-  .savo-in-fade,
-  .savo-pop,
-  .savo-stagger > * {
-    animation: none !important;
-  }
+  width: 100%;
 }

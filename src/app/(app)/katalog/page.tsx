@@ -129,14 +129,14 @@ export default function KatalogB2BPage() {
   };
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="content-container space-y-8">
       {/* Editorial Header */}
       <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
         <div className="space-y-1">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
             PRICING & ASSET CATALOG // B2B WHOLESALE
           </span>
-          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             Katalog Produk & Margin B2B Savo Eats
           </h1>
           <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
@@ -144,18 +144,18 @@ export default function KatalogB2BPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={handleResetDefaults}
-            className="apple-btn-secondary inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium cursor-pointer active:scale-95"
+            className="apple-btn-secondary"
           >
             <RotateCcw className="size-3.5" />
             <span>Reset Default</span>
           </button>
           <Link
             href="/outbox"
-            className="apple-btn-primary inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold cursor-pointer active:scale-95 shadow-xs"
+            className="apple-btn-primary"
           >
             <span>Buka Outbox Email</span>
             <ArrowRight className="size-3" />
@@ -164,15 +164,15 @@ export default function KatalogB2BPage() {
       </div>
 
       {/* Product Spec Table Grid */}
-      <div className="space-y-6">
+      <div className="space-y-0 divide-y divide-border border-t border-b border-border">
         {items.map((item) => {
           const isEditing = editingId === item.id && editForm !== null;
 
           return (
             <div
               key={item.id}
-              className={`border rounded-xl bg-card p-6 space-y-5 transition-all ${
-                isEditing ? "border-primary ring-1 ring-primary/20 shadow-md" : "border-border"
+              className={`py-8 space-y-6 transition-colors ${
+                isEditing ? "bg-secondary/20 px-4 rounded-md" : ""
               }`}
             >
               {isEditing ? (

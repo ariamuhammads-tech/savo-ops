@@ -206,20 +206,7 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
         </div>
       )}
 
-      {/* Section Header */}
-      <div className="flex items-baseline justify-between border-b border-border pb-3">
-        <div>
-          <h2 className="font-display text-xl tracking-tight text-foreground">
-            Antrean Draf Email Hades (Staged Queue)
-          </h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Draf email B2B tersusun otomatis. Email HANYA dikirim setelah Anda menyetujuinya.
-          </p>
-        </div>
-        <div className="text-xs font-mono text-muted-foreground">
-          {stagedLeads.length} Draf Menunggu Persetujuan
-        </div>
-      </div>
+
 
       {/* Staged Items List */}
       {stagedLeads.length === 0 ? (
@@ -233,7 +220,7 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
           </p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="divide-y divide-border border-t border-b border-border">
           {stagedLeads.map((lead) => {
             const isExpanded = expandedId === lead.id;
             const isSending = sendingId === lead.id;
@@ -241,10 +228,10 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
             return (
               <div
                 key={lead.id}
-                className="swiss-card apple-interactive overflow-hidden bg-card transition-all"
+                className="py-5 px-2 hover:bg-secondary/20 transition-colors"
               >
-                {/* Card Header */}
-                <div className="p-5 space-y-3">
+                {/* Row Header */}
+                <div className="space-y-3">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
@@ -381,7 +368,7 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
             Belum ada email yang berstatus terkirim menunggu respon.
           </div>
         ) : (
-          <div className="divide-y divide-border border border-border rounded-xl bg-card overflow-hidden">
+          <div className="divide-y divide-border border-t border-b border-border">
             {sentLeads.map((sent) => {
               const aging = getLeadAgingNotice(sent);
               const isGenerating = isGeneratingFollowUp === sent.id;

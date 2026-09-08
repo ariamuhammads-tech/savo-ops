@@ -2,13 +2,6 @@ import type { Metadata } from "next";
 import { LoginForm } from "./login-form";
 import { SavoLogo } from "@/components/savo-logo";
 import { ThemeToggle } from "@/components/theme-toggle";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Masuk · SAVO Ops",
@@ -28,17 +21,15 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <Card className="border border-border shadow-card bg-card">
-          <CardHeader className="space-y-1 pb-3">
-            <CardTitle className="font-display text-xl font-bold tracking-tight">Selamat Datang</CardTitle>
-            <CardDescription className="text-xs text-muted-foreground">
+        <div className="border border-border rounded-lg bg-background p-6 space-y-4">
+          <div className="space-y-1">
+            <h2 className="text-xl font-bold tracking-tight text-foreground">Selamat Datang</h2>
+            <p className="text-xs text-muted-foreground">
               Masuk untuk mengelola operasional dan akuisisi B2B SAVO.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <LoginForm />
-          </CardContent>
-        </Card>
+            </p>
+          </div>
+          <LoginForm />
+        </div>
 
         <p className="text-center text-xs text-muted-foreground">
           Hanya untuk staf SAVO. Hubungi pemilik jika butuh akses.
