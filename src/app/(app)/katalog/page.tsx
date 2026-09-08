@@ -1,193 +1,508 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { SAVO_PRICING } from "@/lib/leads-data";
+import {
+  Edit3,
+  Check,
+  X,
+  Upload,
+  Trash2,
+  ImageIcon,
+  RotateCcw,
+  Sparkles,
+  Camera,
+  ArrowRight,
+} from "lucide-react";
+import {
+  CatalogItem,
+  DEFAULT_CATALOG,
+  getStoredCatalog,
+  saveStoredCatalog,
+} from "@/lib/catalog-data";
+import { toast } from "sonner";
 
 export default function KatalogB2BPage() {
+  const [items, setItems] = useState<CatalogItem[]>(DEFAULT_CATALOG);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<CatalogItem | null>(null);
+
+  useEffect(() => {
+    setItems(getStoredCatalog());
+  }, []);
+
+  const handleStartEdit = (item: CatalogItem) => {
+    setEditingId(item.id);
+    setEditForm({ ...item });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditForm(null);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editForm) return;
+
+    // Recalculate margin if both prices are valid
+    let updatedMargin = editForm.marginPercent;
+    if (editForm.recommendedSellPrice > 0 && editForm.hppPerPortion >= 0) {
+      const marginVal =
+        ((editForm.recommendedSellPrice - editForm.hppPerPortion) /
+          editForm.recommendedSellPrice) *
+        100;
+      updatedMargin = marginVal.toFixed(1) + "%";
+    }
+
+    const updatedItem: CatalogItem = {
+      ...editForm,
+      marginPercent: updatedMargin,
+    };
+
+    const nextItems = items.map((i) => (i.id === updatedItem.id ? updatedItem : i));
+    setItems(nextItems);
+    saveStoredCatalog(nextItems);
+    setEditingId(null);
+    setEditForm(null);
+    toast.success(`Produk "${updatedItem.name}" berhasil diperbarui!`);
+  };
+
+  const handleImageUpload = (
+    itemId: string,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Ukuran foto melebihi 2MB. Gunakan foto ringan agar siap dikirim via email.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      const sizeKb = Math.round(file.size / 1024);
+
+      const nextItems = items.map((i) =>
+        i.id === itemId
+          ? {
+              ...i,
+              imageUrl: dataUrl,
+              imageName: file.name,
+              imageSizeKb: sizeKb,
+            }
+          : i
+      );
+
+      setItems(nextItems);
+      saveStoredCatalog(nextItems);
+      toast.success(`Foto produk "${file.name}" tersimpan di katalog aset!`);
+    };
+
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const handleRemoveImage = (itemId: string) => {
+    const nextItems = items.map((i) =>
+      i.id === itemId
+        ? {
+            ...i,
+            imageUrl: null,
+            imageName: null,
+            imageSizeKb: null,
+          }
+        : i
+    );
+    setItems(nextItems);
+    saveStoredCatalog(nextItems);
+    toast.success("Foto produk dihapus dari katalog.");
+  };
+
+  const handleResetDefaults = () => {
+    if (confirm("Kembalikan seluruh harga dan penamaan produk ke setelan standar resmi Savo?")) {
+      setItems(DEFAULT_CATALOG);
+      saveStoredCatalog(DEFAULT_CATALOG);
+      toast.success("Katalog dikembalikan ke harga default.");
+    }
+  };
+
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
       {/* Editorial Header */}
-      <div className="border-b border-border pb-6 space-y-2">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
-          PRICING & UNIT ECONOMICS // B2B WHOLESALE
-        </span>
-        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
-          Katalog Produk & Margin B2B SAVO
-        </h1>
-        <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
-          Struktur harga grosir resmi untuk pasokan ke coffee shop, bistro, dan bar di Bandung. Dirancang memberikan margin laba di atas 50% bagi kafe mitra.
-        </p>
-      </div>
-
-      {/* Product Spec Table Grid (Swiss Editorial Layout) */}
-      <div className="space-y-6">
-        {/* Product 1: Bitterballen Original */}
-        <div className="border border-border rounded-xl bg-card p-6 space-y-4">
-          <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border pb-3">
-            <div>
-              <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-primary font-bold">
-                SIGNATURE FINGER FOOD
-              </span>
-              <h2 className="font-display text-xl font-bold text-foreground mt-0.5">
-                {SAVO_PRICING.bitterballen_ori.name}
-              </h2>
-            </div>
-            <div className="text-right">
-              <span className="font-display text-xl font-bold text-primary">
-                Rp {SAVO_PRICING.bitterballen_ori.b2b_price.toLocaleString("id-ID")}
-              </span>
-              <span className="text-xs text-muted-foreground block font-mono">/ pack (10 pcs)</span>
-            </div>
-          </div>
-
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Kroket daging sapi khas Belanda dengan isian 100% Australian Beef bertekstur ragout creamy gurih dan aroma rempah pala asli. Sangat disukai sebagai pendamping kopi di kafe artisan.
+      <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
+        <div className="space-y-1">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground font-mono">
+            PRICING & ASSET CATALOG // B2B WHOLESALE
+          </span>
+          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+            Katalog Produk & Margin B2B Savo Eats
+          </h1>
+          <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
+            Kelola nama, harga grosir, HPP porsi kafe, serta foto aset produk resmi. Foto yang diunggah di sini siap otomatis dilampirkan di email Outbox tanpa perlu upload berulang kali.
           </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 text-xs">
-            <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-              <span className="text-muted-foreground text-[11px] block">Porsi Kafe (5 pcs)</span>
-              <span className="font-mono font-bold text-foreground">
-                HPP Rp {SAVO_PRICING.bitterballen_ori.hpp_per_portion.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-              <span className="text-muted-foreground text-[11px] block">Saran Harga Jual</span>
-              <span className="font-mono font-bold text-foreground">
-                Rp {SAVO_PRICING.bitterballen_ori.recommended_sell_price.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-              <span className="text-emerald-700 dark:text-emerald-400 text-[11px] block font-medium">Margin Laba Kafe</span>
-              <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300">
-                {SAVO_PRICING.bitterballen_ori.margin_percent}
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-              <span className="text-muted-foreground text-[11px] block">Waktu Deep-Fry</span>
-              <span className="font-mono font-medium text-foreground">3.5 Menit (170°C)</span>
-            </div>
-          </div>
         </div>
 
-        {/* Product 2: Bitterballen Cheese */}
-        <div className="border border-border rounded-xl bg-card p-6 space-y-4">
-          <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border pb-3">
-            <div>
-              <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-primary font-bold">
-                PREMIUM VARIANT
-              </span>
-              <h2 className="font-display text-xl font-bold text-foreground mt-0.5">
-                {SAVO_PRICING.bitterballen_cheese.name}
-              </h2>
-            </div>
-            <div className="text-right">
-              <span className="font-display text-xl font-bold text-primary">
-                Rp {SAVO_PRICING.bitterballen_cheese.b2b_price.toLocaleString("id-ID")}
-              </span>
-              <span className="text-xs text-muted-foreground block font-mono">/ pack (10 pcs)</span>
-            </div>
-          </div>
-
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Varian favorit generasi muda: perpaduan daging sapi Australia dengan lelehan keju mozarella/cheddar gurih di setiap gigitan. Sempurna untuk kafe brunch dan beer house.
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 text-xs">
-            <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-              <span className="text-muted-foreground text-[11px] block">Porsi Kafe (5 pcs)</span>
-              <span className="font-mono font-bold text-foreground">
-                HPP Rp {SAVO_PRICING.bitterballen_cheese.hpp_per_portion.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-              <span className="text-muted-foreground text-[11px] block">Saran Harga Jual</span>
-              <span className="font-mono font-bold text-foreground">
-                Rp {SAVO_PRICING.bitterballen_cheese.recommended_sell_price.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-              <span className="text-emerald-700 dark:text-emerald-400 text-[11px] block font-medium">Margin Laba Kafe</span>
-              <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300">
-                {SAVO_PRICING.bitterballen_cheese.margin_percent}
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-              <span className="text-muted-foreground text-[11px] block">Waktu Deep-Fry</span>
-              <span className="font-mono font-medium text-foreground">3.5 Menit (170°C)</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Product 3: Baso Goreng Ready-to-Fry */}
-        <div className="border border-border rounded-xl bg-card p-6 space-y-4">
-          <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border pb-3">
-            <div>
-              <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-primary font-bold">
-                HIGH-VOLUME CROWD PLEASER
-              </span>
-              <h2 className="font-display text-xl font-bold text-foreground mt-0.5">
-                {SAVO_PRICING.baso_goreng.name}
-              </h2>
-            </div>
-            <div className="text-right">
-              <span className="font-display text-xl font-bold text-primary">
-                {SAVO_PRICING.baso_goreng.b2b_price_range}
-              </span>
-              <span className="text-xs text-muted-foreground block font-mono">/ 10 pcs</span>
-            </div>
-          </div>
-
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Baso goreng homemade siap goreng dengan tekstur garing mekar di luar, kopong kenyal di dalam, serta rasa gurih gurih umami asli. Disukai semua kalangan, cocok untuk bar snack dan nongkrong malam.
-          </p>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 text-xs">
-            <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-              <span className="text-muted-foreground text-[11px] block">Porsi Kafe (3 pcs potong)</span>
-              <span className="font-mono font-bold text-foreground">
-                HPP Rp {SAVO_PRICING.baso_goreng.hpp_per_portion.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-              <span className="text-muted-foreground text-[11px] block">Saran Harga Jual</span>
-              <span className="font-mono font-bold text-foreground">
-                Rp {SAVO_PRICING.baso_goreng.recommended_sell_price.toLocaleString("id-ID")}
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-              <span className="text-emerald-700 dark:text-emerald-400 text-[11px] block font-medium">Margin Laba Kafe</span>
-              <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300">
-                {SAVO_PRICING.baso_goreng.margin_percent}
-              </span>
-            </div>
-            <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-              <span className="text-muted-foreground text-[11px] block">Karakter Goreng</span>
-              <span className="font-mono font-medium text-foreground">Kopong & Awet Renyah</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Free Tasting Box Specification */}
-      <div className="border border-border rounded-xl bg-secondary/20 p-6 space-y-3">
-        <span className="text-[11px] font-mono uppercase tracking-[0.14em] text-primary font-bold">
-          STRATEGI AKUISISI // ZERO FRICTION
-        </span>
-        <h3 className="font-display text-lg font-bold text-foreground">
-          {SAVO_PRICING.sample_pack.name}
-        </h3>
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          Porsi kurasi sampel tester: <strong>{SAVO_PRICING.sample_pack.contents}</strong>.
-          Porsi ini sengaja dirancang ringkas agar hemat biaya operasional bagi SAVO, namun memberikan bukti kualitas rasa yang cukup bagi barista lead dan kitchen supervisor sebelum menyepakati pesanan rutin.
-        </p>
-
-        <div className="pt-2">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleResetDefaults}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border bg-card hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
-            Tinjau Antrean Email Penawaran Tester di HQ Hades &rarr;
+            <RotateCcw className="size-3.5" />
+            Reset Default
+          </button>
+          <Link
+            href="/outbox"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer"
+          >
+            Buka Outbox Email
+            <ArrowRight className="size-3" />
           </Link>
         </div>
+      </div>
+
+      {/* Product Spec Table Grid */}
+      <div className="space-y-6">
+        {items.map((item) => {
+          const isEditing = editingId === item.id && editForm !== null;
+
+          return (
+            <div
+              key={item.id}
+              className={`border rounded-xl bg-card p-6 space-y-5 transition-all ${
+                isEditing ? "border-primary ring-1 ring-primary/20 shadow-md" : "border-border"
+              }`}
+            >
+              {isEditing ? (
+                /* EDIT MODE FORM */
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border-b border-border pb-3">
+                    <span className="text-xs font-bold font-mono text-primary uppercase">
+                      ✏️ Mengedit Detail: {item.name}
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={handleCancelEdit}
+                        className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-md border border-border hover:bg-secondary font-medium"
+                      >
+                        <X className="size-3" />
+                        Batal
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleSaveEdit}
+                        className="inline-flex items-center gap-1 px-3.5 py-1 text-xs rounded-md bg-foreground text-background font-bold hover:opacity-90"
+                      >
+                        <Check className="size-3" />
+                        Simpan Perubahan
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <label className="block font-semibold mb-1 text-muted-foreground">
+                        Nama Produk
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.name}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, name: e.target.value })
+                        }
+                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 font-medium text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-semibold mb-1 text-muted-foreground">
+                        Tagline / Kategori
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.categoryTag}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, categoryTag: e.target.value })
+                        }
+                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-semibold mb-1 text-muted-foreground">
+                        Harga Grosir B2B (Rp)
+                      </label>
+                      <input
+                        type="number"
+                        value={editForm.b2bPrice}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            b2bPrice: Number(e.target.value),
+                          })
+                        }
+                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 font-mono text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-semibold mb-1 text-muted-foreground">
+                        Keterangan Satuan Pack
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.packUnit}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, packUnit: e.target.value })
+                        }
+                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-semibold mb-1 text-muted-foreground">
+                        Keterangan Porsi Kafe
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.portionDesc}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            portionDesc: e.target.value,
+                          })
+                        }
+                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-semibold mb-1 text-muted-foreground">
+                        HPP per Porsi Kafe (Rp)
+                      </label>
+                      <input
+                        type="number"
+                        value={editForm.hppPerPortion}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            hppPerPortion: Number(e.target.value),
+                          })
+                        }
+                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 font-mono text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-semibold mb-1 text-muted-foreground">
+                        Saran Harga Jual Menu Kafe (Rp)
+                      </label>
+                      <input
+                        type="number"
+                        value={editForm.recommendedSellPrice}
+                        onChange={(e) =>
+                          setEditForm({
+                            ...editForm,
+                            recommendedSellPrice: Number(e.target.value),
+                          })
+                        }
+                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 font-mono text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-semibold mb-1 text-muted-foreground">
+                        Waktu Goreng / Deep-Fry
+                      </label>
+                      <input
+                        type="text"
+                        value={editForm.cookTime}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, cookTime: e.target.value })
+                        }
+                        className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold mb-1 text-muted-foreground">
+                      Deskripsi Karakter Produk
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={editForm.description}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, description: e.target.value })
+                      }
+                      className="w-full rounded-md border border-border bg-secondary/30 p-2.5 text-xs text-foreground focus:outline-hidden focus:ring-1 focus:ring-primary"
+                    />
+                  </div>
+                </div>
+              ) : (
+                /* DISPLAY VIEW */
+                <div className="space-y-4">
+                  {/* Top Bar with Title and Action */}
+                  <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-border pb-3">
+                    <div>
+                      <span className="text-[10px] font-mono uppercase tracking-[0.14em] text-primary font-bold">
+                        {item.categoryTag}
+                      </span>
+                      <h2 className="font-display text-xl font-bold text-foreground mt-0.5">
+                        {item.name}
+                      </h2>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <span className="font-display text-xl font-bold text-primary">
+                          {item.b2bPrice > 0
+                            ? `Rp ${item.b2bPrice.toLocaleString("id-ID")}`
+                            : "GRATIS"}
+                        </span>
+                        <span className="text-xs text-muted-foreground block font-mono">
+                          {item.packUnit}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleStartEdit(item)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-md border border-border bg-secondary/40 hover:bg-secondary text-foreground transition-colors cursor-pointer"
+                        title="Ubah nama, harga, dan porsi produk"
+                      >
+                        <Edit3 className="size-3" />
+                        Edit
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Main Grid: Photo + Specs */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {/* Left: Product Photo Asset Box */}
+                    <div className="border border-border/70 rounded-xl bg-secondary/20 p-3.5 flex flex-col justify-between space-y-3">
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[11px] font-bold text-foreground flex items-center gap-1.5">
+                            <Camera className="size-3.5 text-primary" />
+                            Foto Produk Resmi
+                          </span>
+                          {item.imageUrl && (
+                            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 font-bold">
+                              Siap di-Attach
+                            </span>
+                          )}
+                        </div>
+
+                        {item.imageUrl ? (
+                          <div className="relative group rounded-lg overflow-hidden border border-border/80 aspect-video bg-black/5 flex items-center justify-center">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={item.imageUrl}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                              <label className="p-2 rounded-md bg-card text-foreground text-xs font-semibold hover:bg-secondary cursor-pointer flex items-center gap-1">
+                                <Upload className="size-3.5" />
+                                Ganti
+                                <input
+                                  type="file"
+                                  accept="image/jpeg,image/png,image/webp"
+                                  className="hidden"
+                                  onChange={(e) => handleImageUpload(item.id, e)}
+                                />
+                              </label>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveImage(item.id)}
+                                className="p-2 rounded-md bg-destructive text-destructive-foreground hover:opacity-90"
+                              >
+                                <Trash2 className="size-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <label className="border-2 border-dashed border-border/80 hover:border-primary/60 rounded-lg p-5 flex flex-col items-center justify-center gap-2 text-center cursor-pointer transition-colors bg-card/50 hover:bg-secondary/40 aspect-video">
+                            <ImageIcon className="size-6 text-muted-foreground" />
+                            <div>
+                              <span className="text-xs font-semibold text-foreground block">
+                                Upload Foto Plating / Produk
+                              </span>
+                              <span className="text-[10px] text-muted-foreground font-mono">
+                                JPG, PNG, WebP (Maks 2MB)
+                              </span>
+                            </div>
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              className="hidden"
+                              onChange={(e) => handleImageUpload(item.id, e)}
+                            />
+                          </label>
+                        )}
+                      </div>
+
+                      <p className="text-[11px] text-muted-foreground leading-normal">
+                        {item.imageUrl
+                          ? `Foto "${item.imageName || "Asset"}" (${item.imageSizeKb || 0} KB) siap otomatis dipilih saat kirim email penawaran ke kafe.`
+                          : "Upload foto terbaik produk ini agar Anda tidak perlu mencari file foto lagi dari komputer setiap mengirim email."}
+                      </p>
+                    </div>
+
+                    {/* Right: Description & Economics Spec */}
+                    <div className="md:col-span-2 space-y-3 flex flex-col justify-between">
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {item.description}
+                      </p>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 text-xs">
+                        <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
+                          <span className="text-muted-foreground text-[11px] block">
+                            {item.portionDesc}
+                          </span>
+                          <span className="font-mono font-bold text-foreground">
+                            HPP Rp {item.hppPerPortion.toLocaleString("id-ID")}
+                          </span>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
+                          <span className="text-muted-foreground text-[11px] block">
+                            Saran Harga Jual
+                          </span>
+                          <span className="font-mono font-bold text-foreground">
+                            {item.recommendedSellPrice > 0
+                              ? `Rp ${item.recommendedSellPrice.toLocaleString("id-ID")}`
+                              : "Sampel Gratis"}
+                          </span>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                          <span className="text-emerald-700 dark:text-emerald-400 text-[11px] block font-medium">
+                            Margin Laba Kafe
+                          </span>
+                          <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300">
+                            {item.marginPercent}
+                          </span>
+                        </div>
+
+                        <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
+                          <span className="text-muted-foreground text-[11px] block">
+                            Waktu Saji / Deep-Fry
+                          </span>
+                          <span className="font-mono font-medium text-foreground">
+                            {item.cookTime}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

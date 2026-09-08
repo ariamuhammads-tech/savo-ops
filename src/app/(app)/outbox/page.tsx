@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import {
   Send,
   Check,
@@ -14,8 +15,10 @@ import {
   Sparkles,
   Wand2,
   Loader2,
+  Camera,
 } from "lucide-react";
 import { INITIAL_LEADS, Lead, PRODUCT_LABELS } from "@/lib/leads-data";
+import { getStoredCatalog, CatalogItem } from "@/lib/catalog-data";
 import { toast } from "sonner";
 
 interface AttachmentItem {
@@ -39,12 +42,40 @@ export default function OutboxPage() {
   const [copied, setCopied] = useState(false);
   const [hadesInstruction, setHadesInstruction] = useState("");
   const [isRefining, setIsRefining] = useState(false);
+  const [showCatalogPicker, setShowCatalogPicker] = useState(false);
+  const [catalogItems, setCatalogItems] = useState<CatalogItem[]>([]);
+
+  useEffect(() => {
+    setCatalogItems(getStoredCatalog());
+    const handleUpdate = () => setCatalogItems(getStoredCatalog());
+    window.addEventListener("savo_catalog_updated", handleUpdate);
+    return () => window.removeEventListener("savo_catalog_updated", handleUpdate);
+  }, []);
 
   // Daily 5-email limit tracker
   const todayStr = new Date().toISOString().slice(0, 10);
   const sentTodayCount = leads.filter(
     (l) => l.status === "sent" && l.sentAt && l.sentAt.slice(0, 10) === todayStr
   ).length;
+
+  const attachFromCatalog = (item: CatalogItem) => {
+    if (!item.imageUrl) return;
+    const base64Content = item.imageUrl.split(",")[1];
+    const contentType =
+      item.imageUrl.split(";")[0]?.replace("data:", "") || "image/jpeg";
+    setAttachments((prev) => [
+      ...prev,
+      {
+        id: `catalog-${item.id}-${Date.now()}`,
+        filename: item.imageName || `${item.id}.jpg`,
+        content: base64Content,
+        contentType,
+        sizeKb: item.imageSizeKb || 120,
+      },
+    ]);
+    toast.success(`Foto ${item.name} dilampirkan dari katalog!`);
+    setShowCatalogPicker(false);
+  };
 
   const currentLead = leads.find((l) => l.id === selectedLeadId) || leads[0];
 
@@ -413,28 +444,39 @@ export default function OutboxPage() {
             </div>
 
             {/* Attachments Section */}
-            <div className="space-y-2 pt-2 border-t border-border/60">
-              <div className="flex items-center justify-between">
+            <div className="space-y-2.5 pt-2 border-t border-border/60">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                   <Paperclip className="size-3.5 text-muted-foreground" />
                   Lampirkan Foto Produk / Menu (Opsional)
                 </span>
-                <label className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline cursor-pointer">
-                  <Plus className="size-3.5" />
-                  + Pilih Foto
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
-                    multiple
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
-                </label>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowCatalogPicker(true)}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-md bg-secondary hover:bg-secondary/80 text-foreground transition-colors cursor-pointer border border-border"
+                    title="Gunakan foto produk yang tersimpan di katalog"
+                  >
+                    <Camera className="size-3 text-primary" />
+                    Ambil dari Katalog Aset
+                  </button>
+                  <label className="inline-flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer">
+                    <Plus className="size-3.5" />
+                    File Komputer
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      multiple
+                      className="hidden"
+                      onChange={handleFileChange}
+                    />
+                  </label>
+                </div>
               </div>
 
               {attachments.length === 0 ? (
                 <p className="text-[11px] text-muted-foreground">
-                  Belum ada foto yang dilampirkan. Klik <strong>+ Pilih Foto</strong> jika ingin menyertakan foto Bitterballen atau Baso Goreng (disarankan maks. 1MB agar tidak masuk tab Spam).
+                  Belum ada foto yang dilampirkan. Klik <strong>Ambil dari Katalog Aset</strong> untuk melampirkan foto resmi produk tanpa perlu upload ulang.
                 </p>
               ) : (
                 <div className="flex flex-wrap gap-2 pt-1">
@@ -495,6 +537,100 @@ export default function OutboxPage() {
           </div>
         </div>
       </div>
+
+      {/* Catalog Asset Picker Modal */}
+      {showCatalogPicker && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-xs p-4">
+          <div className="w-full max-w-xl rounded-xl border border-border bg-card shadow-2xl p-5 space-y-4 max-h-[85vh] overflow-y-auto">
+            <div className="flex items-start justify-between border-b border-border pb-3">
+              <div className="flex items-center gap-2">
+                <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground font-mono text-xs font-bold">
+                  <Camera className="size-4" />
+                </div>
+                <div>
+                  <h3 className="font-display text-base font-bold text-foreground">
+                    Pilih Foto dari Katalog Aset Savo
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Lampirkan foto resmi produk tanpa perlu upload ulang dari hard drive.
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCatalogPicker(false)}
+                className="text-muted-foreground hover:text-foreground p-1 rounded-md cursor-pointer"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            {catalogItems.filter((i) => i.imageUrl).length === 0 ? (
+              <div className="text-center py-8 space-y-3">
+                <ImageIcon className="size-10 text-muted-foreground mx-auto opacity-50" />
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold text-foreground">
+                    Belum ada foto yang diunggah di Katalog Produk.
+                  </p>
+                  <p className="text-[11px] text-muted-foreground max-w-md mx-auto">
+                    Kunjungi menu Katalog & Margin untuk mengunggah foto resmi Bitterballen dan Baso Goreng sekali saja, lalu gunakan di seluruh email berikutnya.
+                  </p>
+                </div>
+                <Link
+                  href="/katalog"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-foreground text-background text-xs font-bold hover:opacity-90 transition-opacity"
+                >
+                  Buka Menu Katalog & Upload Foto Sekarang &rarr;
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {catalogItems
+                    .filter((i) => i.imageUrl)
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        className="rounded-lg border border-border bg-secondary/20 p-3 space-y-2 flex flex-col justify-between hover:border-primary/50 transition-colors"
+                      >
+                        <div className="space-y-2">
+                          <div className="relative rounded-md overflow-hidden aspect-video bg-black/10 border border-border/80">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={item.imageUrl!}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded bg-black/70 text-white font-mono text-[9px]">
+                              {item.imageSizeKb || 0} KB
+                            </span>
+                          </div>
+                          <div>
+                            <p className="font-display text-xs font-bold text-foreground line-clamp-1">
+                              {item.name}
+                            </p>
+                            <span className="text-[10px] text-muted-foreground font-mono">
+                              {item.categoryTag}
+                            </span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => attachFromCatalog(item)}
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-foreground text-background text-xs font-bold hover:opacity-90 transition-opacity cursor-pointer mt-1"
+                        >
+                          <Plus className="size-3" />
+                          Lampirkan Foto Ini
+                        </button>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
