@@ -201,8 +201,8 @@ export default function LeadsPage() {
       status: "staged",
       notes: newLead.notes || "Ditambahkan oleh Aria",
       stagedDraft: {
-        subject: `Perkenalan Savo Eats & Tester Bitterballen untuk ${newLead.name}`,
-        body: `Halo Tim ${newLead.name}, salam kenal dari Aria di Savo Eats.\n\nSuka banget sama vibe dan konsistensi kafe kalian. Kami di Savo Eats memproduksi Bitterballen daging sapi Australia dan Baso Goreng siap goreng khusus untuk kafe di Bandung.\n\nBiar tim kitchen & barista bisa coba langsung, bolehkah kami kirimkan 1 Curated Tasting Box gratis minggu ini?\n\nSalam santai,\nAria — Savo Eats\nthesavorium@gmail.com`,
+        subject: `Menu snack untuk ${newLead.name}`,
+        body: `Halo tim ${newLead.name}, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng khusus untuk kafe.\n\nMenghubungi kalian siapa tahu baso goreng dan bitterballen kami cocok buat menjadi tambahan menu di sana.\n\nKalau berkenan, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com`,
       },
       updatedAt: new Date().toISOString(),
     };
@@ -248,10 +248,10 @@ export default function LeadsPage() {
       });
 
       const data = await res.json();
-      const newSubject = data.subject || `Tester Tasting Box Savo Eats untuk tim ${lead.name}`;
+      const newSubject = data.subject || `Kelanjutan info snack untuk ${lead.name}`;
       const newBody =
         data.body ||
-        `Halo tim ${lead.name},\n\nCuma mau make sure email tester box kami kemarin sempat terbaca atau mungkin nyasar ke tab promosi.\n\nKami masih simpan slot 1 Curated Tasting Box gratis (isi Bitterballen & Baso Goreng) buat dicicipi barista lead atau tim dapur kalian minggu ini. Boleh kami antar testernya besok atau lusa?\n\nCheers,\nHades | Savo Eats\nthesavorium@gmail.com`;
+        `Halo tim ${lead.name},\n\nSemoga pekan ini lancar. Menghubungi kembali siapa tahu email penawaran bitterballen dan baso goreng kami kemarin sempat terlewat.\n\nKalau sekiranya cocok untuk tambahan menu di sana dan tim dapur ingin coba testernya dulu, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com`;
 
       const updated = updateStoredLeadStatus(lead.id, "staged", {
         stagedDraft: { subject: newSubject, body: newBody },

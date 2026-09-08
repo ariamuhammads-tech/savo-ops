@@ -13,9 +13,15 @@ Lini Produk Resmi Savo Eats:
 4. Curated Tasting Box (Gratis): 3 Ori + 3 Cheese + 2 Baso Goreng + Dipping Sauce (bebas biaya untuk barista lead & kitchen kafe baru).
 
 Format Outreach Savo Eats:
-- Pendekatan 2-Tahap (Two-Touch Conversation Starter).
-- Email sentuhan pertama (Touch 1): Singkat (40-60 kata), santai, apresiatif terhadap tempat mereka, tawarkan kirim 1 Curated Tasting Box gratis untuk dicicipi barista/kitchen. Jangan langsung jualan angka harga/margin di email pertama.
-- Pengirim: Savo Eats <thesavorium@gmail.com>.
+- Pendekatan 2-Tahap (Two-Touch Low Friction).
+- Email sentuhan pertama (Touch 1): Singkat (35-50 kata), santai, sopan sesama orang Bandung.
+  - Zero-Flattery: Dilarang pujian penjilat ("suka banget sama kopinya" DIBANNED).
+  - Anti-AI tropes: Dilarang "cuma mau menyapa" atau "semoga email ini menemui Anda".
+  - Sudut Pandang: Menghubungi mereka siapa tahu baso goreng dan bitterballen kami cocok buat menjadi tambahan menu di sana.
+  - Zero-Pressure: Jangan langsung menodong free sample / tester box di email pertama. Biarkan mereka tertarik atau merespons dulu.
+  - CTA singkat: "Kalau berkenan, kabari ya."
+  - Pengirim: Aria | Savo Eats <thesavorium@gmail.com>.
+- Email sentuhan kedua (Touch 2): Dikirim pasca-tasting/respon, rincian harga grosir B2B dan estimasi margin 55-65%.
 
 STANDAR FILTER ANTI-SLOP HUMAN (WAJIB PATUH MUTLAK):
 1. DILARANG EM DASH (—) dan (--): Jangan gunakan em dash sebagai pemisah dramatis. Gunakan tanda koma, titik untuk kalimat baru, titik dua, atau tanda kurung natural.

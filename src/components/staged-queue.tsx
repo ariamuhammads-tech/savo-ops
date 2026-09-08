@@ -141,10 +141,10 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
 
       const data = await res.json();
       const newSubject =
-        data.subject || `Tester Tasting Box Savo Eats untuk tim ${lead.name}`;
+        data.subject || `Kelanjutan info snack untuk ${lead.name}`;
       const newBody =
         data.body ||
-        `Halo tim ${lead.name},\n\nCuma mau make sure email tester box kami kemarin sempat terbaca atau mungkin nyasar ke tab promosi.\n\nKami masih simpan slot 1 Curated Tasting Box gratis (isi Bitterballen & Baso Goreng) buat dicicipi barista lead atau tim dapur kalian minggu ini. Boleh kami antar testernya besok atau lusa?\n\nCheers,\nHades | Savo Eats\nthesavorium@gmail.com`;
+        `Halo tim ${lead.name},\n\nSemoga pekan ini lancar. Menghubungi kembali siapa tahu email penawaran bitterballen dan baso goreng kami kemarin sempat terlewat.\n\nKalau sekiranya cocok untuk tambahan menu di sana dan tim dapur ingin coba testernya dulu, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com`;
 
       const updated = updateStoredLeadStatus(lead.id, "staged", {
         stagedDraft: { subject: newSubject, body: newBody },

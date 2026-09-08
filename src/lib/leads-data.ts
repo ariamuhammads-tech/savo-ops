@@ -193,19 +193,17 @@ export const INITIAL_LEADS: Lead[] = [
     status: "staged",
     notes: "Traffic tinggi, profil pelanggan pas untuk Bitterballen Cheese & Original pendamping manual brew.",
     stagedDraft: {
-      subject: "Tester Bitterballen & Baso Goreng untuk Tim Wheels Coffee",
-      body: `Halo Tim Wheels Coffee, salam kenal dari Aria di Savo Eats.
+      subject: "Menu snack untuk Wheels Coffee",
+      body: `Halo tim Wheels Coffee, salam kenal.
 
-Suka banget sama vibe dan konsistensi kopi kalian di Bandung. Kami di Savo Eats kebetulan memproduksi Bitterballen (100% daging sapi Australia) dan Baso Goreng siap goreng khusus untuk suplai kafe lokal.
+Saya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng khusus untuk kafe.
 
-Tanpa perlu persiapan repot di kitchen, staf tinggal deep-fry 4 menit langsung dari kondisi beku.
+Menghubungi kalian siapa tahu baso goreng dan bitterballen kami cocok buat menjadi tambahan menu di sana.
 
-Biar tim barista dan kitchen bisa mencicipi langsung rasanya, kami ingin mengirimkan 1 Curated Tasting Box gratis (isi Bitterballen Cheese, Ori, dan Baso Goreng) ke Wheels Coffee minggu ini.
+Kalau berkenan, kabari ya.
 
-Kira-kira boleh kami kirimkan? Kalau berkenan, boleh info nama penerima atau hari yang paling pas ya.
-
-Salam santai,
-Aria — Savo Eats
+Salam,
+Aria | Savo Eats
 thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-08T06:00:00Z",
@@ -224,17 +222,17 @@ thesavorium@gmail.com`,
     status: "staged",
     notes: "Spot kopi ikonik di Progo, butuh finger food klasik daging sapi untuk teman ngobrol santai.",
     stagedDraft: {
-      subject: "Tester Bitterballen Sapi untuk Tim Sejiwa Progo",
-      body: `Halo rekan Sejiwa Progo, salam kenal dari Aria di Savo Eats.
+      subject: "Bitterballen & baso goreng untuk Sejiwa Progo",
+      body: `Halo rekan Sejiwa Progo, salam kenal.
 
-Sejiwa selalu jadi barometer kopi di Bandung. Menemani seduhan kopi kalian, kami di Savo Eats memproduksi Bitterballen daging sapi Australia dan Baso Goreng siap goreng yang praktis untuk menu cemilan kafe.
+Saya Aria dari Savo Eats di Bandung. Kami suplai bitterballen daging sapi dan baso goreng siap saji untuk kafe-kafe lokal.
 
-Biar tim barista & kitchen Sejiwa bisa coba langsung kualitas dan rasanya, kami ingin mengirimkan 1 paket tasting gratis (bebas biaya) ke Progo.
+Kontak kalian siapa tahu menu kami pas buat nambah variasi camilan di sana.
 
-Boleh kami drop testernya besok atau lusa? Kalau berkenan, kabari kami ya.
+Kalau sekiranya cocok, kabari ya.
 
-Salam hangat,
-Aria — Savo Eats
+Salam,
+Aria | Savo Eats
 thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-08T06:10:00Z",
@@ -253,17 +251,17 @@ thesavorium@gmail.com`,
     status: "staged",
     notes: "Bar snack paling dicari adalah baso goreng renyah dan bitterballen panas pendamping bir.",
     stagedDraft: {
-      subject: "Sample Bar Snack: Baso Goreng & Bitterballen untuk Beer Point",
-      body: `Halo tim Beer Point Paskal, salam kenal dari Aria di Savo Eats.
+      subject: "Opsi bar snack untuk Beer Point Paskal",
+      body: `Halo tim Beer Point Paskal, salam kenal.
 
-Buat nemenin bir dan suasana taphouse di Paskal, finger food gurih yang keluar cepet dari kitchen emang paling pas. Kami di Savo Eats memproduksi Baso Goreng kopong renyah dan Bitterballen keju beku siap goreng (tinggal deep-fry 4 menit tanpa repot adonan).
+Saya Aria dari Savo Eats di Bandung. Kami produksi baso goreng dan bitterballen daging sapi beku siap goreng (zero prep di dapur) khusus untuk pendamping minuman.
 
-Kami ingin kirim 1 tester box gratis ke Paskal biar tim dapur atau bar bisa coba goreng dan cicipi bareng.
+Menghubungi kalian siapa tahu baso goreng dan bitterballen kami cocok buat tambahan menu snack di sana.
 
-Boleh kami antar sore ini sebelum operasional buka?
+Kalau tertarik, kabari ya.
 
-Salam santai,
-Aria — Savo Eats
+Salam,
+Aria | Savo Eats
 thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-08T06:15:00Z",
@@ -283,17 +281,17 @@ thesavorium@gmail.com`,
     sentAt: "2026-09-07T14:30:00Z",
     notes: "Kafe brunch spesialis Western, email penawaran tester sudah terkirim, menunggu konfirmasi jadwal antar.",
     stagedDraft: {
-      subject: "Sample Tasting Bitterballen Sapi untuk Two Hands Full",
-      body: `Halo rekan Two Hands Full, salam kenal dari Aria di Savo Eats.
+      subject: "Menu snack untuk Two Hands Full",
+      body: `Halo tim Two Hands Full, salam kenal.
 
-Suka banget sama standar brunch dan kopi di THF. Kami di Savo Eats memproduksi Bitterballen daging sapi Australia dan Baso Goreng siap goreng yang praktis untuk melengkapi menu cemilan kafe.
+Saya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng khusus untuk kafe.
 
-Kami ingin mengirimkan 1 Curated Tasting Box gratis ke Sukajadi agar tim kitchen bisa coba cicipi langsung.
+Menghubungi kalian siapa tahu baso goreng dan bitterballen kami cocok buat menjadi tambahan menu di sana.
 
-Boleh kami info jadwal drop sample-nya?
+Kalau berkenan, kabari ya.
 
-Salam hangat,
-Aria — Savo Eats
+Salam,
+Aria | Savo Eats
 thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-07T14:30:00Z",
@@ -333,24 +331,24 @@ thesavorium@gmail.com`,
     sentAt: "2026-09-04T09:00:00Z",
     notes: "Email tester terkirim 4 hari lalu, belum ada konfirmasi penerimaan sample.",
     stagedDraft: {
-      subject: "Sample Tasting Bitterballen Sapi untuk Tim Kiputih Satu",
-      body: `Halo Tim Kiputih Satu, salam kenal dari Aria di Savo Eats.
+      subject: "Bitterballen & baso goreng untuk Kiputih Satu",
+      body: `Halo rekan Kiputih Satu, salam kenal.
 
-Suka sekali dengan konsistensi bakery dan sajian di tempat kalian di Ciumbuleuit. Kami di Savo Eats memproduksi Bitterballen daging sapi Australia beku siap goreng (4 menit) yang sangat cocok untuk pairing minuman hangat kafe.
+Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng siap goreng untuk suplai kafe.
 
-Kami ingin mengirimkan 1 Curated Tasting Box gratis untuk dicicipi tim dapur Kiputih Satu.
+Kontak kalian siapa tahu produk kami cocok untuk tambahan menu camilan di sana.
 
-Kira-kira boleh kami antar testernya minggu ini?
+Kalau pas, kabari ya.
 
-Salam hangat,
-Aria — Savo Eats
+Salam,
+Aria | Savo Eats
 thesavorium@gmail.com`,
     },
     updatedAt: "2026-09-04T09:00:00Z",
   },
 ];
 
-const LEADS_STORAGE_KEY = "savo_leads_v2";
+const LEADS_STORAGE_KEY = "savo_leads_v3";
 
 export function getStoredLeads(): Lead[] {
   if (typeof window === "undefined") return INITIAL_LEADS;

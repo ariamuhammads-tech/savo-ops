@@ -36,14 +36,26 @@ Kriteria Kafe:
 3. Punya menu kopi berkualitas tapi butuh menu finger food gurih siap saji (zero-prep).
 4. Cocok disuntik produk Savo Eats: Bitterballen Beef (Rp 25k/pack), Bitterballen Cheese (Rp 35k/pack), atau Baso Goreng Savo (Rp 35k-40k/10pcs).
 
+FORMULA DRAFTING TOUCH 1 KHUSUS KAFE BANDUNG (5 PILAR UTAMA - WAJIB IKUTI DENGAN VARIASI ALAMI):
+Jangan gunakan kata yang persis sama untuk setiap kafe, tapi WAJIB mengikuti formula psikologis ini:
+1. Subjek: Pendek, natural, tanpa clickbait/em-dash (misal: "Menu snack untuk [Nama Kafe]", "Bitterballen & baso goreng untuk [Nama Kafe]", "Opsi snack untuk [Nama Kafe]").
+2. Pembuka & Identitas: Sopan sesama orang Bandung ("Halo tim [Nama Kafe], salam kenal."). Dilarang basa-basi "cuma mau menyapa" atau "semoga email ini menemui Anda".
+   Identitas ringkas: "Saya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng khusus untuk kafe."
+3. Zero-Flattery (Anti-Penjilat): DILARANG memuji-muji kopi/vibe secara berlebihan atau sok tahu ("Suka banget sama vibe...", "Kopi kalian luar biasa...").
+4. Sudut Pandang Penawaran (Low Friction & Opsi Tambahan Menu):
+   Menghubungi mereka siapa tahu baso goreng dan bitterballen kami cocok buat menjadi tambahan menu di sana.
+5. DILARANG Menodong Sample di Touch 1:
+   JANGAN langsung menawarkan drop Curated Tasting Box atau minta alamat cabang di email pertama. Biarkan mereka merespons dulu.
+6. CTA Singkat & Sopan: "Kalau berkenan, kabari ya." atau "Kalau sekiranya cocok, kabari ya."
+7. Sign-off:
+   Salam,
+   Aria | Savo Eats
+   thesavorium@gmail.com
+8. Panjang draf: 35-50 kata saja.
+
 STANDAR ANTI-SLOP HUMAN (MUTLAK):
 1. DILARANG EM DASH (—) dan (--): Jangan gunakan em dash dalam draf email.
 2. DILARANG KATA KLISE AI: Jangan gunakan kata 'elevate', 'game-changer', 'revolutionize', 'seamless', 'sensasi tak terlupakan'.
-3. FORMAT TOUCH 1:
-   - Draf email wajib 40-60 kata, santai, apresiatif terhadap vibe/kopi kafe tersebut.
-   - Tawarkan 1 Curated Tasting Box gratis untuk dicicipi barista lead atau kitchen team.
-   - JANGAN jualan angka harga/margin di email pertama.
-   - Pengirim: Savo Eats <thesavorium@gmail.com>.
 
 Kembalikan respon dalam format JSON sesuai skema berikut:
 {
@@ -62,7 +74,7 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
       "fitReason": "Alasan kecocokan menu dengan karakter pengunjung kafe ini.",
       "stagedDraft": {
         "subject": "Subjek email santai tanpa em dash",
-        "body": "Isi email touch 1 (40-60 kata) menawarkan free tasting box."
+        "body": "Isi email touch 1 (35-50 kata) menerapkan formula Bandung dengan variasi alami."
       }
     }
   ]
@@ -182,8 +194,8 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           targetProduct: "duo_tasting",
           fitReason: "Trafik anak muda tinggi, butuh cemilan asin gurih pendamping es kopi susu dengan waktu penyajian 4 menit.",
           stagedDraft: {
-            subject: "Kirim Curated Tasting Box buat tim Makmur Jaya?",
-            body: "Halo tim Makmur Jaya. Suka banget sama energi dan konsistensi kopi di Sawunggaling. Kami dari Savo Eats biasa produksi bitterballen daging sapi dan baso goreng gurih siap saji. Boleh saya kirim 1 Curated Tasting Box gratis untuk dicicipi barista lead atau kitchen kalian minggu ini? No strings attached, murni tester rasa.",
+            subject: "Menu snack untuk Makmur Jaya",
+            body: "Halo tim Makmur Jaya, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng khusus untuk kafe.\n\nMenghubungi kalian siapa tahu baso goreng dan bitterballen kami cocok buat menjadi tambahan menu di sana.\n\nKalau berkenan, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
         {
@@ -198,8 +210,8 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           targetProduct: "bitterballen_cheese",
           fitReason: "Tongkrongan santai coffee enthusiast dengan durasi nongkrong lama, sangat butuh cemilan keju lumer hangat.",
           stagedDraft: {
-            subject: "Tester Bitterballen Keju buat barista Kozi Dipatiukur",
-            body: "Halo tim Kozi. Selalu suka sama ambience santai Kozi di Dipatiukur. Kami dari Savo Eats bikin Bitterballen Cheese dengan lelehan keju mozarella dan daging sapi Australia. Boleh kami kirim 1 box tester gratis buat tim bar dan kitchen kalian cicipi sore ini?",
+            subject: "Bitterballen & baso goreng untuk Kozi Dipatiukur",
+            body: "Halo rekan Kozi Dipatiukur, salam kenal.\n\nSaya Aria dari Savo Eats Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap saji untuk suplai kafe.\n\nKontak kalian siapa tahu menu kami pas buat nambah variasi snack pendamping kopi di sana.\n\nKalau sekiranya cocok, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
         {
@@ -214,8 +226,8 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           targetProduct: "baso_goreng",
           fitReason: "Traffic WFC siang hingga malam butuh kudapan gurih renyah pendamping racikan teh dan kopi signature.",
           stagedDraft: {
-            subject: "Kirim tester Baso Goreng gurih buat tim Mimi Dago",
-            body: "Halo tim Mimi Dago. Salut sama ramainya crowd WFC di tempat kalian. Kami dari Savo Eats mau kirim tester Baso Goreng gurih siap goreng yang renyah di luar dan kenyal di dalam. Tanpa biaya, khusus buat dicoba tim kalian. Boleh dikirim ke cabang Dago hari apa?",
+            subject: "Opsi menu snack untuk Mimi Dago",
+            body: "Halo tim Mimi Dago, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami produksi baso goreng dan bitterballen daging sapi beku siap goreng (zero prep) untuk kafe.\n\nMenghubungi kalian siapa tahu baso goreng kami pas buat tambahan menu camilan di sana.\n\nKalau berkenan, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
         {
@@ -230,8 +242,8 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           targetProduct: "duo_tasting",
           fitReason: "Konsep outdoor sejuk, pengunjung gemar pesan cemilan sharing hangat untuk teman ngopi berjam-jam.",
           stagedDraft: {
-            subject: "Tester camilan hangat Savo Eats buat tim Teduh Coffee",
-            body: "Halo tim Teduh Coffee. Senang lihat suasana teduh dan sejuk tempat kalian di Dago. Kami dari Savo Eats mau kirim 1 paket Tasting Box gratis (isi Bitterballen dan Baso Goreng) buat dicoba tim kitchen kalian. Boleh kami drop tester minggu ini?",
+            subject: "Menu snack pendamping untuk Teduh Coffee",
+            body: "Halo tim Teduh Coffee, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng untuk mitra kafe.\n\nMenghubungi kalian siapa tahu produk kami cocok buat melengkapi menu snack hangat di sana.\n\nKalau pas, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
         {
@@ -246,8 +258,8 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           targetProduct: "bitterballen_ori",
           fitReason: "Komunitas pencinta artisanal bake & dine yang sangat menghargai racikan bechamel klasik daging sapi premium.",
           stagedDraft: {
-            subject: "Curated Tasting Box Bitterballen buat tim Kiputih Satu",
-            body: "Halo tim Kiputih Satu. Selalu apresiasi standar rasa dan craftsmanship sajian di tempat kalian. Kami dari Savo Eats membuat bitterballen resep klasik dengan isian daging sapi pilihan. Boleh kami kirimkan 1 box tester gratis untuk dicoba Head Chef atau tim kitchen Kiputih Satu?",
+            subject: "Snack untuk menu Kiputih Satu",
+            body: "Halo rekan Kiputih Satu, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami produksi bitterballen daging sapi klasik dan baso goreng siap goreng khusus untuk kafe.\n\nMenghubungi kalian siapa tahu bitterballen kami cocok buat jadi opsi tambahan menu di sana.\n\nKalau berkenan, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
       ],
