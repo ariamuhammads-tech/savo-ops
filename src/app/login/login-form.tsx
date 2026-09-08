@@ -84,6 +84,9 @@ export function LoginForm() {
         >
           Masuk Otomatis (Akses Cepat)
         </button>
+        <p className="mt-2 text-[11px] text-muted-foreground text-center">
+          Tim &amp; Mitra SAVO: cukup klik tombol di atas untuk masuk langsung tanpa sandi.
+        </p>
       </form>
     </div>
   );

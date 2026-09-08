@@ -9,6 +9,7 @@ import {
   Package,
   ReceiptText,
   MessageSquare,
+  FileSpreadsheet,
   LogOut,
   Menu as MenuIcon,
   X,
@@ -29,6 +30,7 @@ const PIPELINE_NAVIGATION: NavItem[] = [
 ];
 
 const UTILITY_NAVIGATION: NavItem[] = [
+  { href: "/invoice/baru", label: "Invoice Generator", icon: FileSpreadsheet },
   { href: "/katalog", label: "Katalog", icon: Package },
 ];
 
@@ -67,12 +69,12 @@ export function AppShell({
   return (
     <div className="min-h-dvh bg-background text-foreground flex flex-col">
       {/* Top Architectural Navigation Bar */}
-      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-[#d99204]/30 bg-background/95 backdrop-blur-md">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-6 lg:px-8">
           {/* Brand: Master Original SAVO Vector Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-              <SavoLogo className="h-5 w-auto text-foreground" />
+              <SavoLogo className="h-5 w-auto text-[#d99204]" />
             </Link>
           </div>
 
@@ -93,7 +95,7 @@ export function AppShell({
                 >
                   <span>{item.label}</span>
                   {active && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-foreground" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#d99204]" />
                   )}
                 </Link>
               );
@@ -116,7 +118,7 @@ export function AppShell({
                 >
                   <span>{item.label}</span>
                   {active && (
-                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-foreground" />
+                    <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#d99204]" />
                   )}
                 </Link>
               );
@@ -157,13 +159,13 @@ export function AppShell({
       {menuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div
-            className="absolute inset-0 bg-foreground/20 backdrop-blur-xs"
+            className="absolute inset-0 bg-[#d99204]/20 backdrop-blur-xs"
             onClick={() => setMenuOpen(false)}
           />
           <div className="absolute right-0 top-0 flex h-full w-72 flex-col bg-background shadow-2xl p-5 border-l border-border animate-in slide-in-from-right duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-border">
               <div className="flex items-center">
-                <SavoLogo className="h-5 w-auto text-foreground" />
+                <SavoLogo className="h-5 w-auto text-[#d99204]" />
               </div>
               <button
                 type="button"
@@ -185,7 +187,7 @@ export function AppShell({
                     className={cn(
                       "flex items-center justify-between px-3 py-2.5 text-xs font-medium rounded-md transition-colors",
                       active
-                        ? "bg-foreground text-background font-semibold"
+                        ? "bg-[#d99204] text-background font-semibold"
                         : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                     )}
                   >

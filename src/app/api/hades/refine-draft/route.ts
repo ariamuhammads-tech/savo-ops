@@ -28,23 +28,24 @@ Katalog Produk Savo Eats:
 - Baso Goreng Savo (Ready-to-fry): Rp 35.000 - Rp 40.000 / 10 pcs.
 - Curated Tasting Box: 3 Ori + 3 Cheese + 2 Baso Goreng + Dipping Sauce. Margin kafe 55-65%, siap goreng 4 menit zero-prep.
 
-FORMULA DRAFTING TOUCH 1 KAFE BANDUNG (5 PILAR UTAMA):
-Gunakan formula ini sebagai kerangka dasar, dengan variasi bahasa yang natural tiap email (tidak harus plek-ketiplek sama kata per kata):
-1. Subjek: Singkat, natural, tanpa clickbait/em-dash. Contoh: "Menu snack untuk ${leadName || "Kafe"}", "Bitterballen & baso goreng untuk ${leadName || "Kafe"}", "Opsi snack untuk ${leadName || "Kafe"}".
-2. Pembuka & Identitas: Sopan sesama orang Bandung, tanpa pujian penjilat ("suka banget sama kopinya" DIBANNED), tanpa basa-basi terjemahan AI ("cuma mau menyapa" DIBANNED).
-   - "Halo tim ${leadName || "Kafe"}, salam kenal." atau "Halo rekan ${leadName || "Kafe"}, salam kenal."
-   - "Saya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng khusus untuk kafe."
-3. Inti Penawaran (Low Friction & Opsi Tambahan Menu):
-   - Menghubungi mereka dengan santai dan bersahaja: siapa tahu produk ini cocok buat jadi tambahan menu snack di sana.
-   - Contoh variasi: "Menghubungi kalian siapa tahu baso goreng dan bitterballen kami cocok buat menjadi tambahan menu di sana." atau "Saya kontak siapa tahu bitterballen dan baso goreng kami pas buat nambah variasi menu camilan di sana."
-   - JANGAN mengkritik atau sok tahu tentang menu/kopi kafe mereka.
-4. DILARANG Menodong Sample di Touch 1:
-   - JANGAN langsung menawarkan drop Curated Tasting Box atau minta alamat cabang di email pertama. Biarkan mereka tertarik atau merespons dulu. Sample baru ditawarkan setelah mereka menunjukkan minat.
-5. CTA Singkat & Sopan:
-   - "Kalau berkenan, kabari ya." atau "Kalau sekiranya cocok, kabari ya."
-6. Sign-off:
-   Salam,
-   Aria | Savo Eats
+FORMULA DRAFTING TOUCH 1 KAFE BANDUNG (STANDAR TATA BAHASA SPOK & ETIKA BISNIS):
+Wajib patuh kaidah SPOK (Subjek - Predikat - Objek - Keterangan) dan etika bisnis sopan:
+1. Subjek Email: Jelas, profesional, dan to-the-point. Contoh: "Peluang kerja sama menu camilan untuk ${leadName || "Kafe"}", "Opsi suplai bitterballen & baso goreng untuk ${leadName || "Kafe"}".
+2. Pembuka & Salam: Santun dan menghormati penerima. Gunakan "Halo tim ${leadName || "Kafe"}, salam kenal." atau "Halo rekan-rekan di ${leadName || "Kafe"}, salam kenal.". DILARANG MENGGUNAKAN KATA 'KALIAN'!
+3. Identitas Pengirim (SPOK):
+   - Subjek (Saya/Kami) + Predikat (memproduksi) + Objek (bitterballen daging sapi dan baso goreng beku) + Keterangan (siap saji khusus untuk suplai kafe di Bandung).
+   - Contoh: "Saya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng khusus untuk kebutuhan kafe."
+4. Maksud Menghubungi & Bridging Penawaran (SPOK Runtut):
+   - Jelas siapa yang menawarkan dan apa tujuannya.
+   - Contoh: "Saya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di ${leadName || "kafe rekan-rekan"}."
+   - Nilai praktis dapur: "Produk kami berbentuk siap goreng (zero prep), sehingga praktis disajikan dalam 3–4 menit tanpa perlu persiapan bahan mentah di dapur."
+5. Call to Action (Santun & Beretika):
+   - Jangan asal 'kalau berkenan kabari ya'. Tawarkan sampel tester gratis dengan sopan:
+   - "Jika rekan-rekan berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicicipi langsung oleh tim dapur atau barista."
+   - "Terima kasih banyak atas perhatian dan waktunya."
+6. Sign-off Resmi:
+   Salam hangat,
+   Aria Muhammad | Savo Eats
    thesavorium@gmail.com
 7. Panjang: Ringkas, 35-50 kata saja.
 

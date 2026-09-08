@@ -29,7 +29,11 @@
   --ink-secondary: #4a4d57;
   --ink-muted: #6b6e7b;
 
-  --primary: #111215;
+  --primary: #d99204;
+  --primary-foreground: #ffffff;
+  --brand-mustard: #d99204;
+  --brand-mustard-fg: #ffffff;
+  --brand-mustard-border: rgba(217, 146, 4, 0.35);
   --primary-foreground: #ffffff;
 
   --brand-terracotta: #c0492b;
@@ -50,12 +54,13 @@
   --success: #15803d;
   --warning: #b45309;
 
-  --border: #e6e8ec;
+  --border: #e8dbbe;
+  --border-mustard: rgba(217, 146, 4, 0.35);
   --input: #e6e8ec;
   --ring: #111215;
 
-  --hairline: #e6e8ec;
-  --hairline-dark: #1a1b1e;
+  --hairline: #e8dbbe;
+  --hairline-dark: rgba(217, 146, 4, 0.4);
 
   --font-display: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-mono), monospace;
@@ -492,5 +497,10 @@
 .swiss-datum {
   height: 1px;
   background-color: var(--border);
+  width: 100%;
+}
+.swiss-datum-mustard {
+  height: 1px;
+  background-color: rgba(217, 146, 4, 0.4);
   width: 100%;
 }

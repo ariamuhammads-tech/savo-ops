@@ -47,7 +47,7 @@ const STEPS = [
 
 export function PipelineStepper({ currentStep, stats }: PipelineStepperProps) {
   return (
-    <nav aria-label="Alur Kerja Operasional" className="border-b border-border/40 pb-5">
+    <nav aria-label="Alur Kerja Operasional" className="border-b border-[#d99204]/30 pb-5">
       <div className="flex items-center justify-between text-xs text-muted-foreground mb-3">
         <span className="text-[11px] text-muted-foreground">
           Alur Kerja B2B
@@ -70,7 +70,7 @@ export function PipelineStepper({ currentStep, stats }: PipelineStepperProps) {
               className={cn(
                 "group relative py-2 transition-colors border-b",
                 isActive
-                  ? "border-foreground text-foreground"
+                  ? "border-[#d99204] text-foreground"
                   : isPast
                   ? "border-border/60 hover:border-foreground/60 text-muted-foreground hover:text-foreground"
                   : "border-transparent hover:border-border/40 text-muted-foreground/40 hover:text-muted-foreground"

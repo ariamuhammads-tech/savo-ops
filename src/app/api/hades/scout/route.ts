@@ -195,7 +195,7 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           fitReason: "Trafik anak muda tinggi, butuh cemilan asin gurih pendamping es kopi susu dengan waktu penyajian 4 menit.",
           stagedDraft: {
             subject: "Menu snack untuk Makmur Jaya",
-            body: "Halo tim Makmur Jaya, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng khusus untuk kafe.\n\nMenghubungi kalian siapa tahu baso goreng dan bitterballen kami cocok buat menjadi tambahan menu di sana.\n\nKalau berkenan, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
+            body: "Halo tim Makmur Jaya, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng khusus untuk kafe.\n\nSaya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan camilan pendamping kopi di sana.\n\nJika rekan-rekan berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicoba langsung oleh tim.\n\nTerima kasih banyak atas perhatian dan waktunya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
         {
@@ -211,7 +211,7 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           fitReason: "Tongkrongan santai coffee enthusiast dengan durasi nongkrong lama, sangat butuh cemilan keju lumer hangat.",
           stagedDraft: {
             subject: "Bitterballen & baso goreng untuk Kozi Dipatiukur",
-            body: "Halo rekan Kozi Dipatiukur, salam kenal.\n\nSaya Aria dari Savo Eats Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap saji untuk suplai kafe.\n\nKontak kalian siapa tahu menu kami pas buat nambah variasi snack pendamping kopi di sana.\n\nKalau sekiranya cocok, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
+            body: "Halo rekan Kozi Dipatiukur, salam kenal.\n\nSaya Aria dari Savo Eats Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap saji untuk suplai kafe.\n\nSaya menghubungi tim untuk memperkenalkan produk siap goreng kami, barangkali cocok melengkapi variasi menu camilan di sana.\n\nJika rekan-rekan berkenan, kami ingin mengirimkan tester sampel gratis untuk dicoba langsung.\n\nTerima kasih banyak atas perhatian dan waktunya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
         {
@@ -227,7 +227,7 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           fitReason: "Traffic WFC siang hingga malam butuh kudapan gurih renyah pendamping racikan teh dan kopi signature.",
           stagedDraft: {
             subject: "Opsi menu snack untuk Mimi Dago",
-            body: "Halo tim Mimi Dago, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami produksi baso goreng dan bitterballen daging sapi beku siap goreng (zero prep) untuk kafe.\n\nMenghubungi kalian siapa tahu baso goreng kami pas buat tambahan menu camilan di sana.\n\nKalau berkenan, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
+            body: "Halo tim Mimi Dago, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami produksi baso goreng dan bitterballen daging sapi beku siap goreng (zero prep) untuk kafe.\n\nSaya menghubungi rekan-rekan untuk memperkenalkan baso goreng siap saji kami, siapa tahu pas menjadi menu kudapan hangat di sana.\n\nJika berkenan, kami ingin mengirimkan paket tester cuma-cuma untuk dicoba oleh tim.\n\nTerima kasih banyak atas waktunya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
         {
@@ -243,7 +243,7 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           fitReason: "Konsep outdoor sejuk, pengunjung gemar pesan cemilan sharing hangat untuk teman ngopi berjam-jam.",
           stagedDraft: {
             subject: "Menu snack pendamping untuk Teduh Coffee",
-            body: "Halo tim Teduh Coffee, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng untuk mitra kafe.\n\nMenghubungi kalian siapa tahu produk kami cocok buat melengkapi menu snack hangat di sana.\n\nKalau pas, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
+            body: "Halo tim Teduh Coffee, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng untuk mitra kafe.\n\nSaya menghubungi rekan-rekan untuk menjajaki kerja sama suplai camilan pendamping kopi di sana.\n\nJika tim berkenan, kami siap mengirimkan tester sampel untuk dicicipi langsung oleh tim dapur.\n\nTerima kasih banyak atas waktunya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
         {
@@ -259,7 +259,7 @@ Kembalikan respon dalam format JSON sesuai skema berikut:
           fitReason: "Komunitas pencinta artisanal bake & dine yang sangat menghargai racikan bechamel klasik daging sapi premium.",
           stagedDraft: {
             subject: "Snack untuk menu Kiputih Satu",
-            body: "Halo rekan Kiputih Satu, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami produksi bitterballen daging sapi klasik dan baso goreng siap goreng khusus untuk kafe.\n\nMenghubungi kalian siapa tahu bitterballen kami cocok buat jadi opsi tambahan menu di sana.\n\nKalau berkenan, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
+            body: "Halo rekan Kiputih Satu, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami produksi bitterballen daging sapi klasik dan baso goreng siap goreng khusus untuk kafe.\n\nSaya menghubungi rekan-rekan untuk memperkenalkan bitterballen daging sapi kami, siapa tahu dapat menjadi opsi tambahan menu santai di sana.\n\nJika berkenan, kami sangat terbuka untuk mengirimkan sampel tester cuma-cuma untuk dicoba.\n\nTerima kasih banyak atas waktunya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com",
           },
         },
       ],

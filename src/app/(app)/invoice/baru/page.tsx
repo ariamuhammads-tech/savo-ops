@@ -8,6 +8,10 @@ import {
   Download,
   Phone,
   Building2,
+  Copy,
+  Check,
+  RotateCcw,
+  Plus,
 } from "lucide-react";
 import { INITIAL_LEADS, SAVO_PRICING } from "@/lib/leads-data";
 import { formatIDR } from "@/lib/format";
@@ -26,9 +30,9 @@ export default function BuatInvoiceBaruPage() {
   const todayStr = new Date().toISOString().slice(0, 10);
 
   // Form states
-  const [customerName, setCustomerName] = useState(INITIAL_LEADS[0].name);
-  const [customerPhone, setCustomerPhone] = useState(INITIAL_LEADS[0].whatsapp);
-  const [customerAddress, setCustomerAddress] = useState(INITIAL_LEADS[0].address);
+  const [customerName, setCustomerName] = useState(INITIAL_LEADS[0]?.name || "Pelanggan / Kafe Mitra");
+  const [customerPhone, setCustomerPhone] = useState(INITIAL_LEADS[0]?.whatsapp || "0812xxxx");
+  const [customerAddress, setCustomerAddress] = useState(INITIAL_LEADS[0]?.address || "Bandung");
   const [invoiceNo, setInvoiceNo] = useState(`INV-${year}-${Math.floor(1000 + Math.random() * 9000)}`);
   const [issueDate, setIssueDate] = useState(todayStr);
   const [dueDate, setDueDate] = useState("");
@@ -36,6 +40,7 @@ export default function BuatInvoiceBaruPage() {
   const [discount, setDiscount] = useState(0);
   const [shipping, setShipping] = useState(0);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const [items, setItems] = useState<LineItem[]>([
     {
@@ -53,7 +58,14 @@ export default function BuatInvoiceBaruPage() {
   ]);
 
   const handleSelectLead = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const lead = INITIAL_LEADS.find((l) => l.id === e.target.value);
+    const val = e.target.value;
+    if (val === "custom") {
+      setCustomerName("");
+      setCustomerPhone("");
+      setCustomerAddress("");
+      return;
+    }
+    const lead = INITIAL_LEADS.find((l) => l.id === val);
     if (lead) {
       setCustomerName(lead.name);
       setCustomerPhone(lead.whatsapp);
@@ -71,6 +83,7 @@ export default function BuatInvoiceBaruPage() {
         unit_price: price,
       },
     ]);
+    toast.success(`Menambahkan ${name}`);
   };
 
   const removeItem = (id: string) => {
@@ -85,6 +98,17 @@ export default function BuatInvoiceBaruPage() {
           : i
       )
     );
+  };
+
+  const handleReset = () => {
+    setCustomerName("");
+    setCustomerPhone("");
+    setCustomerAddress("");
+    setItems([]);
+    setDiscount(0);
+    setShipping(0);
+    setInvoiceNo(`INV-${year}-${Math.floor(1000 + Math.random() * 9000)}`);
+    toast.success("Form invoice dikosongkan.");
   };
 
   const subtotal = items.reduce((sum, item) => sum + item.qty * item.unit_price, 0);
@@ -169,11 +193,11 @@ export default function BuatInvoiceBaruPage() {
     }
   };
 
-  const handleShareWhatsApp = () => {
-    const summary =
+  const getSummaryText = () => {
+    return (
       `*INVOICE RESMI SAVO BANDUNG*\n` +
       `No: *${invoiceNo}*\n` +
-      `Kepada: *${customerName}*\n` +
+      `Kepada: *${customerName || "Pelanggan"}*\n` +
       `Tanggal: ${issueDate}\n\n` +
       `*Rincian Pesanan:*\n` +
       items.map((i) => `• ${i.name} (${i.qty} pack @ ${formatIDR(i.unit_price)}) = ${formatIDR(i.qty * i.unit_price)}`).join("\n") +
@@ -182,295 +206,333 @@ export default function BuatInvoiceBaruPage() {
       `Pembayaran Transfer Bank BCA:\n` +
       `No Rek: 283-091-8899\n` +
       `A/N: Aria Muhammad\n\n` +
-      `Terima kasih atas kemitraannya dengan Savo Eats!`;
+      `Terima kasih atas kemitraannya dengan Savo Eats!`
+    );
+  };
 
+  const handleShareWhatsApp = () => {
+    const summary = getSummaryText();
     const phoneClean = (customerPhone || "").replace(/\D/g, "").replace(/^0/, "62");
     window.open(`https://wa.me/${phoneClean}?text=${encodeURIComponent(summary)}`, "_blank");
   };
 
+  const handleCopySummary = () => {
+    navigator.clipboard.writeText(getSummaryText());
+    setCopied(true);
+    toast.success("Ringkasan invoice disalin ke clipboard!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-8 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="border-b border-border pb-6 flex flex-wrap items-baseline justify-between gap-4">
+      <div className="border-b border-border/40 pb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <Link
-            href="/invoice"
-            className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-2"
-          >
-            <ArrowLeft className="size-3.5" />
-            Kembali ke Daftar Invoice
-          </Link>
-          <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
-            Generator Invoice B2B Mandiri
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1.5">
+            <Link
+              href="/invoice"
+              className="hover:text-foreground inline-flex items-center gap-1 transition-colors"
+            >
+              <ArrowLeft className="size-3.5" />
+              <span>Daftar Invoice</span>
+            </Link>
+            <span>·</span>
+            <span className="text-foreground font-medium">Generator Bebas (Standalone)</span>
+          </div>
+          <h1 className="text-2xl md:text-3xl font-medium tracking-tight text-foreground">
+            Invoice Generator Mandiri
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Terbitkan invoice resmi SAVO langsung untuk kafe mitra tanpa alur pencatatan rumit.
+          <p className="text-xs md:text-sm text-muted-foreground mt-1 max-w-2xl leading-relaxed">
+            Buat, bagikan via WhatsApp, dan unduh PDF invoice B2B secara bebas untuk kafe mitra, resto, atau pesanan ritel tanpa harus melalui alur penawaran.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="px-3 py-2 text-xs border border-border/60 text-muted-foreground hover:text-foreground transition-colors cursor-pointer inline-flex items-center gap-1.5"
+            title="Kosongkan form"
+          >
+            <RotateCcw className="size-3" />
+            <span>Reset</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleCopySummary}
+            className="px-3 py-2 text-xs border border-border/60 text-foreground hover:border-foreground transition-colors cursor-pointer inline-flex items-center gap-1.5"
+          >
+            {copied ? <Check className="size-3 text-emerald-600" /> : <Copy className="size-3" />}
+            <span>{copied ? "Tersalin" : "Salin Teks"}</span>
+          </button>
           <button
             type="button"
             onClick={handleShareWhatsApp}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-colors cursor-pointer"
+            className="px-3 py-2 text-xs border border-border/60 text-foreground hover:border-foreground transition-colors cursor-pointer inline-flex items-center gap-1.5"
           >
-            <Phone className="size-3.5 text-emerald-600" />
-            Kirim Rangkuman WA
+            <Phone className="size-3 text-emerald-600" />
+            <span>Kirim WA</span>
           </button>
           <button
             type="button"
             disabled={isGeneratingPdf}
             onClick={handleDownloadPdf}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-xs cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 text-xs font-medium bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer inline-flex items-center gap-1.5 disabled:opacity-50"
           >
-            {isGeneratingPdf ? (
-              "Merender PDF..."
-            ) : (
-              <>
-                <Download className="size-3.5" />
-                Unduh PDF Resmi
-              </>
-            )}
+            <Download className="size-3" />
+            <span>{isGeneratingPdf ? "Merender..." : "Unduh PDF Resmi"}</span>
           </button>
         </div>
       </div>
 
       {/* Invoice Form Body */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Customer & Line Items */}
-        <div className="md:col-span-2 space-y-6">
-          {/* Customer Card */}
-          <div className="border border-border rounded-xl bg-card p-5 space-y-4">
-            <h2 className="font-display text-base font-bold text-foreground flex items-center gap-2">
-              <Building2 className="size-4 text-primary" />
-              Data Kafe / Pelanggan
-            </h2>
-
-            <div>
-              <label className="block text-xs font-semibold mb-1 text-muted-foreground">
-                Pilih dari Database Hades (Atau Ketik Baru)
-              </label>
-              <select
-                onChange={handleSelectLead}
-                className="w-full rounded-md border border-border bg-secondary/30 px-3 py-2 text-xs focus:outline-hidden focus:ring-1 focus:ring-primary"
-              >
-                {INITIAL_LEADS.map((lead) => (
-                  <option key={lead.id} value={lead.id}>
-                    {lead.name} ({lead.area})
-                  </option>
-                ))}
-              </select>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left Column: Customer & Line Items (8 cols) */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Customer Section (Zero Card Box, Pure Hairline Datum) */}
+          <div className="space-y-3 pb-6 border-b border-border/40">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                <Building2 className="size-3.5 text-foreground" />
+                Data Penerima / Kafe
+              </span>
+              <div className="text-xs">
+                <select
+                  onChange={handleSelectLead}
+                  className="border-b border-border/60 bg-transparent py-1 text-xs text-foreground focus:outline-hidden cursor-pointer"
+                >
+                  <option value="custom">-- Ketik Bebas Manual --</option>
+                  {INITIAL_LEADS.map((lead) => (
+                    <option key={lead.id} value={lead.id}>
+                      {lead.name} ({lead.area})
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="block text-xs font-semibold mb-1">Nama Tempat / Kafe</label>
+                <label className="block text-muted-foreground mb-1">Nama Tempat / Kafe *</label>
                 <input
                   type="text"
+                  placeholder="Misal: Kozi Coffee Bandung"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full rounded-md border border-border bg-card px-3 py-2 text-xs focus:outline-hidden focus:ring-1 focus:ring-primary"
+                  className="w-full border-b border-border/60 bg-transparent py-1.5 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold mb-1">No WhatsApp / Telepon</label>
+                <label className="block text-muted-foreground mb-1">No WhatsApp / PIC</label>
                 <input
                   type="text"
+                  placeholder="0812xxxx"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full rounded-md border border-border bg-card px-3 py-2 text-xs focus:outline-hidden focus:ring-1 focus:ring-primary"
+                  className="w-full border-b border-border/60 bg-transparent py-1.5 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold mb-1">Alamat Pengiriman</label>
+            <div className="text-xs">
+              <label className="block text-muted-foreground mb-1">Alamat Pengiriman</label>
               <input
                 type="text"
+                placeholder="Jl. Progo No. 12, Bandung"
                 value={customerAddress}
                 onChange={(e) => setCustomerAddress(e.target.value)}
-                className="w-full rounded-md border border-border bg-card px-3 py-2 text-xs focus:outline-hidden focus:ring-1 focus:ring-primary"
+                className="w-full border-b border-border/60 bg-transparent py-1.5 text-xs text-foreground focus:outline-hidden focus:border-foreground transition-colors"
               />
             </div>
           </div>
 
-          {/* Line Items Card */}
-          <div className="border border-border rounded-xl bg-card p-5 space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
-              <h2 className="font-display text-base font-bold text-foreground">
-                Rincian Produk B2B
-              </h2>
+          {/* Line Items Section */}
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 pb-3">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                Daftar Produk ({items.length} Item)
+              </span>
 
-              {/* 1-Click Quick Preset Buttons */}
-              <div className="flex flex-wrap gap-1.5 text-[11px]">
+              {/* Quick Presets */}
+              <div className="flex items-center gap-1.5 flex-wrap text-xs">
+                <span className="text-[11px] text-muted-foreground mr-1">Tambah Cepat:</span>
                 <button
                   type="button"
                   onClick={() => addItem("Bitterballen Original (Pack 10 pcs)", 25000)}
-                  className="px-2.5 py-1 border border-border rounded hover:bg-secondary text-primary font-semibold"
+                  className="px-2 py-0.5 border border-border/60 hover:border-foreground text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   + Bitterballen Ori (25rb)
                 </button>
                 <button
                   type="button"
                   onClick={() => addItem("Bitterballen Cheese (Pack 10 pcs)", 35000)}
-                  className="px-2.5 py-1 border border-border rounded hover:bg-secondary text-primary font-semibold"
+                  className="px-2 py-0.5 border border-border/60 hover:border-foreground text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   + Bitterballen Cheese (35rb)
                 </button>
                 <button
                   type="button"
                   onClick={() => addItem("Baso Goreng SAVO (Pack 10 pcs)", 35000)}
-                  className="px-2.5 py-1 border border-border rounded hover:bg-secondary text-primary font-semibold"
+                  className="px-2 py-0.5 border border-border/60 hover:border-foreground text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
                   + Baso Goreng (35rb)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => addItem("Duo Tasting Box (3 Ori + 3 Cheese + 2 Baso)", 50000)}
+                  className="px-2 py-0.5 border border-border/60 hover:border-foreground text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                >
+                  + Tasting Box (50rb)
                 </button>
               </div>
             </div>
 
-            {/* Table of items */}
-            <div className="space-y-2.5">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="grid grid-cols-12 gap-2 items-center p-2.5 rounded-lg border border-border/70 bg-secondary/20 text-xs"
-                >
-                  <div className="col-span-6">
-                    <input
-                      type="text"
-                      value={item.name}
-                      onChange={(e) => updateItem(item.id, "name", e.target.value)}
-                      className="w-full rounded border border-border/80 bg-card px-2.5 py-1.5 font-medium"
-                    />
+            {/* Items Table */}
+            {items.length === 0 ? (
+              <div className="py-10 text-center text-xs text-muted-foreground border-b border-border/40">
+                Belum ada produk yang ditambahkan. Gunakan tombol &ldquo;Tambah Cepat&rdquo; di atas atau tambah baris kosong di bawah.
+              </div>
+            ) : (
+              <div className="divide-y divide-border/30 border-b border-border/40">
+                {items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="grid grid-cols-12 gap-3 items-center py-2.5 text-xs"
+                  >
+                    <div className="col-span-6">
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => updateItem(item.id, "name", e.target.value)}
+                        className="w-full bg-transparent border-b border-border/40 py-1 text-xs text-foreground focus:outline-hidden focus:border-foreground"
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="number"
+                          min={1}
+                          value={item.qty}
+                          onChange={(e) => updateItem(item.id, "qty", e.target.value)}
+                          className="w-full bg-transparent border-b border-border/40 py-1 text-center font-mono text-xs text-foreground focus:outline-hidden focus:border-foreground"
+                        />
+                        <span className="text-muted-foreground text-[10px]">pack</span>
+                      </div>
+                    </div>
+                    <div className="col-span-3">
+                      <input
+                        type="number"
+                        step={1000}
+                        value={item.unit_price}
+                        onChange={(e) => updateItem(item.id, "unit_price", e.target.value)}
+                        className="w-full bg-transparent border-b border-border/40 py-1 text-right font-mono text-xs text-foreground focus:outline-hidden focus:border-foreground"
+                      />
+                    </div>
+                    <div className="col-span-1 text-right">
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        className="text-muted-foreground hover:text-destructive p-1 cursor-pointer transition-colors"
+                        title="Hapus baris"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="col-span-2">
-                    <input
-                      type="number"
-                      min={1}
-                      value={item.qty}
-                      onChange={(e) => updateItem(item.id, "qty", e.target.value)}
-                      className="w-full rounded border border-border/80 bg-card px-2 py-1.5 text-center font-mono"
-                      title="Kuantitas Pack"
-                    />
-                  </div>
-                  <div className="col-span-3">
-                    <input
-                      type="number"
-                      step={1000}
-                      value={item.unit_price}
-                      onChange={(e) => updateItem(item.id, "unit_price", e.target.value)}
-                      className="w-full rounded border border-border/80 bg-card px-2 py-1.5 text-right font-mono"
-                      title="Harga Satuan (Rp)"
-                    />
-                  </div>
-                  <div className="col-span-1 text-center">
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.id)}
-                      className="text-muted-foreground hover:text-destructive p-1 rounded"
-                    >
-                      <Trash2 className="size-3.5" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            )}
 
-              <button
-                type="button"
-                onClick={() => addItem("Item Produk Kustom", 30000)}
-                className="w-full py-2 border border-dashed border-border rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary/30 transition-colors"
-              >
-                + Tambah Baris Produk Baru
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={() => addItem("Produk Kustom Baru", 30000)}
+              className="w-full py-2 border border-dashed border-border/60 hover:border-foreground text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer inline-flex items-center justify-center gap-1.5"
+            >
+              <Plus className="size-3" />
+              <span>Tambah Baris Produk Kustom</span>
+            </button>
           </div>
         </div>
 
-        {/* Right Column: Invoice Specs & Total */}
-        <div className="space-y-6">
-          {/* Metadata Card */}
-          <div className="border border-border rounded-xl bg-card p-5 space-y-3.5 text-xs">
-            <h3 className="font-display text-sm font-bold text-foreground">Parameter Invoice</h3>
+        {/* Right Column: Parameters & Calculations (4 cols) */}
+        <div className="lg:col-span-4 space-y-6">
+          <div className="border border-border/60 p-5 space-y-4 text-xs bg-surface/30">
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground block border-b border-border/40 pb-2">
+              Parameter Tagihan
+            </span>
 
             <div>
-              <label className="block text-[11px] font-semibold mb-1 text-muted-foreground">
-                Nomor Invoice
-              </label>
+              <label className="block text-muted-foreground mb-1 text-[11px]">Nomor Invoice</label>
               <input
                 type="text"
                 value={invoiceNo}
                 onChange={(e) => setInvoiceNo(e.target.value)}
-                className="w-full rounded border border-border bg-card px-2.5 py-1.5 font-mono font-bold text-foreground"
+                className="w-full border-b border-border/60 bg-transparent py-1 font-mono text-foreground font-medium focus:outline-hidden focus:border-foreground"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-semibold mb-1 text-muted-foreground">
-                  Tanggal Terbit
-                </label>
+                <label className="block text-muted-foreground mb-1 text-[11px]">Tanggal Terbit</label>
                 <input
                   type="date"
                   value={issueDate}
                   onChange={(e) => setIssueDate(e.target.value)}
-                  className="w-full rounded border border-border bg-card px-2 py-1.5 font-mono"
+                  className="w-full border-b border-border/60 bg-transparent py-1 font-mono text-foreground focus:outline-hidden focus:border-foreground"
                 />
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold mb-1 text-muted-foreground">
-                  Jatuh Tempo (Opsional)
-                </label>
+                <label className="block text-muted-foreground mb-1 text-[11px]">Jatuh Tempo</label>
                 <input
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full rounded border border-border bg-card px-2 py-1.5 font-mono"
+                  className="w-full border-b border-border/60 bg-transparent py-1 font-mono text-foreground focus:outline-hidden focus:border-foreground"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[11px] font-semibold mb-1 text-muted-foreground">
-                Status Pembayaran
-              </label>
+              <label className="block text-muted-foreground mb-1 text-[11px]">Status Pembayaran</label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as "paid" | "sent")}
-                className="w-full rounded border border-border bg-card px-2.5 py-1.5 font-medium"
+                className="w-full border-b border-border/60 bg-transparent py-1 text-foreground focus:outline-hidden cursor-pointer"
               >
                 <option value="sent">Menunggu Pembayaran (Belum Lunas)</option>
                 <option value="paid">Lunas (Sudah Dibayar)</option>
               </select>
             </div>
 
-            {/* Calculations */}
-            <div className="pt-3 border-t border-border space-y-2">
+            {/* Calculation Totals */}
+            <div className="pt-3 border-t border-border/40 space-y-2">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal:</span>
-                <span className="font-mono text-foreground font-medium">{formatIDR(subtotal)}</span>
+                <span className="font-mono text-foreground">{formatIDR(subtotal)}</span>
               </div>
               <div className="flex justify-between items-center text-muted-foreground">
-                <span>Diskon / Potongan:</span>
+                <span>Diskon (Rp):</span>
                 <input
                   type="number"
                   value={discount}
                   onChange={(e) => setDiscount(Number(e.target.value))}
-                  className="w-24 text-right rounded border border-border px-1.5 py-0.5 font-mono text-foreground"
+                  className="w-24 text-right border-b border-border/60 bg-transparent py-0.5 font-mono text-foreground focus:outline-hidden focus:border-foreground"
                 />
               </div>
               <div className="flex justify-between items-center text-muted-foreground">
-                <span>Ongkos Kirim:</span>
+                <span>Ongkos Kirim (Rp):</span>
                 <input
                   type="number"
                   value={shipping}
                   onChange={(e) => setShipping(Number(e.target.value))}
-                  className="w-24 text-right rounded border border-border px-1.5 py-0.5 font-mono text-foreground"
+                  className="w-24 text-right border-b border-border/60 bg-transparent py-0.5 font-mono text-foreground focus:outline-hidden focus:border-foreground"
                 />
               </div>
-              <div className="pt-2 border-t border-border flex justify-between items-baseline">
-                <span className="font-display font-bold text-foreground text-sm">Total Tagihan:</span>
-                <span className="font-display text-xl font-bold text-primary">
+              <div className="pt-3 border-t border-border/60 flex justify-between items-baseline">
+                <span className="font-medium text-foreground text-sm">Total:</span>
+                <span className="text-xl font-light tracking-tight text-foreground font-mono">
                   {formatIDR(total)}
                 </span>
               </div>
@@ -480,10 +542,10 @@ export default function BuatInvoiceBaruPage() {
               type="button"
               disabled={isGeneratingPdf}
               onClick={handleDownloadPdf}
-              className="w-full mt-3 py-2.5 text-xs font-bold rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-xs cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full mt-3 py-2 text-xs font-medium bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
             >
               <Download className="size-3.5" />
-              Unduh File PDF Resmi
+              <span>{isGeneratingPdf ? "Merender PDF..." : "Unduh File PDF Resmi"}</span>
             </button>
           </div>
         </div>
@@ -491,3 +553,4 @@ export default function BuatInvoiceBaruPage() {
     </div>
   );
 }
+

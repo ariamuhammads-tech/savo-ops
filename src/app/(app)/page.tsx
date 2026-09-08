@@ -23,6 +23,7 @@ import {
   getLeadAgingNotice,
 } from "@/lib/leads-data";
 import { PipelineStepper } from "@/components/pipeline-stepper";
+import { HadesFloatingChat } from "@/components/hades-floating-chat";
 import { toast } from "sonner";
 
 interface ScoutCandidate {
@@ -185,8 +186,8 @@ export default function TargetKafePage() {
       status: "staged",
       updatedAt: new Date().toISOString(),
       stagedDraft: {
-        subject: `Menu snack untuk ${newLead.name.trim()}`,
-        body: `Halo tim ${newLead.name.trim()}, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami bikin bitterballen daging sapi dan baso goreng siap goreng khusus untuk kafe.\n\nMenghubungi kalian siapa tahu baso goreng dan bitterballen kami cocok buat menjadi tambahan menu di sana.\n\nKalau berkenan, kabari ya.\n\nSalam,\nAria | Savo Eats\nthesavorium@gmail.com`,
+        subject: `Peluang kerja sama menu camilan untuk ${newLead.name.trim()}`,
+        body: `Halo tim ${newLead.name.trim()}, salam kenal.\n\nSaya Aria dari Savo Eats di Bandung. Kami memproduksi bitterballen daging sapi dan baso goreng beku siap goreng khusus untuk kebutuhan kafe.\n\nSaya menghubungi rekan-rekan untuk menjajaki peluang kerja sama penyediaan menu camilan pendamping kopi di ${newLead.name.trim()}.\n\nProduk kami berbentuk siap goreng (zero prep), sehingga praktis disajikan dalam 3–4 menit tanpa perlu persiapan bahan mentah di dapur.\n\nJika rekan-rekan berkenan, kami dengan senang hati mengirimkan sampel tester cuma-cuma untuk dicicipi langsung oleh tim dapur atau barista.\n\nTerima kasih banyak atas perhatian dan waktunya.\n\nSalam hangat,\nAria Muhammad | Savo Eats\nthesavorium@gmail.com`,
       },
     };
 
@@ -665,6 +666,9 @@ export default function TargetKafePage() {
           </form>
         </div>
       )}
+
+      {/* Floating Hades B2B Chatbot Trigger & Drawer */}
+      <HadesFloatingChat />
     </div>
   );
 }

@@ -15,7 +15,7 @@ export default function LoginPage() {
       </div>
       <div className="w-full max-w-sm space-y-6 savo-in">
         <div className="flex flex-col items-center text-center">
-          <SavoLogo className="h-9 w-auto text-foreground" />
+          <SavoLogo className="h-9 w-auto text-[#d99204]" />
           <p className="mt-2.5 text-xs text-muted-foreground">
             Savo Eats · Operasional &amp; Akuisisi B2B
           </p>

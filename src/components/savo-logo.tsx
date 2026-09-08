@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 // Official SAVO logo paths (from the brand SVG). Recolored to terracotta via
-// `currentColor` (text-primary). Mark = S monogram; word = "SAVO".
+// `currentColor` (text-[#d99204]). Mark = S monogram; word = "SAVO".
 const MARK_PATHS = [
   "M29.93 180.44l-29.93 25.76 150.1 0c13.34,0 36.8,-3.12 36.99,-25.09l-157.17 -0.67z",
   "M65.54 129.86c81.55,-24.22 143.09,-40.82 154.84,0.2 3.65,12.74 -5.09,30.08 -33.29,51.06 88.31,-10.67 106.34,-170.79 7.81,-133.89 -68.58,23.9 -138.3,39.56 -139.75,7.04 -0.58,-12.99 5.33,-20.37 20.2,-29.17 -88.31,10.67 -103.96,129.99 -9.82,104.77z",
@@ -38,7 +38,7 @@ export function SavoLogo({ className }: { className?: string }) {
       viewBox="0 0 1003 206.2"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("text-primary", className)}
+      className={cn("text-[#d99204]", className)}
       role="img"
       aria-label="SAVO"
     >
