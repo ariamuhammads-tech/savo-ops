@@ -148,16 +148,16 @@ export default function KatalogB2BPage() {
           <button
             type="button"
             onClick={handleResetDefaults}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-border bg-card hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            className="apple-btn-secondary inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium cursor-pointer active:scale-95"
           >
             <RotateCcw className="size-3.5" />
-            Reset Default
+            <span>Reset Default</span>
           </button>
           <Link
             href="/outbox"
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer"
+            className="apple-btn-primary inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold cursor-pointer active:scale-95 shadow-xs"
           >
-            Buka Outbox Email
+            <span>Buka Outbox Email</span>
             <ArrowRight className="size-3" />
           </Link>
         </div>
@@ -457,41 +457,41 @@ export default function KatalogB2BPage() {
                         {item.description}
                       </p>
 
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-2 text-xs">
-                        <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-                          <span className="text-muted-foreground text-[11px] block">
+                      <div className="grid grid-cols-2 md:grid-cols-4 divide-x divide-y md:divide-y-0 divide-border border border-border rounded-lg bg-secondary/20 overflow-hidden text-xs">
+                        <div className="p-3">
+                          <span className="text-muted-foreground text-[10px] block font-semibold uppercase tracking-wider">
                             {item.portionDesc}
                           </span>
-                          <span className="font-mono font-bold text-foreground">
+                          <span className="font-mono font-bold text-foreground text-xs mt-1 block">
                             HPP Rp {item.hppPerPortion.toLocaleString("id-ID")}
                           </span>
                         </div>
 
-                        <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-                          <span className="text-muted-foreground text-[11px] block">
-                            Saran Harga Jual
+                        <div className="p-3">
+                          <span className="text-muted-foreground text-[10px] block font-semibold uppercase tracking-wider">
+                            Saran Jual Kafe
                           </span>
-                          <span className="font-mono font-bold text-foreground">
+                          <span className="font-mono font-bold text-foreground text-xs mt-1 block">
                             {item.recommendedSellPrice > 0
                               ? `Rp ${item.recommendedSellPrice.toLocaleString("id-ID")}`
                               : "Sampel Gratis"}
                           </span>
                         </div>
 
-                        <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-                          <span className="text-emerald-700 dark:text-emerald-400 text-[11px] block font-medium">
+                        <div className="p-3 bg-emerald-500/5">
+                          <span className="text-emerald-700 dark:text-emerald-400 text-[10px] block font-semibold uppercase tracking-wider">
                             Margin Laba Kafe
                           </span>
-                          <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300">
+                          <span className="font-mono font-bold text-emerald-700 dark:text-emerald-300 text-xs mt-1 block">
                             {item.marginPercent}
                           </span>
                         </div>
 
-                        <div className="p-3 rounded-lg bg-secondary/40 border border-border/50">
-                          <span className="text-muted-foreground text-[11px] block">
-                            Waktu Saji / Deep-Fry
+                        <div className="p-3">
+                          <span className="text-muted-foreground text-[10px] block font-semibold uppercase tracking-wider">
+                            Waktu Saji
                           </span>
-                          <span className="font-mono font-medium text-foreground">
+                          <span className="font-mono font-medium text-foreground text-xs mt-1 block">
                             {item.cookTime}
                           </span>
                         </div>

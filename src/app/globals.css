@@ -270,121 +270,72 @@
 .savo-stagger > *:nth-child(5) { animation-delay: 0.18s; }
 .savo-stagger > *:nth-child(6) { animation-delay: 0.22s; }
 
-/* ===== Stove flames (decorative background) ===== */
-.savo-flame {
-  transform-origin: 50% 100%;
-  border-radius: 50% 50% 42% 42% / 72% 72% 28% 28%;
-  background: radial-gradient(
-    ellipse 60% 75% at 50% 88%,
-    #ffe9b0 0%,
-    #ffc35c 22%,
-    #f59e0b 42%,
-    #e0602f 62%,
-    #c0492b 78%,
-    transparent 96%
-  );
-  filter: blur(7px);
-  opacity: 0.85;
-  animation-name: savo-flicker;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  will-change: transform;
+/* ===== Swiss Editorial & Apple HIG Interactive Tokens ===== */
+.apple-btn-primary {
+  background-color: var(--foreground);
+  color: var(--background);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-xs);
+}
+.apple-btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+.apple-btn-primary:active {
+  transform: scale(0.985);
 }
 
-.savo-ember {
-  background: radial-gradient(
-    ellipse 70% 100% at 50% 100%,
-    color-mix(in srgb, var(--primary) 45%, transparent),
-    color-mix(in srgb, #f59e0b 30%, transparent) 45%,
-    transparent 75%
-  );
-  animation: savo-ember-pulse 3.2s ease-in-out infinite;
+.apple-btn-secondary {
+  background-color: var(--card);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.apple-btn-secondary:hover {
+  background-color: var(--secondary);
+  border-color: color-mix(in srgb, var(--foreground) 20%, var(--border));
+}
+.apple-btn-secondary:active {
+  transform: scale(0.985);
 }
 
-.savo-gasline {
-  background: radial-gradient(
-    ellipse 90% 100% at 50% 100%,
-    rgba(59, 130, 246, 0.55),
-    rgba(59, 130, 246, 0.15) 55%,
-    transparent 80%
-  );
-  animation: savo-ember-pulse 2.4s ease-in-out infinite reverse;
+.apple-segmented-container {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  background-color: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
 }
 
-@keyframes savo-flicker {
-  0%,
-  100% {
-    transform: scaleY(1) scaleX(1) translateY(0);
-  }
-  20% {
-    transform: scaleY(1.18) scaleX(0.92) translateY(-6px) rotate(-1.5deg);
-  }
-  40% {
-    transform: scaleY(0.88) scaleX(1.08) translateY(2px) rotate(1deg);
-  }
-  60% {
-    transform: scaleY(1.12) scaleX(0.95) translateY(-9px) rotate(1.5deg);
-  }
-  80% {
-    transform: scaleY(0.94) scaleX(1.05) translateY(1px) rotate(-1deg);
-  }
+.apple-segmented-item {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  border-radius: calc(var(--radius-md) - 2px);
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+.apple-segmented-item:hover {
+  color: var(--foreground);
+}
+.apple-segmented-item.active {
+  background-color: var(--card);
+  color: var(--foreground);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
 }
 
-@keyframes savo-ember-pulse {
-  0%,
-  100% {
-    opacity: 0.7;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-/* ===== Animated parallax orbs (ambient drift) =====
-   The wrapper gets scroll + pointer parallax from JS; the inner orb
-   drifts on its own via these keyframes so the two compose cleanly. */
-.parallax-orb {
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  will-change: transform;
-}
-.parallax-orb.a {
-  animation-name: parallax-drift-a;
-  animation-duration: 26s;
-}
-.parallax-orb.b {
-  animation-name: parallax-drift-b;
-  animation-duration: 34s;
-}
-.parallax-orb.c {
-  animation-name: parallax-drift-c;
-  animation-duration: 22s;
-}
-
-@keyframes parallax-drift-a {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(46px, -34px, 0) scale(1.12);
-  }
-}
-@keyframes parallax-drift-b {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(-38px, 28px, 0) scale(1.06);
-  }
-}
-@keyframes parallax-drift-c {
-  from {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  to {
-    transform: translate3d(30px, 22px, 0) scale(0.92);
-  }
+.swiss-datum-vertical {
+  width: 1px;
+  background-color: var(--border);
+  height: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -394,14 +345,7 @@
   .savo-in,
   .savo-in-fade,
   .savo-pop,
-  .savo-stagger > *,
-  .savo-flame,
-  .savo-ember,
-  .savo-gasline {
-    animation: none;
-  }
-  /* !important: beats the higher-specificity .parallax-orb.a/.b/.c rules */
-  .parallax-orb {
+  .savo-stagger > * {
     animation: none !important;
   }
 }

@@ -76,10 +76,10 @@ export default async function InvoicePage() {
         <div className="flex items-center gap-2">
           <Link
             href="/invoice/baru"
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-[0.99]"
+            className="apple-btn-primary px-4 py-2 text-xs font-semibold inline-flex items-center gap-2"
           >
             <Plus className="size-4" />
-            + Buat Invoice Baru (B2B Instant)
+            <span>+ Buat Invoice Baru (B2B Instant)</span>
           </Link>
         </div>
       </div>
@@ -97,10 +97,10 @@ export default async function InvoicePage() {
           </div>
           <Link
             href="/invoice/baru"
-            className="mt-2 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90"
+            className="mt-2 apple-btn-primary px-4 py-2 text-xs font-semibold inline-flex items-center gap-2"
           >
             <Plus className="size-3.5" />
-            Mulai Buat Invoice B2B
+            <span>Mulai Buat Invoice Pertama</span>
           </Link>
         </Card>
       ) : (

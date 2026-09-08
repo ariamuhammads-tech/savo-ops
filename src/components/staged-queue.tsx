@@ -316,21 +316,21 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                       <span>Kirim dari: <strong className="text-foreground">thesavorium@gmail.com</strong></span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2.5">
                       <button
                         type="button"
                         onClick={() => handleCopy(lead.stagedDraft.body, lead.id)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-border rounded-lg bg-card hover:bg-secondary text-foreground transition-colors"
+                        className="apple-btn-secondary px-3 py-2 text-xs inline-flex items-center gap-1.5 cursor-pointer"
                       >
                         {copiedId === lead.id ? (
                           <>
                             <Check className="size-3.5 text-emerald-600" />
-                            Tersalin
+                            <span>Tersalin</span>
                           </>
                         ) : (
                           <>
                             <Copy className="size-3.5" />
-                            Salin
+                            <span>Salin Draf</span>
                           </>
                         )}
                       </button>
@@ -339,17 +339,17 @@ export function StagedQueue({ initialLeads }: StagedQueueProps) {
                         type="button"
                         disabled={isSending}
                         onClick={() => handleApproveAndSend(lead)}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 text-xs font-bold rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+                        className="apple-btn-primary px-4 py-2 text-xs inline-flex items-center gap-2 cursor-pointer disabled:opacity-50"
                       >
                         {isSending ? (
                           <>
-                            <span className="size-3.5 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-                            Mengirim...
+                            <span className="size-3.5 border-2 border-background border-t-transparent rounded-full animate-spin" />
+                            <span>Mengirim...</span>
                           </>
                         ) : (
                           <>
                             <Send className="size-3.5" />
-                            Setujui & Kirim Email
+                            <span>Setujui & Kirim Email</span>
                           </>
                         )}
                       </button>

@@ -305,19 +305,19 @@ export default function LeadsPage() {
               setShowScoutModal(true);
               if (scoutCandidates.length === 0) handleRunScout(scoutArea);
             }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity cursor-pointer shadow-xs"
+            className="apple-btn-primary inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold cursor-pointer shadow-xs active:scale-95"
           >
             <Sparkles className="size-3.5" />
-            Hades Scout 5 Kafe
+            <span>Hades Scout 5 Kafe</span>
           </button>
 
           <button
             type="button"
             onClick={() => setShowAddModal(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg border border-border bg-card hover:bg-secondary text-foreground transition-colors cursor-pointer"
+            className="apple-btn-secondary inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium cursor-pointer active:scale-95"
           >
             <Plus className="size-3.5" />
-            Tambah Manual
+            <span>Tambah Manual</span>
           </button>
         </div>
       </div>

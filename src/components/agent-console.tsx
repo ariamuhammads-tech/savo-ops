@@ -173,9 +173,10 @@ export function AgentConsole() {
         />
         <button
           type="submit"
-          className="px-4 py-2 text-xs font-bold rounded-md bg-foreground text-background hover:opacity-90 transition-opacity cursor-pointer"
+          disabled={isLoading || !input.trim()}
+          className="apple-btn-primary h-9 px-4 text-xs font-semibold"
         >
-          Kirim Perintah
+          {isLoading ? "Memproses..." : "Kirim Perintah"}
         </button>
       </form>
     </div>

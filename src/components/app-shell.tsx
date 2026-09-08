@@ -50,20 +50,20 @@ function NavLink({
       onClick={onClick}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium transition-colors",
+        "group flex items-center justify-between rounded-lg px-3 py-2.5 text-xs font-medium transition-all duration-150",
         active
-          ? "bg-foreground text-background font-bold shadow-xs"
-          : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+          ? "bg-foreground text-background font-semibold shadow-xs"
+          : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground active:scale-[0.99]"
       )}
     >
       <div className="flex items-center gap-2.5">
-        <Icon className="size-4 shrink-0" />
+        <Icon className={cn("size-4 shrink-0 transition-transform duration-150 group-hover:scale-105", active ? "text-background" : "text-muted-foreground group-hover:text-foreground")} />
         <span>{item.label}</span>
       </div>
       {item.badge && (
         <span
           className={cn(
-            "text-[10px] font-mono px-1.5 py-0.2 rounded",
+            "text-[10px] font-mono px-1.5 py-0.5 rounded",
             active ? "bg-background/20 text-background" : "bg-secondary text-muted-foreground"
           )}
         >
@@ -139,8 +139,8 @@ export function AppShell({
         </div>
 
         <div className="mt-auto border-t border-border p-3 space-y-2">
-          <div className="flex items-center justify-between px-3 py-1.5 rounded-lg bg-secondary/40 text-xs">
-            <span className="truncate text-muted-foreground font-mono text-[11px]">
+          <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-secondary/50 text-xs border border-border/50">
+            <span className="truncate text-muted-foreground font-mono text-[11px] max-w-[140px]">
               {userEmail || "thesavorium@gmail.com"}
             </span>
             <ThemeToggle />
@@ -150,7 +150,7 @@ export function AppShell({
       </aside>
 
       {/* Mobile Header */}
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card/95 px-4 py-3 backdrop-blur-xs md:hidden">
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-card/95 px-4 py-3 backdrop-blur-md md:hidden">
         <Brand />
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -158,7 +158,7 @@ export function AppShell({
             type="button"
             onClick={() => setMenuOpen(true)}
             aria-label="Buka menu"
-            className="rounded-lg border border-border bg-secondary/50 p-2 text-foreground"
+            className="rounded-lg border border-border bg-secondary/50 p-2 text-foreground min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer active:scale-95 transition-transform"
           >
             <MenuIcon className="size-4" />
           </button>
@@ -178,7 +178,7 @@ export function AppShell({
               <button
                 type="button"
                 onClick={() => setMenuOpen(false)}
-                className="rounded-md p-1.5 hover:bg-secondary"
+                className="rounded-md p-2 hover:bg-secondary min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
               >
                 <X className="size-4" />
               </button>
@@ -205,13 +205,13 @@ export function AppShell({
 
       {/* Main Content Arena */}
       <div className="md:pl-64">
-        <main className="mx-auto max-w-5xl px-4 py-6 pb-24 md:py-8 md:pb-12">
+        <main className="mx-auto max-w-5xl px-4 py-6 pb-28 md:py-8 md:pb-12">
           {children}
         </main>
       </div>
 
-      {/* Mobile Bottom Tab Bar (Apple HIG 5-Tab Bar) */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-card/95 backdrop-blur-xs md:hidden">
+      {/* Mobile Bottom Tab Bar (Apple HIG 5-Tab Bar with Safe Area) */}
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t border-border bg-card/95 backdrop-blur-md pb-[env(safe-area-inset-bottom,0px)] md:hidden">
         {NAVIGATION.map((item) => {
           const active = isActive(pathname, item.href);
           const Icon = item.icon;
@@ -220,12 +220,12 @@ export function AppShell({
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center py-2 text-[10px] font-medium transition-colors",
+                "flex flex-col items-center justify-center py-2.5 min-h-[52px] text-[10px] font-medium transition-colors active:scale-95",
                 active ? "text-foreground font-bold" : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Icon className={cn("size-4 mb-0.5", active ? "text-primary" : "")} />
-              <span className="truncate max-w-[60px]">{item.label}</span>
+              <Icon className={cn("size-4 mb-1 transition-colors", active ? "text-primary" : "text-muted-foreground")} />
+              <span className="truncate max-w-[62px]">{item.label}</span>
             </Link>
           );
         })}

@@ -448,39 +448,39 @@ export default function OutboxPage() {
                 )}
               </div>
 
-              {/* Quick Preset Buttons */}
-              <div className="flex flex-wrap gap-1.5">
+              {/* Quick Preset Buttons (Apple HIG Segmented Bar) */}
+              <div className="flex flex-wrap gap-1.5 pt-1">
                 <button
                   type="button"
                   disabled={isRefining}
                   onClick={() => handleRefine("touch1")}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-secondary/80 hover:bg-secondary text-foreground text-[11px] font-medium border border-border transition-colors disabled:opacity-50 cursor-pointer"
+                  className="apple-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium disabled:opacity-50 cursor-pointer active:scale-95"
                 >
-                  ⚡ Touch 1 (Tasting Box Gratis)
+                  <span>⚡ Touch 1 (Menu Tambahan)</span>
                 </button>
                 <button
                   type="button"
                   disabled={isRefining}
                   onClick={() => handleRefine("touch2")}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-secondary/80 hover:bg-secondary text-foreground text-[11px] font-medium border border-border transition-colors disabled:opacity-50 cursor-pointer"
+                  className="apple-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium disabled:opacity-50 cursor-pointer active:scale-95"
                 >
-                  ⚡ Touch 2 (Follow-Up & Margin)
+                  <span>⚡ Touch 2 (Rincian B2B & Margin)</span>
                 </button>
                 <button
                   type="button"
                   disabled={isRefining}
                   onClick={() => handleRefine("followup")}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 text-[11px] font-medium border border-amber-300 dark:border-amber-800 transition-colors disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 text-[11px] font-medium border border-amber-300 dark:border-amber-800 transition-colors disabled:opacity-50 cursor-pointer active:scale-95"
                 >
-                  ⚡ Gentle Nudge (Follow-Up Hening)
+                  <span>⚡ Gentle Nudge (Follow-Up Hening)</span>
                 </button>
                 <button
                   type="button"
                   disabled={isRefining}
                   onClick={() => handleRefine("shorten")}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-secondary/80 hover:bg-secondary text-foreground text-[11px] font-medium border border-border transition-colors disabled:opacity-50 cursor-pointer"
+                  className="apple-btn-secondary inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium disabled:opacity-50 cursor-pointer active:scale-95"
                 >
-                  ⚡ Persingkat Draf
+                  <span>⚡ Persingkat Draf</span>
                 </button>
               </div>
 
@@ -490,23 +490,23 @@ export default function OutboxPage() {
                   e.preventDefault();
                   if (hadesInstruction.trim()) handleRefine("custom");
                 }}
-                className="flex gap-1.5"
+                className="flex gap-2 pt-1"
               >
                 <input
                   type="text"
                   value={hadesInstruction}
                   onChange={(e) => setHadesInstruction(e.target.value)}
-                  placeholder="Ketik instruksi khusus (misal: 'Sebutkan kita bisa drop jam 3 sore ke barista')..."
+                  placeholder="Ketik instruksi khusus (misal: 'Sebutkan kita bisa drop sore ini ke Mas Dimas')..."
                   disabled={isRefining}
-                  className="flex-1 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-primary font-sans"
+                  className="flex-1 rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-hidden focus:ring-1 focus:ring-primary font-sans"
                 />
                 <button
                   type="submit"
                   disabled={isRefining || !hadesInstruction.trim()}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-foreground text-background text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
+                  className="apple-btn-primary inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold disabled:opacity-50 cursor-pointer"
                 >
                   <Wand2 className="size-3" />
-                  Terapkan
+                  <span>Terapkan</span>
                 </button>
               </form>
             </div>
@@ -597,29 +597,32 @@ export default function OutboxPage() {
               <button
                 type="button"
                 onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-border rounded-md bg-card hover:bg-secondary text-foreground transition-colors cursor-pointer"
+                className="apple-btn-secondary px-3.5 py-2 text-xs inline-flex items-center gap-1.5 cursor-pointer"
               >
-                {copied ? <Check className="size-3 text-emerald-600" /> : <Copy className="size-3" />}
-                Salin Teks
+                {copied ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                <span>{copied ? "Tersalin" : "Salin Teks"}</span>
               </button>
 
               <button
                 type="button"
                 disabled={isSending || currentLead.status === "sent"}
                 onClick={handleSend}
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs font-bold rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-xs disabled:opacity-50 cursor-pointer"
+                className="apple-btn-primary px-5 py-2.5 text-xs inline-flex items-center gap-2 cursor-pointer shadow-xs disabled:opacity-50"
               >
                 {isSending ? (
-                  "Mengirim via SMTP..."
+                  <>
+                    <span className="size-3.5 border-2 border-background border-t-transparent rounded-full animate-spin" />
+                    <span>Mengirim via SMTP...</span>
+                  </>
                 ) : currentLead.status === "sent" ? (
                   <>
                     <CheckCircle2 className="size-3.5" />
-                    Email Sudah Terkirim
+                    <span>Email Sudah Terkirim</span>
                   </>
                 ) : (
                   <>
                     <Send className="size-3.5" />
-                    Setujui & Kirim Email Sekarang
+                    <span>Setujui & Kirim Email Sekarang</span>
                   </>
                 )}
               </button>
